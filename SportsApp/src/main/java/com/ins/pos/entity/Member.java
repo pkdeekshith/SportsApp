@@ -28,32 +28,65 @@ public class Member {
 	private String memberPhoto;
 	@Column
 	private String word;
-	
+
 	@Column
 	private Long billId;
-	
+
 	@Column
 	private Boolean spotCheck;
 
 	@Column
 	private Boolean isStudent;
-	
+
 	@Column
 	private Boolean isGovt;
-	
+
 	@Column
 	private Boolean isCoaching;
-	
+
 	@Column
 	private String memberIdProof;
-	
+
 	@Column
 	private String gender;
-	
-	
 
-	
-	
+	@Column
+	private Date dob;
+	@Column
+	private String memberContactNo;
+
+	@Column
+	private String memberBarCode;
+	@Column(columnDefinition = "tinyint(1) default 1")
+	private Boolean active;
+	@Column
+	private String userName;
+	@Column
+	private String password;
+	@Column
+	private String email;
+	@Column
+	private String street;
+	@Column(name = "city")
+	private String city;
+	@Column(name = "district")
+	private String district;
+	@Column(name = "state")
+	private String state;
+	@Column(name = "country")
+	private String country;
+	@Column(name = "pincode")
+	private Integer pincode;
+	@Column
+	private String fatherName;
+	@Column
+	private String age;
+	@Column
+	private Boolean checkStaff;
+	@Column
+	private Double paidAmount;
+	@Column
+	private String memberIdProofType;
 
 	public String getGender() {
 		return gender;
@@ -135,82 +168,24 @@ public class Member {
 
 	@Column
 	private Date memberTypeValidity;
-	
-	/*@Column
-	private String facilityTypeName;
-	
-	public String getFacilityTypeName() {
-		return facilityTypeName;
-	}
-
-	public void setFacilityTypeName(String facilityTypeName) {
-		this.facilityTypeName = facilityTypeName;
-	}*/
 
 	@Column
 	private Date memberTypeStartDate;
-	
+
 	@Column
 	private Date createdDate;
-	
-	@Column Date updatedDate;
-	
-	public Date getMemberTypeStartDate() {
-		return memberTypeStartDate;
-	}
-
-	public void setMemberTypeStartDate(Date memberTypeStartDate) {
-		this.memberTypeStartDate = memberTypeStartDate;
-	}
 
 	@Column
-	private Date dob;
-	@Column
-	private String memberContactNo;
-	@Column
-	private String memberAadharNo;
-	@Column
-	private String memberBarCode;
-	@Column(columnDefinition = "tinyint(1) default 1")
-	private Boolean active;
-	@Column
-	private String userName;
-	@Column
-	private String password;
-	@Column
-	private String email;
-	@Column
-	private String street;
-	@Column(name = "city")
-	private String city;
-	@Column(name = "district")
-	private String district;
-	@Column(name = "state")
-	private String state;
-	@Column(name = "country")
-	private String country;
-	@Column(name = "pincode")
-	private Integer pincode;
-	@Column
-	private String fatherName;
-	@Column
-	private String age;
-	@Column
-	private Boolean checkStaff;
-	@Column
-	private Double paidAmount;
-	@Column
-	private String voterId;
+	Date updatedDate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branch_id", nullable = false)
+	@JsonIgnore
+	private Branch branchId;
 
-
-	public String getVoterId() {
-		return voterId;
-	}
-
-	public void setVoterId(String voterId) {
-		this.voterId = voterId;
-	}
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "role_id", nullable = false)
+	private Role roleId;
 
 	public Double getPaidAmount() {
 		return paidAmount;
@@ -236,8 +211,6 @@ public class Member {
 		this.fatherName = fatherName;
 	}
 
-
-
 	public String getAge() {
 		return age;
 	}
@@ -246,38 +219,6 @@ public class Member {
 		this.age = age;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branch_id", nullable = false)
-	@JsonIgnore
-	private Branch branchId;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "role_id", nullable = false)
-	private Role roleId;
-
-	/*@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "centerId", nullable = true)
-	private Center centerId;
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "lastModifiedUserId")
-	private Set<Facility> FacilityRole = new HashSet<Facility>(0);
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "lastModifiedUserId")
-	private Set<SubFacility> SubFacilityRole = new HashSet<SubFacility>(0);
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "lastModifiedUserId")
-	private Set<Booking> bookRole = new HashSet<Booking>(0);
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "memberId")
-	private Set<Accounts> accountRole = new HashSet<Accounts>(0);
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "memberId")
-	private Set<Booking> bookingRole = new HashSet<Booking>(0);*/
 	public Long getMemberId() {
 		return memberId;
 	}
@@ -316,14 +257,6 @@ public class Member {
 
 	public void setMemberContactNo(String memberContactNo) {
 		this.memberContactNo = memberContactNo;
-	}
-
-	public String getMemberAadharNo() {
-		return memberAadharNo;
-	}
-
-	public void setMemberAadharNo(String memberAadharNo) {
-		this.memberAadharNo = memberAadharNo;
 	}
 
 	public String getMemberBarCode() {
@@ -462,52 +395,12 @@ public class Member {
 		this.updatedDate = updatedDate;
 	}
 
-	/*public Center getCenterId() {
-		return centerId;
+	public Date getMemberTypeStartDate() {
+		return memberTypeStartDate;
 	}
 
-	public void setCenterId(Center centerId) {
-		this.centerId = centerId;
+	public void setMemberTypeStartDate(Date memberTypeStartDate) {
+		this.memberTypeStartDate = memberTypeStartDate;
 	}
-
-	public Set<Facility> getFacilityRole() {
-		return FacilityRole;
-	}
-
-	public void setFacilityRole(Set<Facility> facilityRole) {
-		FacilityRole = facilityRole;
-	}
-
-	public Set<SubFacility> getSubFacilityRole() {
-		return SubFacilityRole;
-	}
-
-	public void setSubFacilityRole(Set<SubFacility> subFacilityRole) {
-		SubFacilityRole = subFacilityRole;
-	}
-
-	public Set<Booking> getBookRole() {
-		return bookRole;
-	}
-
-	public void setBookRole(Set<Booking> bookRole) {
-		this.bookRole = bookRole;
-	}
-
-	public Set<Accounts> getAccountRole() {
-		return accountRole;
-	}
-
-	public void setAccountRole(Set<Accounts> accountRole) {
-		this.accountRole = accountRole;
-	}
-
-	public Set<Booking> getBookingRole() {
-		return bookingRole;
-	}
-
-	public void setBookingRole(Set<Booking> bookingRole) {
-		this.bookingRole = bookingRole;
-	}*/
 
 }

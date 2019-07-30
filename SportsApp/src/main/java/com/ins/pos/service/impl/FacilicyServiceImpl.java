@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
@@ -49,16 +50,22 @@ public class FacilicyServiceImpl implements FacilityService{
 		try {
 			JSONObject jsonData = new JSONObject(data);
 			String centerId = jsonData.getString("centerId");
-			String facilityTypeId = jsonData.getString("facilityTypeId");
+			JSONArray facilityTypeIdJSONArray = jsonData.getJSONArray("facilityTypeId");
 			Optional<Center> center = centerRepository.findById(Long.parseLong(centerId));
-			Optional<FacilityType> facilityType = facilityTypeRepository.findById(Long.parseLong(facilityTypeId));
-			if (center.isPresent() && facilityType.isPresent()) {
-				List<Facility> facilityList = facilityRepository
-						.findByCenterIdAndFacilityTypeIdAndOnlineActive(center.get(), facilityType.get(), true);
-				for (Facility facility : facilityList) {
-					FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
-					BeanUtils.copyProperties(facility, facilityJsonDTO);
-					facilityJsonDTOList.add(facilityJsonDTO);
+			List<Long> facilityTypeIdArray = new ArrayList<Long>();
+			for (Object value : facilityTypeIdJSONArray) {
+				facilityTypeIdArray.add(Long.valueOf((String) value));
+			}
+			Iterable<FacilityType> facilityType = facilityTypeRepository.findAllById(facilityTypeIdArray);
+			if (center.isPresent() && facilityType != null) {
+				for (FacilityType facType : facilityType) {
+					List<Facility> facilityList = facilityRepository
+							.findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(center.get(), facType, true,true);
+					for (Facility facility : facilityList) {
+						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
+						BeanUtils.copyProperties(facility, facilityJsonDTO);
+						facilityJsonDTOList.add(facilityJsonDTO);
+					}
 				}
 			}
 		} catch (JSONException e) {

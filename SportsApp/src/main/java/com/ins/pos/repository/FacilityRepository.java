@@ -13,8 +13,8 @@ public interface FacilityRepository extends CrudRepository<Facility, Long> {
 
 	public Facility findByFacilityName(String facilityName);
 
-	public List<Facility> findByCenterIdAndFacilityTypeIdAndOnlineActive(Center centerId, FacilityType facilityTypeId,
-			Boolean onlineActive);
+	public List<Facility> findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(Center centerId, FacilityType facilityTypeId,
+			Boolean onlineActive, Boolean active);
 
 	public List<Facility> findByCenterIdAndActive(Center centerId, boolean active);
 

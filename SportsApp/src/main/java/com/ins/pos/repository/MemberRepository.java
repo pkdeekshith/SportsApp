@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.ins.pos.entity.Member;
 
-public interface MemberDao extends CrudRepository<Member, Long> {
+public interface MemberRepository extends CrudRepository<Member, Long> {
 	Iterable<Member> findByActiveAndCheckStaff(boolean active,boolean checkActive);
 	
 	Iterable<Member> findByActiveAndCheckStaffAndSpotCheck(boolean active,boolean checkActive,boolean checks);
