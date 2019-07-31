@@ -19,7 +19,7 @@ public class MemberServiceImpl implements MemberService{
 	private MemberShipTypeRepository memberShipTypeRepository;
 
 	@Override
-	public List<MemberShipTypeJsonDTO> getMemberShipTypes(String data) {
+	public List<MemberShipTypeJsonDTO> getMemberShipTypes() {
 		List<MemberShipTypeJsonDTO> memberShipTypeJsonDTOList = new ArrayList<MemberShipTypeJsonDTO>();
 		List<MemberShipType> memberShipTypeList = memberShipTypeRepository.findByActiveAndOnlineActive(true, true);
 		for(MemberShipType memberShipType:memberShipTypeList) {

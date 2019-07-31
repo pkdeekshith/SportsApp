@@ -6,6 +6,6 @@ import com.ins.pos.dto.MemberShipTypeJsonDTO;
 
 public interface MemberService {
 
-	List<MemberShipTypeJsonDTO> getMemberShipTypes(String data);
+	List<MemberShipTypeJsonDTO> getMemberShipTypes();
 	
 }
