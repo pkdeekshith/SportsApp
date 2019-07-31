@@ -87,6 +87,9 @@ public class Member {
 	private Double paidAmount;
 	@Column
 	private String memberIdProofType;
+	
+	@Column(columnDefinition="tinyint(1) default 0")
+	private Boolean isOnline;
 
 	public String getGender() {
 		return gender;
@@ -401,6 +404,22 @@ public class Member {
 
 	public void setMemberTypeStartDate(Date memberTypeStartDate) {
 		this.memberTypeStartDate = memberTypeStartDate;
+	}
+
+	public String getMemberIdProofType() {
+		return memberIdProofType;
+	}
+
+	public void setMemberIdProofType(String memberIdProofType) {
+		this.memberIdProofType = memberIdProofType;
+	}
+
+	public Boolean getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Boolean isOnline) {
+		this.isOnline = isOnline;
 	}
 
 }

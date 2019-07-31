@@ -43,7 +43,7 @@ public class TimetableServiceImpl implements TimetableService {
 		try {
 			JSONObject requestJSON = new JSONObject(data);
 			JSONArray facilityJSONArray = requestJSON.getJSONArray("facility");
-			Date selectedDate = new SimpleDateFormat("dd MMM yyyy").parse((String) requestJSON.get("date"));
+			Date selectedDate = new Date();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(selectedDate);
 			int daynum = calendar.get(Calendar.DAY_OF_WEEK);
@@ -62,7 +62,7 @@ public class TimetableServiceImpl implements TimetableService {
 					}
 					
 					BeanUtils.copyProperties(facilityOpt.get(), facilitySubFacilityTimeTableJsonDTO);
-					List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActive(facilityOpt.get(), true);
+					List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActiveAndOnlineActive(facilityOpt.get(), true,true);
 					List<SubFacilityTimeTableJsonDTO> subFacilityTimeTableJsonDTOList = new ArrayList<SubFacilityTimeTableJsonDTO>();
 					for(SubFacility subFacility:subFacilityList) {
 						SubFacilityTimeTableJsonDTO subFacilityTimeTableJsonDTO = new SubFacilityTimeTableJsonDTO();

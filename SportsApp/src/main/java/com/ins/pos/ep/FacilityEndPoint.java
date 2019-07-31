@@ -28,4 +28,9 @@ public class FacilityEndPoint {
 	public List<FacilityJsonDTO> getFacilityForPreferredSport(@RequestBody String data) {
 		return facilityService.getFacilityForPreferredSport(data);
 	}
+	
+	@PostMapping("/checkFacilityAvailabilty")
+	public String checkFacilityAvailabilty(@RequestBody String data) {
+		return facilityService.checkFacilityAvailabilty(data);
+	}
 }

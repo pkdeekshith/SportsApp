@@ -30,6 +30,9 @@ public class MemberShipType {
 	@Column
 	private Double memberIdCardAmount;
 	
+	@Column(columnDefinition="tinyint(1) default 1")
+	private Boolean onlineActive;
+	
 	public Double getMemberIdCardAmount() {
 		return memberIdCardAmount;
 	}
@@ -94,6 +97,14 @@ public class MemberShipType {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public Boolean getOnlineActive() {
+		return onlineActive;
+	}
+
+	public void setOnlineActive(Boolean onlineActive) {
+		this.onlineActive = onlineActive;
 	}
 
 	/*public Set<Member> getMemberRole() {

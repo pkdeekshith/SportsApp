@@ -37,8 +37,14 @@ public class SubFacility {
 	@Column(columnDefinition="tinyint(1) default 1")
 	private Boolean active;
 	
+	@Column(columnDefinition="tinyint(1) default 1")
+	private Boolean onlineActive;
+	
 	@Column
 	private Date lastModifiedDate;
+	
+	@Column
+	private int slotLimit;
 	
 	@Column
 	private String subFacilityName;
@@ -159,6 +165,22 @@ public class SubFacility {
 
 	public void setLastModifiedUserId(Member lastModifiedUserId) {
 		this.lastModifiedUserId = lastModifiedUserId;
+	}
+
+	public Boolean getOnlineActive() {
+		return onlineActive;
+	}
+
+	public void setOnlineActive(Boolean onlineActive) {
+		this.onlineActive = onlineActive;
+	}
+
+	public int getSlotLimit() {
+		return slotLimit;
+	}
+
+	public void setSlotLimit(int slotLimit) {
+		this.slotLimit = slotLimit;
 	}
 
 	/*public Set<Booking> getBookRole() {

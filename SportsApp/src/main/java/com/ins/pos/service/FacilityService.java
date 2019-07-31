@@ -9,4 +9,5 @@ public interface FacilityService {
 	public List<FacilityTypeJsonDTO> getAllFacilityTypes();
 
 	public List<FacilityJsonDTO> getFacilityForPreferredSport(String data);
+	public String checkFacilityAvailabilty(String data);
 }
