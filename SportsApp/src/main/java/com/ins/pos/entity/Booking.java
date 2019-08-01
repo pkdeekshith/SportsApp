@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Booking {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column
 	private Long bookingId;
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -95,6 +96,8 @@ public class Booking {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "bookingId")
 	@JsonIgnore
 	private Set<AccountBook> AccountTypeLinkRole = new HashSet<AccountBook>(0);
+	
+	private String bookingApp;
 
 	public Boolean getEntryStatus() {
 		return entryStatus;
@@ -270,6 +273,14 @@ public class Booking {
 
 	public void setBookingEndDate(Date bookingEndDate) {
 		this.bookingEndDate = bookingEndDate;
+	}
+
+	public String getBookingApp() {
+		return bookingApp;
+	}
+
+	public void setBookingApp(String bookingApp) {
+		this.bookingApp = bookingApp;
 	}
 
 }
