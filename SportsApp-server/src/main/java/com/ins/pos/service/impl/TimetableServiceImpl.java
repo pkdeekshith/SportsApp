@@ -74,7 +74,7 @@ public class TimetableServiceImpl implements TimetableService {
 						BeanUtils.copyProperties(subFacility, subFacilityTimeTableJsonDTO);
 						subFacilityTimeTableJsonDTO.setTimetable(timeTableJsonArray);
 						if(priceList!=null&&!priceList.isEmpty()) {
-							subFacilityTimeTableJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth().toString());
+							subFacilityTimeTableJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 						}
 						subFacilityTimeTableJsonDTOList.add(subFacilityTimeTableJsonDTO);
 					}

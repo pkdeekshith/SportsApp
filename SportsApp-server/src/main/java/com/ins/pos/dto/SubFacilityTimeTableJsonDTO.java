@@ -6,7 +6,7 @@ public class SubFacilityTimeTableJsonDTO {
 	
 	private Long subFacilityId;
 	
-	private String rateMonthly;
+	private Double rateMonthly;
 	
 	private String subFacilityName;
 	
@@ -20,11 +20,11 @@ public class SubFacilityTimeTableJsonDTO {
 		this.subFacilityId = subFacilityId;
 	}
 
-	public String getRateMonthly() {
+	public Double getRateMonthly() {
 		return rateMonthly;
 	}
 
-	public void setRateMonthly(String rateMonthly) {
+	public void setRateMonthly(Double rateMonthly) {
 		this.rateMonthly = rateMonthly;
 	}
 
