@@ -1,0 +1,31 @@
+.login-card{
+    background:#00002d;
+    color: white;
+}
+.login-wrapper{
+    background: url("../../../assets/images/Banner-6.jpg"); 
+    height: 100%;
+    
+}
+.loginbtn{
+    background: #d8d0d0;
+    color: #315a07;
+    
+    width: 185px;
+    border:none;
+}
+.reg-link{
+    color: white;
+}
+.invalid-feedback div{
+    color:#dcbfbf;
+}
+.log2{
+    /* margin-left:7%; */
+}
+.log3{
+    margin-left: 2px;
+}
+.loginbtn:hover{
+    background: #56c38c;
+}

@@ -1,0 +1,42 @@
+.about-banner{
+    height:330px;
+    width: 100%;    
+}
+.banner-text-about{
+    margin-top: 9%;
+    text-align: center;
+    color: white;
+    font-size: 28px;
+}
+#q1{
+    background: url("../../../assets/images/home-banner.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#q2{
+    background: url("../../../assets/images/Banner-4.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#q3{
+    background: url("../../../assets/images/Banner-5.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#q4{
+    background: url("../../../assets/images/Banner-6.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.first-para{
+    margin-top:4px;
+}
+.descrptn{
+    padding-left: 15px;
+    padding-right: 10px;
+    background:#00002d;
+    color: white;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 3%;
+}

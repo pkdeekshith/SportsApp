@@ -1,0 +1,58 @@
+.home-banner{
+    height:330px;
+    background-position: center center;
+    background-size: cover;
+}
+#t1{
+    background: url("../../../assets/images/home-banner.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#t2{
+    background: url("../../../assets/images/Banner-4.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#t3{
+    background: url("../../../assets/images/Banner-5.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+#t4{
+    background: url("../../../assets/images/Banner-6.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.banner-text{
+    margin-top: 10%;
+    text-align: center;
+    color: white;
+    font-size: 28px;
+}
+.carousel-inner{
+    height: 180px;
+    background: #00002d;
+    color: wheat;
+    font-size: 17px;
+}
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+.carousel-item{
+    height: 100%;
+    text-align: center;
+}
+.carousel-item div{
+    margin-top: 16px;
+}
+.testi-head{
+    background: #00002d;
+    text-align: center;
+    color:white;
+}
+.testi-head div{
+    width: 100%;
+    font-size: 18px;
+    font-weight: 400;
+}

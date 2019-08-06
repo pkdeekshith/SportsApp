@@ -1,0 +1,41 @@
+.bookingWrapper{
+    padding: 10px;
+    background:#315a07;
+    color: wheat;
+}
+.slotBox{
+    width: 150px;
+    background: red;
+    float: left;
+    height: 40px;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+.slotBox input{
+    float: right;
+    height: 100%;
+  
+    width: 26px;
+}
+.slotBox label{
+    margin-top: 8px;
+    padding-left: 4px;
+}
+.slotContainer{
+    border: solid 1px grey;
+    text-align: center;
+    padding-bottom: 10px;
+    background: #520808;
+    padding-top: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+.slotBox, .slotBox label{
+    cursor: pointer;
+}
+.slotBox:hover{
+    background: #d45151;
+}
+.slotBox.selected{
+    background: green;
+}

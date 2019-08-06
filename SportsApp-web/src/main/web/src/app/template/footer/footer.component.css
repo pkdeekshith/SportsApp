@@ -1,0 +1,12 @@
+.footer {
+   
+    bottom: 0;
+    /* Set the fixed height of the footer here */
+    height: 45px;
+    line-height: 31px;
+    /* width:100%; */
+    background: #030403;
+  }
+  .footer .container{
+    text-align: center;
+  }

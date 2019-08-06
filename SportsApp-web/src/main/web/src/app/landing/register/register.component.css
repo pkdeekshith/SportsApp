@@ -1,0 +1,148 @@
+.reg-wrapper{
+    width: 100%;
+    padding-left: 3%;
+    padding-right: 3%;
+    color: white;
+}
+.reg-wrapper form{
+    width: 100%;
+}
+.reg-title{
+    color:white;
+    font-size: 19px;
+}
+.reg-title div{
+    width:100%;
+    text-align: center;
+    background: #00002d;
+
+}
+.invalid-feedback{
+    color: red;
+}
+.btn-reg{
+    width: 162px;
+    background: #46793f;
+    border: none;
+    color: #c5d4d2;
+    box-shadow: none;
+    min-height: 35px;
+}
+.btn-reg:hover{
+    /* font-weight: bolder; */
+    background: green;
+}
+.reg-title div{
+    /* border-bottom: solid 1px wheat; */
+    width: 92%;
+    margin: 0 auto;
+}
+.cal span {
+    width:100%;
+}
+.cal span input {
+    width:87%;
+}
+
+.facilityBlock{
+    padding: 14px;
+    border: solid 1px grey;
+    background: #f7f1f1;
+    color: black;
+}
+.subheader{
+    background: #10380d;
+    background: #00002d;
+    text-align: center;
+    color: white;
+}
+.multiPref{
+    width: 250px;
+}
+
+.notEditable{
+    filter: contrast(0.5);
+    pointer-events: none;
+}
+.edit{
+    height: 100%;
+    width: 98%;
+    transition: all 1000ms ease;
+    z-index: 1;
+    background: black;
+    position: absolute;
+    opacity: 0.5;
+}
+.edit.show{
+    height: 100%;
+    width: 0%;
+}
+.ui-messages{
+    margin: 0 !important;
+}
+::ng-deep .prime-slider-override{ 
+  margin: 0 !important;      
+}
+::ng-deep .pi-times:before{
+    vertical-align: middle;
+}
+::ng-deep  .ui-dialog-content{
+ background: #00002d !important;
+ color:white !important;
+}
+
+::ng-deep .slotPopup ul li{
+    list-style: none;
+    min-width: 160px;
+    background: #0180a9;
+    /* text-align: center; */
+    color: wheat;
+    float: left;
+    margin: 4px;
+    padding: 10px;
+    position: relative;
+}
+::ng-deep .slotPopup ul li input{
+    position: absolute;
+    right: 8px;
+    top: 14px;
+    transform: scale(2);
+
+}
+::ng-deep .slotPopup .row{
+    margin-right: 0px;
+    margin-left: 0px;
+}
+::ng-deep .slotPopup label.row{
+    text-align: center !important;
+    display: block;
+}
+::ng-deep .facBlock{
+    border: solid 1px #515184;
+    border-radius: 8px;
+    margin-top: 2px;
+}
+::ng-deep .facName{
+    background:#2c2954;
+}
+::ng-deep .disableClick{
+    pointer-events: none;
+    /* opacity: 0.4; */
+    filter: brightness(0.5);
+}
+::ng-deep .ui-dialog-footer{
+    text-align: center !important;
+    background: #515184 !important;
+}
+.is-invalid .invalid-feedback{
+    display: block;
+}
+::ng-deep .ui-toast-close-icon{
+    display: none !important;
+}
+.selectedVal{
+    color:wheat !important;
+}
+.reviewPopup .row{
+    margin-top: 7px !important;
+}

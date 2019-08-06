@@ -1,0 +1,20 @@
+.logoBox{
+    height: 55px;
+    padding: 0;
+}
+.toprow{
+    
+}
+.nav-link{
+    color:black !important;
+    font-weight: 600;
+}
+.nav-item.active{
+    
+}
+.nav-item:hover{
+    text-decoration: underline;
+}
+.navbar-toggler{
+    background: black;
+}

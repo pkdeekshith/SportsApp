@@ -1,0 +1,47 @@
+.cont-wrapper{
+    background:url("../../../assets/images/about-back.jpg")
+}
+.image-box{
+    /* height:165px; */
+    background: #00002d;
+}
+.cont1{
+    background:url("../../../assets/images/Jayathilak.jpg");
+    background-repeat: no-repeat;
+}
+.cont2{
+    
+    background:url("../../../assets/images/Sanjayan-Kumar.jpg");
+    background-repeat: no-repeat;
+}
+.cont3{
+    background:url("../../../assets/images/Ajith-Kumar-B.jpg");
+    background-repeat: no-repeat;
+}
+.im{
+    background-position: center;
+    text-align: center;
+    padding-top: 9%;
+}
+.im-text{
+    padding: 1%;
+    color:white;
+}
+.im-text span{
+    display: block;
+}
+.cont-title{
+    background: #00002d;
+    font-weight: 500;
+    color: white;
+}
+.cont-title div{
+    width: 100%;
+    margin-left: 9%;
+}
+.address{
+    color:white;
+}
+.address span{
+    display: block;
+}

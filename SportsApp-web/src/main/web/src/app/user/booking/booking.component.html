@@ -1,0 +1,48 @@
+<div class="bookingWrapper">
+  <div class="row">
+    <div class="col-md-3 col-sm-12">
+      
+    </div>
+    <div class="col-md-3 col-sm-12">
+      <div class="form-group">
+        <label for="centerName">Centre</label>
+        <input type="text" [(ngModel)]="centreName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-12">
+      <div class="form-group">
+        <label for="facilityName">Facility</label>
+        <input type="text" [(ngModel)]="facilityName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 col-sm-12">
+      
+    </div>
+    <div class="col-md-3 col-sm-12">
+        <div class="form-group">
+          <label for="facilityName">Sub Facility</label>
+          <input type="text" [(ngModel)]="subFacility" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+        </div>
+      </div>
+    <div class="col-md-3 col-sm-12">
+      <div class="form-group">
+        <label for="facilityName">Date</label>
+        <input type="text" [(ngModel)]="selectedDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+      </div>
+    </div>
+    
+  </div>
+  <div class="row">
+    <button (click)="getSlots()" class="btn btn-info" style="margin: 0 auto;">View Slots</button>
+  </div>
+  <div class="slotContainer">
+    <div class="row"><label class="col">Pick the Slots</label></div>
+    <div class="row">
+      <div class="boxes col">
+        <div class="slotBox" id="tBox" *ngFor="let item of availableSlots; let i = index" (click)="slotClicked()"><label>{{item}}</label></div>
+      </div>
+    </div>
+  </div>
+</div>
