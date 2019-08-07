@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ins.pos.dto.FacilityJsonDTO;
+import com.ins.pos.dto.FacilitySubFacilityJsonDTO;
 import com.ins.pos.dto.FacilityTypeJsonDTO;
 import com.ins.pos.service.FacilityService;
 
@@ -24,6 +25,11 @@ public class FacilityEndPoint {
 		return facilityService.getAllFacilityTypes();
 	}
 	
+	@PostMapping("/getAllFacilities")
+	public List<FacilityJsonDTO> getAllFacilities(@RequestBody String data) {
+		return facilityService.getAllFacilities(data);
+	}
+	
 	@PostMapping("/getFacilityForPreferredSport")
 	public List<FacilityJsonDTO> getFacilityForPreferredSport(@RequestBody String data) {
 		return facilityService.getFacilityForPreferredSport(data);
@@ -32,5 +38,10 @@ public class FacilityEndPoint {
 	@PostMapping("/checkFacilityAvailabilty")
 	public String checkFacilityAvailabilty(@RequestBody String data) {
 		return facilityService.checkFacilityAvailabilty(data);
+	}
+	
+	@PostMapping("/getSubFacilitiesForFacilities")
+	public List<FacilitySubFacilityJsonDTO> getSubFacilitiesForFacilities(@RequestBody String data) {
+		return facilityService.getSubFacilitiesForFacility(data);
 	}
 }

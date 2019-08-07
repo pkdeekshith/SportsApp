@@ -11,6 +11,9 @@ import com.ins.pos.entity.FacilityType;
 public interface FacilityRepository extends CrudRepository<Facility, Long> {
 	public List<Facility> findByActive(Boolean active);
 
+	public List<Facility> findByCenterIdAndOnlineActiveAndActive(Center centerId,
+			Boolean onlineActive, Boolean active);
+	
 	public Facility findByFacilityName(String facilityName);
 
 	public List<Facility> findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(Center centerId, FacilityType facilityTypeId,

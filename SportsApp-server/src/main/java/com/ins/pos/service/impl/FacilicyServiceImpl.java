@@ -14,12 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityJsonDTO;
+import com.ins.pos.dto.FacilitySubFacilityJsonDTO;
 import com.ins.pos.dto.FacilityTypeJsonDTO;
+import com.ins.pos.dto.SubFacilityJsonDTO;
 import com.ins.pos.entity.Booking;
 import com.ins.pos.entity.Center;
 import com.ins.pos.entity.Facility;
 import com.ins.pos.entity.FacilityType;
 import com.ins.pos.entity.OnlineBookingWindow;
+import com.ins.pos.entity.Price;
 import com.ins.pos.entity.SubFacility;
 import com.ins.pos.entity.TimeTable;
 import com.ins.pos.repository.BookingRepository;
@@ -27,6 +30,7 @@ import com.ins.pos.repository.CenterRepository;
 import com.ins.pos.repository.FacilityRepository;
 import com.ins.pos.repository.FacilityTypeRepository;
 import com.ins.pos.repository.OnlineBookingWindowRepository;
+import com.ins.pos.repository.PriceRepository;
 import com.ins.pos.repository.SubFacilityRepository;
 import com.ins.pos.repository.TimeTableRepository;
 import com.ins.pos.service.FacilityService;
@@ -54,6 +58,9 @@ public class FacilicyServiceImpl implements FacilityService{
 	
 	@Autowired
 	BookingRepository bookingRepository;
+	
+	@Autowired
+	PriceRepository priceRepository;
 	
 	@Override
 	public List<FacilityTypeJsonDTO> getAllFacilityTypes() {
@@ -191,5 +198,64 @@ public class FacilicyServiceImpl implements FacilityService{
 		}
 		return isAvailable;
 	}
+
+	@Override
+	public List<FacilityJsonDTO> getAllFacilities(String data) {
+		List<FacilityJsonDTO> facilityJsonDTOList = new ArrayList<FacilityJsonDTO>();
+		try {
+			JSONObject jsonData = new JSONObject(data);
+			String centerId = jsonData.getString("centerId");
+			Optional<Center> center = centerRepository.findById(Long.parseLong(centerId));
+			if (center.isPresent()) {
+					List<Facility> facilityList = facilityRepository
+							.findByCenterIdAndOnlineActiveAndActive(center.get(), true,true);
+					for (Facility facility : facilityList) {
+						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
+						BeanUtils.copyProperties(facility, facilityJsonDTO);
+						facilityJsonDTOList.add(facilityJsonDTO);
+					}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return facilityJsonDTOList;
+	}
+	
+	@Override
+	public List<FacilitySubFacilityJsonDTO> getSubFacilitiesForFacility(String data) {
+		List<FacilitySubFacilityJsonDTO> facilitySubFacilityJsonDTOArray = new ArrayList<FacilitySubFacilityJsonDTO>();
+
+		try {
+			JSONObject jsonData = new JSONObject(data);
+			JSONArray facilityList = jsonData.getJSONArray("facility");
+			for (Object value : facilityList) {
+				FacilitySubFacilityJsonDTO facilitySubFacilityJsonDTO = new FacilitySubFacilityJsonDTO();
+				Optional<Facility> facility = facilityRepository.findById(Long.valueOf((String) value));
+				if (facility.isPresent()) {
+					BeanUtils.copyProperties(facility.get(), facilitySubFacilityJsonDTO);
+					List<SubFacility> subFacilityList = subFacilityRepository
+							.findByFacilityIdAndActiveAndOnlineActive(facility.get(), true, true);
+					List<SubFacilityJsonDTO> subFacilityJsonDTOList = new ArrayList<SubFacilityJsonDTO>();
+					for (SubFacility subFacility : subFacilityList) {
+						List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacility);
+						SubFacilityJsonDTO subFacilityJsonDTO = new SubFacilityJsonDTO();
+						BeanUtils.copyProperties(subFacility, subFacilityJsonDTO);
+						subFacilityJsonDTOList.add(subFacilityJsonDTO);
+						if(priceList!=null&&!priceList.isEmpty()) {
+							subFacilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+						}
+					}
+					facilitySubFacilityJsonDTO.setSubFacility(subFacilityJsonDTOList);
+				}
+				facilitySubFacilityJsonDTOArray.add(facilitySubFacilityJsonDTO);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return facilitySubFacilityJsonDTOArray;
+
+	}
+
 
 }

@@ -89,6 +89,44 @@ public class TimetableServiceImpl implements TimetableService {
 		return facilitySubFacilityTimeTableJsonDTOList;
 	}
 
+	@Override
+	public List<SubFacilityTimeTableJsonDTO> getTimeSlotsForSubFacility(String data) {
+		List<SubFacilityTimeTableJsonDTO> subFacilityTimeTableJsonDTOList = new ArrayList<SubFacilityTimeTableJsonDTO>();
+		try {
+			JSONObject requestJSON = new JSONObject(data);
+			JSONArray subFacilityJSONArray = requestJSON.getJSONArray("subFacility");
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			int daynum = calendar.get(Calendar.DAY_OF_WEEK);
+			for (Object key : subFacilityJSONArray) {
+				Long subFacilityId = Long.parseLong((String) key);
+				Optional<SubFacility> subFacilityOpt = subFacilityRepository.findById(subFacilityId);
+				if (subFacilityOpt.isPresent()) {
+					SubFacilityTimeTableJsonDTO subFacilityTimeTableJsonDTO = new SubFacilityTimeTableJsonDTO();
+					List<TimeTable> timeTableList = timeTableRepository.findByActiveAndDayNumAndFacilityId(true, daynum,
+							subFacilityOpt.get().getFacilityId());
+					List<TimeTableJsonDTO> timeTableJsonArray = new ArrayList<TimeTableJsonDTO>();
+					for (TimeTable timeTable : timeTableList) {
+						TimeTableJsonDTO timeTableJsonDTO = new TimeTableJsonDTO();
+						BeanUtils.copyProperties(timeTable, timeTableJsonDTO);
+						timeTableJsonArray.add(timeTableJsonDTO);
+					}
+					BeanUtils.copyProperties(subFacilityOpt.get(), subFacilityTimeTableJsonDTO);
+					List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacilityOpt.get());
+					subFacilityTimeTableJsonDTO.setTimetable(timeTableJsonArray);
+					if (priceList != null && !priceList.isEmpty()) {
+						subFacilityTimeTableJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+					}
+					subFacilityTimeTableJsonDTOList.add(subFacilityTimeTableJsonDTO);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return subFacilityTimeTableJsonDTOList;
+	}
 	
 
 }

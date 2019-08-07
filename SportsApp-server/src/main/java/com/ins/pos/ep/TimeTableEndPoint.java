@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ins.pos.dto.FacilitySubFacilityTimeTableJsonDTO;
+import com.ins.pos.dto.SubFacilityTimeTableJsonDTO;
 import com.ins.pos.service.TimetableService;
 
 @RestController
@@ -25,5 +26,10 @@ public class TimeTableEndPoint {
 				return timetableService.getAvailableTimeTables(data);
 	}
 	
+	
+	@PostMapping("getTimeSlotsForSubFacility")
+	public @ResponseBody List<SubFacilityTimeTableJsonDTO> getTimeSlotsForSubFacility(@RequestBody String data) {
+				return timetableService.getTimeSlotsForSubFacility(data);
+	}
 	
 }
