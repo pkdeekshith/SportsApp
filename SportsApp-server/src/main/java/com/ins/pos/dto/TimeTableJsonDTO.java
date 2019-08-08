@@ -7,6 +7,10 @@ public class TimeTableJsonDTO {
 	private int sessionStartTime;
 		
 	private int sessionEndTime;
+	
+	private int totalSlots;
+	
+	private int bookedSlots;
 
 	public Long getTimeTableId() {
 		return timeTableId;
@@ -30,6 +34,22 @@ public class TimeTableJsonDTO {
 
 	public void setSessionEndTime(int sessionEndTime) {
 		this.sessionEndTime = sessionEndTime;
+	}
+
+	public int getTotalSlots() {
+		return totalSlots;
+	}
+
+	public void setTotalSlots(int totalAvailableSlots) {
+		this.totalSlots = totalAvailableSlots;
+	}
+
+	public int getBookedSlots() {
+		return bookedSlots;
+	}
+
+	public void setBookedSlots(int bookedSlots) {
+		this.bookedSlots = bookedSlots;
 	}
 
 }

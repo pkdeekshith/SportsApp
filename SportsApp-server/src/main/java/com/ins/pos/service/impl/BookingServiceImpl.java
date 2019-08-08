@@ -153,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
 			}
 			for (TimeTable timeTbl : timeTables) {
 				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTbl.getSessionStartTime(), timeTbl.getSessionEndTime(), "Monthly", true, subFacility);
-				if(accountSubSectorList.size()>subFacility.getSlotLimit()) {
+				if(accountSubSectorList.size()>=subFacility.getSlotLimit()) {
 					throw new Exception("Slot not available");
 				}
 			}
@@ -177,6 +177,7 @@ public class BookingServiceImpl implements BookingService {
 			accounts.setCreditAmount(0.00);
 			accounts.setActive(true);
 			accounts.setBookingApp("Online");
+			accounts.setTypeOfBooking("Monthly");
 			accounts.setSessionStartTime(timeTables.get(0).getSessionStartTime());
 			accounts.setSessionEndTime(timeTables.get(0).getSessionEndTime());
 			accounts.setIsCentreBooking(false);
@@ -188,7 +189,7 @@ public class BookingServiceImpl implements BookingService {
 						.findByActiveAndSessionStartTimeAndSessionEndTimeAndFacilityId(true,
 								timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), facility)
 						.stream().collect(Collectors.toMap(TimeTable::getDayNum, Function.identity()));
-				int daysList = Math.round(ChronoUnit.DAYS.between(bookingEndDate.toInstant(), bookingStartDate.toInstant()));
+				int daysList = Math.round(ChronoUnit.DAYS.between(bookingStartDate.toInstant(),bookingEndDate.toInstant()));
 				bookedDates.add(bookingStartDate.getTime());
 				Calendar bookDate  = bookingStartDate;
 				int dayNeedToChange = Calendar.DAY_OF_WEEK;
@@ -200,6 +201,7 @@ public class BookingServiceImpl implements BookingService {
 						timeTables1.add(timeTableMap.get(bookDate.get(Calendar.DAY_OF_WEEK)));
 					} 
 				}
+				timeTables = timeTables1;
 			}
 			int i=0;
 			for (TimeTable timeTbl : timeTables) {

@@ -31,5 +31,4 @@ public class FacilitySubFacilityTimeTableJsonDTO {
 	public void setSubFacility(List<SubFacilityTimeTableJsonDTO> subFacility) {
 		this.subFacility = subFacility;
 	}
-
 }
