@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityTypeJsonDTO;
+import com.ins.pos.dto.MemberDetailsJsonDTO;
 import com.ins.pos.dto.MemberJsonDTO;
 import com.ins.pos.dto.MemberShipTypeJsonDTO;
 import com.ins.pos.entity.Accounts;
@@ -161,6 +162,24 @@ public class MemberServiceImpl implements MemberService{
 			response.put("status", "Failure");
 		}
 		return response.toString();
+	}
+
+	@Override
+	public MemberDetailsJsonDTO getMember(long id) {
+		MemberDetailsJsonDTO memberDetailsJsonDTO = new MemberDetailsJsonDTO();
+		Optional<Member> member = memberRepository.findById(id);
+		List<FacilityTypeJsonDTO> facilityTypeList = new ArrayList<FacilityTypeJsonDTO>();
+		memberDetailsJsonDTO.setFacilityType(facilityTypeList);
+		if(member.isPresent()) {
+			BeanUtils.copyProperties(member, memberDetailsJsonDTO);
+			List<MemberFacility> memberFacList = memberFacilityRepository.findByMemberAndActive(member.get(), true);
+			for(MemberFacility memberFacility:memberFacList) {
+				FacilityTypeJsonDTO facilityTypeJsonDTO = new FacilityTypeJsonDTO();
+				BeanUtils.copyProperties(memberFacility.getFacilityType(), facilityTypeJsonDTO);
+				facilityTypeList.add(facilityTypeJsonDTO);
+			}
+		}
+		return memberDetailsJsonDTO;
 	}
 	
 }
