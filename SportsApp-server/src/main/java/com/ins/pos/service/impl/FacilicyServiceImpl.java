@@ -17,7 +17,7 @@ import com.ins.pos.dto.FacilityJsonDTO;
 import com.ins.pos.dto.FacilitySubFacilityJsonDTO;
 import com.ins.pos.dto.FacilityTypeJsonDTO;
 import com.ins.pos.dto.SubFacilityJsonDTO;
-import com.ins.pos.entity.Booking;
+import com.ins.pos.entity.AccountsSubSector;
 import com.ins.pos.entity.Center;
 import com.ins.pos.entity.Facility;
 import com.ins.pos.entity.FacilityType;
@@ -25,6 +25,7 @@ import com.ins.pos.entity.OnlineBookingWindow;
 import com.ins.pos.entity.Price;
 import com.ins.pos.entity.SubFacility;
 import com.ins.pos.entity.TimeTable;
+import com.ins.pos.repository.AccountsSubSectorRepository;
 import com.ins.pos.repository.BookingRepository;
 import com.ins.pos.repository.CenterRepository;
 import com.ins.pos.repository.FacilityRepository;
@@ -61,6 +62,9 @@ public class FacilicyServiceImpl implements FacilityService{
 	
 	@Autowired
 	PriceRepository priceRepository;
+	
+	@Autowired 
+	AccountsSubSectorRepository accountsSubSectorRepository;
 	
 	@Override
 	public List<FacilityTypeJsonDTO> getAllFacilityTypes() {
@@ -186,8 +190,8 @@ public class FacilicyServiceImpl implements FacilityService{
 		List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActiveAndOnlineActive(facility, true,true);
 		for(SubFacility subFacility:subFacilityList) {
 			for(TimeTable timetable:timeTableList) {
-				List<Booking> bookingLst = bookingRepository.findByBookingStartDateGreaterThanEqualAndBookingEndDateLessThanEqualAndSubFacilityIdAndTimeTableId(selectedDate, selectedDate, subFacility,timetable);
-				if(bookingLst.size()<subFacility.getSlotLimit()) {
+				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(selectedDate, selectedDate, timetable.getSessionStartTime(), timetable.getSessionEndTime(), "Monthly", true, subFacility);
+				if(accountSubSectorList.size()<subFacility.getSlotLimit()) {
 					isAvailable =true;
 					break;
 				}

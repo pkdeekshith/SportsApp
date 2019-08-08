@@ -100,6 +100,17 @@ public class Accounts {
 	@Column
 	private Double creditAmount;
 	
+	@Column
+	private String bookingType;
+	
+	@Column
+	private int sessionStartTime;
+
+	@Column
+	private int sessionEndTime;
+	
+	@Column
+	private String bookingApp;
 	
 	public Double getCreditAmount() {
 		return creditAmount;
@@ -279,6 +290,38 @@ public class Accounts {
 
 	public void setIsCentreBooking(Boolean isCentreBooking) {
 		this.isCentreBooking = isCentreBooking;
+	}
+
+	public String getBookingType() {
+		return bookingType;
+	}
+
+	public void setBookingType(String bookingType) {
+		this.bookingType = bookingType;
+	}
+
+	public int getSessionStartTime() {
+		return sessionStartTime;
+	}
+
+	public void setSessionStartTime(int sessionStartTime) {
+		this.sessionStartTime = sessionStartTime;
+	}
+
+	public int getSessionEndTime() {
+		return sessionEndTime;
+	}
+
+	public void setSessionEndTime(int sessionEndTime) {
+		this.sessionEndTime = sessionEndTime;
+	}
+
+	public String getBookingApp() {
+		return bookingApp;
+	}
+
+	public void setBookingApp(String bookingApp) {
+		this.bookingApp = bookingApp;
 	}
 	
 

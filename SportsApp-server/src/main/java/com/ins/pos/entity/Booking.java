@@ -41,10 +41,7 @@ public class Booking {
 	private Date bookedDate;
 
 	@Column
-	private Date bookingStartDate;
-	
-	@Column
-	private Date bookingEndDate;
+	private Date bookingDate;
 
 	@Column
 	private Boolean active;
@@ -96,6 +93,8 @@ public class Booking {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "bookingId")
 	@JsonIgnore
 	private Set<AccountBook> AccountTypeLinkRole = new HashSet<AccountBook>(0);
+	
+	
 	
 	private String bookingApp;
 
@@ -259,28 +258,20 @@ public class Booking {
 		this.count = count;
 	}
 
-	public Date getBookingStartDate() {
-		return bookingStartDate;
-	}
-
-	public void setBookingStartDate(Date bookingStartDate) {
-		this.bookingStartDate = bookingStartDate;
-	}
-
-	public Date getBookingEndDate() {
-		return bookingEndDate;
-	}
-
-	public void setBookingEndDate(Date bookingEndDate) {
-		this.bookingEndDate = bookingEndDate;
-	}
-
 	public String getBookingApp() {
 		return bookingApp;
 	}
 
 	public void setBookingApp(String bookingApp) {
 		this.bookingApp = bookingApp;
+	}
+
+	public Date getBookingDate() {
+		return bookingDate;
+	}
+
+	public void setBookingDate(Date bookingDate) {
+		this.bookingDate = bookingDate;
 	}
 
 }

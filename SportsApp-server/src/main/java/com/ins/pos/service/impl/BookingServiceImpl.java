@@ -1,9 +1,13 @@
 package com.ins.pos.service.impl;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +93,7 @@ public class BookingServiceImpl implements BookingService {
 			SubFacility subFacility = subFacilityRepository.findById(bookingJsonDTO.getSubFacilityId()).get();
 			Member member = memberRepository.findById(bookingJsonDTO.getMemberId()).get();
 			timeTableRepository.findAllById(bookingJsonDTO.getTimeTableId()).forEach(timeTables::add);
+			
 			for (Long id : bookingJsonDTO.getOtherMemberId()) {
 				Member addMember = memberRepository.findById(id).get();
 				memberFiless.add(addMember);
@@ -111,77 +116,48 @@ public class BookingServiceImpl implements BookingService {
 						bookingStartDate.set(Calendar.MINUTE, 0);
 						bookingStartDate.set(Calendar.SECOND, 0);
 						bookingStartDate.set(Calendar.MILLISECOND, 0);
-						bookingEndDate.add(Calendar.MONTH, 1);
+						bookingEndDate.add(Calendar.MONTH, 2);
+						bookingEndDate.set(Calendar.DAY_OF_MONTH, 4);
 						bookingEndDate.set(Calendar.HOUR_OF_DAY, 23);
 						bookingEndDate.set(Calendar.MINUTE, 59);
 						bookingEndDate.set(Calendar.SECOND, 59);
 						bookingEndDate.set(Calendar.MILLISECOND, 0);
-						bookingEndDate.set(Calendar.DAY_OF_MONTH,
-								bookingEndDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 					} else {
-						bookingStartDate.set(Calendar.DAY_OF_MONTH, 1);
 						bookingStartDate.set(Calendar.HOUR_OF_DAY, 0);
 						bookingStartDate.set(Calendar.MINUTE, 0);
 						bookingStartDate.set(Calendar.SECOND, 0);
 						bookingStartDate.set(Calendar.MILLISECOND, 0);
+						bookingEndDate.add(Calendar.MONTH, 1);
+						bookingEndDate.set(Calendar.DAY_OF_MONTH, 4);
 						bookingEndDate.set(Calendar.HOUR_OF_DAY, 23);
 						bookingEndDate.set(Calendar.MINUTE, 59);
 						bookingEndDate.set(Calendar.SECOND, 59);
 						bookingEndDate.set(Calendar.MILLISECOND, 0);
-						bookingEndDate.set(Calendar.DAY_OF_MONTH,
-								bookingEndDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 					}
 				} else {
-					bookingStartDate.set(Calendar.DAY_OF_MONTH, 1);
 					bookingStartDate.set(Calendar.HOUR_OF_DAY, 0);
 					bookingStartDate.set(Calendar.MINUTE, 0);
 					bookingStartDate.set(Calendar.SECOND, 0);
 					bookingStartDate.set(Calendar.MILLISECOND, 0);
+					bookingEndDate.add(Calendar.MONTH, 1);
+					bookingEndDate.set(Calendar.DAY_OF_MONTH, 4);
 					bookingEndDate.set(Calendar.HOUR_OF_DAY, 23);
 					bookingEndDate.set(Calendar.MINUTE, 59);
 					bookingEndDate.set(Calendar.SECOND, 59);
 					bookingEndDate.set(Calendar.MILLISECOND, 0);
-					bookingEndDate.set(Calendar.DAY_OF_MONTH, bookingEndDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 				}
 
 			} else {
-				bookingStartDate.set(Calendar.DAY_OF_MONTH, 1);
-				bookingStartDate.set(Calendar.HOUR_OF_DAY, 0);
-				bookingStartDate.set(Calendar.MINUTE, 0);
-				bookingStartDate.set(Calendar.SECOND, 0);
-				bookingStartDate.set(Calendar.MILLISECOND, 0);
-				bookingEndDate.set(Calendar.HOUR_OF_DAY, 23);
-				bookingEndDate.set(Calendar.MINUTE, 59);
-				bookingEndDate.set(Calendar.SECOND, 59);
-				bookingEndDate.set(Calendar.MILLISECOND, 0);
-				bookingEndDate.set(Calendar.DAY_OF_MONTH, bookingEndDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+				throw new Exception("No booking window is defined for the facility");
 
 			}
 			for (TimeTable timeTbl : timeTables) {
-				Booking booking = new Booking();
-				booking.setMemberId(member);
-				booking.setBookedDate(bookedDate.getTime());
-				booking.setBookingStartDate(bookingStartDate.getTime());
-				booking.setBookingEndDate(bookingEndDate.getTime());
-				booking.setBranchId(branch);
-				booking.setFacilityId(facility);
-				booking.setSubFacilityId(subFacility);
-				booking.setCenterId(center);
-				booking.setLastModifiedUserId(modifiedUser);
-				booking.setTimeTableId(timeTbl);
-				booking.setDayNum(timeTbl.getDayNum());
-				booking.setSessionEndTime(timeTbl.getSessionEndTime());
-				booking.setSessionStartTime(timeTbl.getSessionStartTime());
-				booking.setEntryStatus(false);
-				booking.setBookStatus(1);
-				booking.setActive(true);
-				booking.setBookingApp("Online");
-				booking.setCount(1);
-				bookingRepository.save(booking);
-				bookings.add(booking);
+				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTbl.getSessionStartTime(), timeTbl.getSessionEndTime(), "Monthly", true, subFacility);
+				if(accountSubSectorList.size()>subFacility.getSlotLimit()) {
+					throw new Exception("Slot not available");
+				}
 			}
 			List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacility);
-
 			
 			
 			Accounts accounts = new Accounts();
@@ -192,22 +168,64 @@ public class BookingServiceImpl implements BookingService {
 				String words = EnglishNumberToWords.convert(accounts.getPaidAmount());
 				accounts.setWords(words);
 			}
-			//Long l1 = Math.round(accounts.getPaidAmount());
-			//double paidAmpunt = l1;
-			//accounts.setPaidAmount(1);
 			accounts.setPaidDate(new Date());
 			accounts.setTypeOfBooking("Bookings");
-			//String words = EnglishNumberToWords.convert(accounts.getPaidAmount());
-			//accounts.setWords(words);
 			accounts.setBookingDate(bookedDate.getTime());
 			accounts.setBookingDateLast(bookingEndDate.getTime());
 			accounts.setCenterId(center);
 			accounts.setCautionStatus(false);
 			accounts.setCreditAmount(0.00);
 			accounts.setActive(true);
+			accounts.setBookingApp("Online");
+			accounts.setSessionStartTime(timeTables.get(0).getSessionStartTime());
+			accounts.setSessionEndTime(timeTables.get(0).getSessionEndTime());
 			accounts.setIsCentreBooking(false);
 			accountsRepository.save(accounts);
-
+			List<Date> bookedDates = new ArrayList<>();
+			List<TimeTable> timeTables1 = new ArrayList<>();
+			for (TimeTable timeTable : timeTables) {
+				Map<Integer, TimeTable> timeTableMap = timeTableRepository
+						.findByActiveAndSessionStartTimeAndSessionEndTimeAndFacilityId(true,
+								timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), facility)
+						.stream().collect(Collectors.toMap(TimeTable::getDayNum, Function.identity()));
+				int daysList = Math.round(ChronoUnit.DAYS.between(bookingEndDate.toInstant(), bookingStartDate.toInstant()));
+				bookedDates.add(bookingStartDate.getTime());
+				Calendar bookDate  = bookingStartDate;
+				int dayNeedToChange = Calendar.DAY_OF_WEEK;
+				timeTables1.add(timeTableMap.get(bookDate.get(dayNeedToChange)));
+				for (int i = 0; i < daysList; i++) {
+					bookDate.add(Calendar.DATE, 1);
+					if (timeTableMap.containsKey(bookDate.get(Calendar.DAY_OF_WEEK))) {
+						bookedDates.add(bookDate.getTime());
+						timeTables1.add(timeTableMap.get(bookDate.get(Calendar.DAY_OF_WEEK)));
+					} 
+				}
+			}
+			int i=0;
+			for (TimeTable timeTbl : timeTables) {
+			Booking booking = new Booking();
+			booking.setMemberId(member);
+			booking.setBookedDate(bookedDates.isEmpty() ? bookedDate.getTime() : bookedDates.get(i));
+			booking.setBookingDate(bookedDate.getTime());
+			booking.setBranchId(branch);
+			booking.setFacilityId(facility);
+			booking.setSubFacilityId(subFacility);
+			booking.setCenterId(center);
+			booking.setLastModifiedUserId(modifiedUser);
+			booking.setTimeTableId(timeTbl);
+			booking.setDayNum(timeTbl.getDayNum());
+			booking.setSessionEndTime(timeTbl.getSessionEndTime());
+			booking.setSessionStartTime(timeTbl.getSessionStartTime());
+			booking.setEntryStatus(false);
+			booking.setBookStatus(1);
+			booking.setActive(true);
+			booking.setBookingApp("Online");
+			booking.setCount(1);
+			bookingRepository.save(booking);
+			bookings.add(booking);
+			i++;
+			}
+			
 			for (Booking boos : bookings) {
 				for (Member memList : memberFiless) {
 					BookAdditionalMembers boo = new BookAdditionalMembers();
@@ -241,6 +259,7 @@ public class BookingServiceImpl implements BookingService {
 			
 		} catch (Exception e) {
 			response.put("status", "Failure");
+			response.put("message", e.getMessage());
 		}
 		return response.toString();
 

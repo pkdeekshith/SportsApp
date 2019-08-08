@@ -11,5 +11,8 @@ public interface TimeTableRepository extends CrudRepository<TimeTable, Long> {
 	public List<TimeTable> findByActive(Boolean active);
 
 	public List<TimeTable> findByActiveAndDayNumAndFacilityId(Boolean active, int dayNum, Facility facilityId);
+	
+	public List<TimeTable> findByActiveAndSessionStartTimeAndSessionEndTimeAndFacilityId(Boolean active, int sessionStartTime, int sessionEndTime, Facility facilityId);
+
 
 }
