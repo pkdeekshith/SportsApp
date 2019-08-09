@@ -3,12 +3,13 @@ package com.ins.pos.dto;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class MemberDetailsJsonDTO {
 
 	private Long memberId;
-	private Long centerId;
 	private String memberName;
 	private String memberPhoto;
 	private Boolean isStudent;
@@ -18,6 +19,10 @@ public class MemberDetailsJsonDTO {
 	private String gender;
 	@JsonFormat(pattern = "dd MMM yyyy")
 	private Date dob;
+	@JsonFormat(pattern = "dd MMM yyyy")
+	private Date memberTypeValidity;
+	@JsonFormat(pattern = "dd MMM yyyy")
+	private Date memberTypeStartDate;
 	private String memberContactNo;
 	private Boolean active;
 	private String email;
@@ -31,7 +36,7 @@ public class MemberDetailsJsonDTO {
 	private String age;
 	private Double paidAmount;
 	private String memberIdProofType;
-	private Long memberShipTypeId;
+	private MemberShipTypeJsonDTO memberShipType;
 	private List<FacilityTypeJsonDTO> facilityType;
 
 	public Long getMemberId() {
@@ -210,28 +215,20 @@ public class MemberDetailsJsonDTO {
 		this.memberIdProofType = memberIdProofType;
 	}
 
-	public Long getCenterId() {
-		return centerId;
-	}
-
-	public void setCenterId(Long centerId) {
-		this.centerId = centerId;
-	}
-
-	public Long getMemberShipTypeId() {
-		return memberShipTypeId;
-	}
-
-	public void setMemberShipTypeId(Long memberShipTypeId) {
-		this.memberShipTypeId = memberShipTypeId;
-	}
-
 	public List<FacilityTypeJsonDTO> getFacilityType() {
 		return facilityType;
 	}
 
 	public void setFacilityType(List<FacilityTypeJsonDTO> facilityType) {
 		this.facilityType = facilityType;
+	}
+
+	public MemberShipTypeJsonDTO getMemberShipType() {
+		return memberShipType;
+	}
+
+	public void setMemberShipType(MemberShipTypeJsonDTO memberShipType) {
+		this.memberShipType = memberShipType;
 	}
 
 }

@@ -34,6 +34,11 @@ public class MemberEndPoint {
 		return memberService.saveMember(memberJsonDTO);
 	}
 	
+	@PostMapping("/renewMember")
+	public String renewMember(@RequestBody String requestJSON) {
+		return memberService.renewMember(requestJSON);
+	}
+	
 	@RequestMapping("/getMember/{id}")
 	public MemberDetailsJsonDTO getMember(HttpServletRequest request, @PathVariable String id) {
 		return memberService.getMember(Long.parseLong(id));

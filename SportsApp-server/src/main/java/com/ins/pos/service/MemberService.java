@@ -11,5 +11,6 @@ public interface MemberService {
 	public String saveMember(MemberJsonDTO memberJsonDTO);
 	List<MemberShipTypeJsonDTO> getMemberShipTypes();
 	public MemberDetailsJsonDTO getMember(long parseLong);
+	String renewMember(String memberJson);
 	
 }

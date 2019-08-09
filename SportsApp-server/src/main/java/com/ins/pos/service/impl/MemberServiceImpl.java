@@ -163,6 +163,72 @@ public class MemberServiceImpl implements MemberService{
 		}
 		return response.toString();
 	}
+	
+	@Override
+	public String renewMember(String memberJson) {
+		JSONObject response = new JSONObject();
+		Optional<Center> centerOpt = null;
+		Accounts account = new Accounts();
+		try {
+			JSONObject request = new JSONObject(memberJson);
+			Member member = new Member();
+			if (request.has("memberId")) {
+				member = memberRepository.findById(Long.valueOf(((Integer) request.get("memberId")).longValue())).get();
+
+			} else {
+
+			}
+			if (request.has("centerId")) {
+				centerOpt = centerRepository.findById(Long.valueOf(((Integer) request.get("centerId")).longValue()));
+			}
+			if (request.has("memberShipTypeId")) {
+			Long memberShipTypeId = request.has("memberShipTypeId") ? Long.valueOf(((Integer) request.get("memberShipTypeId")).longValue()) : null;
+			if (memberShipTypeId != null) {
+				Optional<MemberShipType> memberShipType = memberShipTypeRepository.findById(memberShipTypeId);
+				if (memberShipType.isPresent()&&memberShipType.get()!=null) {
+					member.setMemberShipTypeId(memberShipType.get());
+				}
+			}
+			}
+			Calendar endCalender = Calendar.getInstance();
+			endCalender.setTime(member.getMemberTypeValidity());
+			endCalender.add(Calendar.DAY_OF_YEAR, 1);
+			endCalender.add(Calendar.YEAR, 1);
+			member.setMemberTypeValidity(endCalender.getTime());
+
+			member.setPaidAmount(
+					(member.getMemberShipTypeId().getMemberShipCost() * member.getMemberFacility().size()));
+			String words = EnglishNumberToWords.convert(member.getPaidAmount());
+			member.setWord(words);
+
+			member = memberRepository.save(member);
+
+			account.setActualAmount(member.getPaidAmount());
+			account.setWords(member.getWord());
+			account.setActive(true);
+			account.setTypeOfBooking("Member Renewal");
+			account.setBranchId(member.getBranchId());
+			account.setCautionDeposit(0.00);
+			account.setCautionStatus(false);
+			account.setBalanceAmount(0.00);
+			account.setExtraAmount(0.00);
+			account.setCreditAmount(0.00);
+			account.setDiscount(0.00);
+			account.setPaidAmount(member.getPaidAmount());
+			account.setPaidDate(new Date());
+			account.setPayableAmount(0.00);
+			member.getMemberId();
+			account.setMemberId(member);
+			account.setCenterId(centerOpt.isPresent() ? centerOpt.get() : null);
+			account = accountsRepository.save(account);
+			response.put("status", "Success");
+			response.put("memberId", member.getMemberId());
+			response.put("accountId", account.getAccountsId());
+		} catch (Exception e) {
+			response.put("status", "Failure");
+		}
+		return response.toString();
+	}
 
 	@Override
 	public MemberDetailsJsonDTO getMember(long id) {
@@ -171,10 +237,14 @@ public class MemberServiceImpl implements MemberService{
 		List<FacilityTypeJsonDTO> facilityTypeList = new ArrayList<FacilityTypeJsonDTO>();
 		memberDetailsJsonDTO.setFacilityType(facilityTypeList);
 		if(member.isPresent()) {
-			BeanUtils.copyProperties(member, memberDetailsJsonDTO);
+			MemberShipTypeJsonDTO memberShipTypeJsonDTO = new MemberShipTypeJsonDTO();
+			BeanUtils.copyProperties(member.get(), memberDetailsJsonDTO);
+			BeanUtils.copyProperties(member.get().getMemberShipTypeId(), memberShipTypeJsonDTO);
+			memberDetailsJsonDTO.setMemberShipType(memberShipTypeJsonDTO);
 			List<MemberFacility> memberFacList = memberFacilityRepository.findByMemberAndActive(member.get(), true);
 			for(MemberFacility memberFacility:memberFacList) {
 				FacilityTypeJsonDTO facilityTypeJsonDTO = new FacilityTypeJsonDTO();
+				memberFacility.getFacilityType();
 				BeanUtils.copyProperties(memberFacility.getFacilityType(), facilityTypeJsonDTO);
 				facilityTypeList.add(facilityTypeJsonDTO);
 			}
