@@ -1,14 +1,19 @@
 package com.ins.pos.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityTypeJsonDTO;
@@ -53,6 +58,9 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Autowired
 	private FacilityTypeRepository facilityTypeRepository;
+	
+	@Value("${sportsapp.photos.path}")
+	private String photoPath;
 	
 	@Override
 	public List<MemberShipTypeJsonDTO> getMemberShipTypes() {
@@ -112,7 +120,18 @@ public class MemberServiceImpl implements MemberService{
 			branchId.setBranchId(1l);
 			member.setBranchId(branchId);
 			member.setSpotCheck(false);
-			// dmember.setMemberPhoto((String) jsonObject.get("memberPhoto"));
+			if (memberJsonDTO.getMemberPhoto() != null) {
+				try {
+					byte imageByte[] = Base64.getDecoder().decode(memberJsonDTO.getMemberPhoto());
+					String path = photoPath + System.currentTimeMillis();
+					FileOutputStream fos = new FileOutputStream(path);
+					fos.write(imageByte);
+					fos.close();
+					member.setMemberPhoto(path);
+				} catch (Exception e) {
+
+				}
+			}
 			member.setActive(true);
 			member.setIsOnline(true);
 			member.setCreatedDate(new Date());
@@ -247,6 +266,15 @@ public class MemberServiceImpl implements MemberService{
 				memberFacility.getFacilityType();
 				BeanUtils.copyProperties(memberFacility.getFacilityType(), facilityTypeJsonDTO);
 				facilityTypeList.add(facilityTypeJsonDTO);
+			}
+		}
+		if (memberDetailsJsonDTO.getMemberPhoto() != null) {
+			try {
+				byte[] fileContent = FileUtils.readFileToByteArray(new File(memberDetailsJsonDTO.getMemberPhoto()));
+				String encodedString = Base64.getEncoder().encodeToString(fileContent);
+				memberDetailsJsonDTO.setMemberPhoto(encodedString);
+			} catch (Exception e) {
+
 			}
 		}
 		return memberDetailsJsonDTO;
