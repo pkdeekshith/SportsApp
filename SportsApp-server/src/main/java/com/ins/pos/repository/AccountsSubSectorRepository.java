@@ -16,5 +16,5 @@ public interface AccountsSubSectorRepository extends CrudRepository<AccountsSubS
 			@Param("bookingEndDate") Date bookingEndDate, @Param("sessionStartTime") int sessionStartTime,
 			@Param("sessionEndTime") int sessionEndTime, @Param("typeOfBooking") String typeOfBooking,
 			@Param("active") Boolean active, @Param("subFacility") SubFacility subFacility);
-
+	
 }

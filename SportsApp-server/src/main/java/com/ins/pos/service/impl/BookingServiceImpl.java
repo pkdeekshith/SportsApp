@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ins.pos.dto.BookingDetailsJsonDTO;
 import com.ins.pos.dto.BookingJsonDTO;
 import com.ins.pos.entity.AccountBook;
 import com.ins.pos.entity.Accounts;
@@ -265,6 +267,74 @@ public class BookingServiceImpl implements BookingService {
 		}
 		return response.toString();
 
+	}
+
+	@Override
+	public List<BookingDetailsJsonDTO> getAllBookingForMember(long parseLong) {
+		List<BookingDetailsJsonDTO> bookingDetailsJsonDTOList = new ArrayList<BookingDetailsJsonDTO>();
+		Optional<Member> memberOpt = memberRepository.findById(parseLong);
+		List<Accounts> accountList = accountsRepository.getAllBookingForMember(memberOpt.get(), "Monthly", true);
+		for(Accounts accounts:accountList) {
+			BookingDetailsJsonDTO bookingDetailsJsonDTO =new BookingDetailsJsonDTO();
+			bookingDetailsJsonDTO.setAccountsId(accounts.getAccountsId());
+			bookingDetailsJsonDTO.setBookingEndDate(accounts.getBookingDateLast());
+			bookingDetailsJsonDTO.setBookingStartDate(accounts.getBookingDate());
+			bookingDetailsJsonDTO.setBookedDate(accounts.getPaidDate());
+			for(AccountsSubSector accountsSubSector:accounts.getAccountsSubId()) {
+				if(accountsSubSector.getFacilityId()!=null) {
+				bookingDetailsJsonDTO.setFacilityId(accountsSubSector.getFacilityId().getFacilityId());
+				bookingDetailsJsonDTO.setFacilityName(accountsSubSector.getFacilityId().getFacilityName());
+				}
+				if(accountsSubSector.getSubFacilityId()!=null) {
+				bookingDetailsJsonDTO.setSubFacilityId(accountsSubSector.getSubFacilityId().getSubFacilityId());
+				bookingDetailsJsonDTO.setSubFacilityName(accountsSubSector.getSubFacilityId().getSubFacilityName());
+				}
+			}
+			if(accounts.getMemberId()!=null) {
+			bookingDetailsJsonDTO.setMemberId(accounts.getMemberId().getMemberId());
+			bookingDetailsJsonDTO.setMemberName(accounts.getMemberId().getMemberName());
+			}
+			bookingDetailsJsonDTO.setPaidAmount(accounts.getPaidAmount());
+			bookingDetailsJsonDTO.setSessionEndTime(accounts.getSessionEndTime());
+			bookingDetailsJsonDTO.setSessionStartTime(accounts.getSessionStartTime());
+			bookingDetailsJsonDTOList.add(bookingDetailsJsonDTO);
+		}
+		return bookingDetailsJsonDTOList;
+	}
+
+	@Override
+	public List<BookingDetailsJsonDTO> getUpcomingBookingForMember(long parseLong) {
+		List<BookingDetailsJsonDTO> bookingDetailsJsonDTOList = new ArrayList<BookingDetailsJsonDTO>();
+		Optional<Member> memberOpt = memberRepository.findById(parseLong);
+		Date date = new Date();
+		List<Accounts> accountList = accountsRepository.getUpcomingBookingForMember(memberOpt.get(), "Monthly", true, date);
+		for(Accounts accounts:accountList) {
+			BookingDetailsJsonDTO bookingDetailsJsonDTO =new BookingDetailsJsonDTO();
+			bookingDetailsJsonDTO.setAccountsId(accounts.getAccountsId());
+			bookingDetailsJsonDTO.setBookingEndDate(accounts.getBookingDateLast());
+			bookingDetailsJsonDTO.setBookingStartDate(accounts.getBookingDate());
+			bookingDetailsJsonDTO.setBookedDate(accounts.getPaidDate());
+			for(AccountsSubSector accountsSubSector:accounts.getAccountsSubId()) {
+				if(accountsSubSector.getFacilityId()!=null) {
+				bookingDetailsJsonDTO.setFacilityId(accountsSubSector.getFacilityId().getFacilityId());
+				bookingDetailsJsonDTO.setFacilityName(accountsSubSector.getFacilityId().getFacilityName());
+				}
+				if(accountsSubSector.getSubFacilityId()!=null) {
+				bookingDetailsJsonDTO.setSubFacilityId(accountsSubSector.getSubFacilityId().getSubFacilityId());
+				bookingDetailsJsonDTO.setSubFacilityName(accountsSubSector.getSubFacilityId().getSubFacilityName());
+				}
+			}
+			if(accounts.getMemberId()!=null) {
+			bookingDetailsJsonDTO.setMemberId(accounts.getMemberId().getMemberId());
+			bookingDetailsJsonDTO.setMemberName(accounts.getMemberId().getMemberName());
+			}
+			bookingDetailsJsonDTO.setPaidAmount(accounts.getPaidAmount());
+			bookingDetailsJsonDTO.setSessionEndTime(accounts.getSessionEndTime());
+			bookingDetailsJsonDTO.setSessionStartTime(accounts.getSessionStartTime());
+			bookingDetailsJsonDTOList.add(bookingDetailsJsonDTO);
+		}
+		
+		return bookingDetailsJsonDTOList;
 	}
 	
 	

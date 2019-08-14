@@ -187,6 +187,9 @@ public class Accounts {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "accountsId")
 	private Set<AccountBook> AccountTypeLinkRole = new HashSet<AccountBook>(0);
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "accountsId")
+	private Set<AccountsSubSector> accountsSubId = new HashSet<AccountsSubSector>(0);
 
 	public Long getAccountsId() {
 		return accountsId;
@@ -322,6 +325,14 @@ public class Accounts {
 
 	public void setBookingApp(String bookingApp) {
 		this.bookingApp = bookingApp;
+	}
+
+	public Set<AccountsSubSector> getAccountsSubId() {
+		return accountsSubId;
+	}
+
+	public void setAccountsSubId(Set<AccountsSubSector> accountsSubId) {
+		this.accountsSubId = accountsSubId;
 	}
 	
 
