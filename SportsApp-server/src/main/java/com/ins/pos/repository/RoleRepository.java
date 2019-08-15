@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.ins.pos.entity.Role;
 
-public interface RoleDao extends CrudRepository<Role, Long> {
+public interface RoleRepository extends CrudRepository<Role, Long> {
 	List<Role> findByActive(boolean active);
 	
 	

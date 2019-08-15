@@ -1,6 +1,7 @@
 package com.ins.pos.entity;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,14 +27,6 @@ public class Role {
 	
 	@Column
 	private Date createDate;
-
-	/*@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "roleId")
-	private Set<RoleAction> RoleActionRole = new HashSet<RoleAction>(0);
-
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "roleId")
-	private Set<Member> MemberRole = new HashSet<Member>(0);*/
 
 	public Long getRoleId() {
 		return roleId;
@@ -66,21 +59,5 @@ public class Role {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-
-	/*public Set<RoleAction> getRoleActionRole() {
-		return RoleActionRole;
-	}
-
-	public void setRoleActionRole(Set<RoleAction> roleActionRole) {
-		RoleActionRole = roleActionRole;
-	}
-
-	public Set<Member> getMemberRole() {
-		return MemberRole;
-	}
-
-	public void setMemberRole(Set<Member> memberRole) {
-		MemberRole = memberRole;
-	}*/
 
 }

@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityTypeJsonDTO;
@@ -28,6 +29,7 @@ import com.ins.pos.entity.Member;
 import com.ins.pos.entity.MemberFacility;
 import com.ins.pos.entity.MemberShipType;
 import com.ins.pos.entity.Role;
+import com.ins.pos.entity.User;
 import com.ins.pos.repository.AccountsRepository;
 import com.ins.pos.repository.CenterRepository;
 import com.ins.pos.repository.FacilityTypeRepository;
@@ -61,6 +63,9 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Value("${sportsapp.photos.path}")
 	private String photoPath;
+	
+	@Autowired
+	CustomUserDetailsServiceImpl customUserDetailsServiceImpl;
 	
 	@Override
 	public List<MemberShipTypeJsonDTO> getMemberShipTypes() {
@@ -115,6 +120,11 @@ public class MemberServiceImpl implements MemberService{
 			roleId.setRoleId(Long.parseLong("99"));
 			List<MemberFacility> memberFacilityList = new ArrayList<MemberFacility>();
 
+			User userExists = customUserDetailsServiceImpl.findUserByEmail(member.getEmail());
+			if (userExists != null) {
+				throw new BadCredentialsException("User with username: " + member.getEmail() + " already exists");
+			}
+			
 			member.setRoleId(roleId);
 			Branch branchId = new Branch();
 			branchId.setBranchId(1l);
@@ -158,6 +168,11 @@ public class MemberServiceImpl implements MemberService{
 				account.setMemberId(member);
 				account.setCenterId(centerOpt.get());
 				account = accountsRepository.save(account);
+				User user = new User();
+				user.setUsername(member.getEmail());
+				user.setEmail(member.getEmail());
+				user.setPassword("password");
+				customUserDetailsServiceImpl.saveUser(user);
 
 			}
 
@@ -174,6 +189,7 @@ public class MemberServiceImpl implements MemberService{
 				}
 				memberFacilityRepository.saveAll(memberFacilityList);
 			}
+			
 			response.put("status", "Success");
 			response.put("memberId", member.getMemberId());
 			response.put("accountId", account.getAccountsId());

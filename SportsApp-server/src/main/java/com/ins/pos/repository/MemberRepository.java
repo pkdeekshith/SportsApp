@@ -1,5 +1,7 @@
 package com.ins.pos.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -10,7 +12,7 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
 	
 	Iterable<Member> findByActiveAndCheckStaffAndSpotCheck(boolean active,boolean checkActive,boolean checks);
 	
-	public Member findByUserName(String userName);
+	public List<Member> findByUserName(String userName);
 	
 	public Member findByMemberName(String memberName);
 	

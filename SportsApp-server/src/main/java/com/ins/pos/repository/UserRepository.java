@@ -16,7 +16,7 @@ import com.ins.pos.entity.User;
  * @author netgloo
  */
 @Transactional
-public interface UserDao extends CrudRepository<User, String> {
+public interface UserRepository extends CrudRepository<User, String> {
 
 	/**
 	 * Return the user having the passed email or null if no user is found.
