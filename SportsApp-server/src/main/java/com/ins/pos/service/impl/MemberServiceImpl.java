@@ -122,7 +122,7 @@ public class MemberServiceImpl implements MemberService{
 			member.setSpotCheck(false);
 			if (memberJsonDTO.getMemberPhoto() != null) {
 				try {
-					byte imageByte[] = Base64.getDecoder().decode(memberJsonDTO.getMemberPhoto());
+					byte imageByte[] = memberJsonDTO.getMemberPhoto().getBytes();
 					String path = photoPath + System.currentTimeMillis();
 					FileOutputStream fos = new FileOutputStream(path);
 					fos.write(imageByte);
@@ -271,8 +271,8 @@ public class MemberServiceImpl implements MemberService{
 		if (memberDetailsJsonDTO.getMemberPhoto() != null) {
 			try {
 				byte[] fileContent = FileUtils.readFileToByteArray(new File(memberDetailsJsonDTO.getMemberPhoto()));
-				String encodedString = Base64.getEncoder().encodeToString(fileContent);
-				memberDetailsJsonDTO.setMemberPhoto(encodedString);
+				String byteString = new String(fileContent);
+				memberDetailsJsonDTO.setMemberPhoto(byteString);
 			} catch (Exception e) {
 
 			}

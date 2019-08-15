@@ -231,4 +231,20 @@ public class MemberDetailsJsonDTO {
 		this.memberShipType = memberShipType;
 	}
 
+	public Date getMemberTypeValidity() {
+		return memberTypeValidity;
+	}
+
+	public void setMemberTypeValidity(Date memberTypeValidity) {
+		this.memberTypeValidity = memberTypeValidity;
+	}
+
+	public Date getMemberTypeStartDate() {
+		return memberTypeStartDate;
+	}
+
+	public void setMemberTypeStartDate(Date memberTypeStartDate) {
+		this.memberTypeStartDate = memberTypeStartDate;
+	}
+
 }
