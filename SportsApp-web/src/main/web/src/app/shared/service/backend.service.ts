@@ -6,12 +6,13 @@ import { Config } from "../constant/config";
 })
 export class BackendService {
   URL:any;
+  memberId:any;
   constructor(private Http:HttpClient, private Config: Config) { 
     this.URL = this.Config.URL;
   }
 
   login(data){
-    return this.Http.post<any>("", data)
+    return this.Http.post<any>(this.URL.login, data)
   }
   getCentreList(){
     return this.Http.post<any>("", {})
@@ -33,20 +34,22 @@ export class BackendService {
     return this.Http.post<any>(this.URL.verifyAvailability, req)
   }
   getSlotsAvailableToBook(data){
-    let req= {"facility":["7","9","10"],
-              "date": "31 Jul 2019"};
+    let req= {
+      "facility": data.map(String)   
+     // "facility":["7","9","10"]
+             };
     return this.Http.post<any>(this.URL.getSlotsAvailableToBook, req)
   }
   saveMember(form,img){
     let req = {
       "centerId": "2",
       "memberName": form.memberName.value,
-      "memberPhoto": "img",
+      "memberPhoto": img,
       "isStudent": form.student.value =="Yes" ? true :false,
       "isGovt": form.govt.value =="Yes" ? true :false,
       "isCoaching": form.coaching.value =="Yes" ? true :false,
-      "memberIdProof": form.idType.value,
-      "memberIdProofType": form.idNumber.value,
+      "memberIdProof": form.idNumber.value,
+      "memberIdProofType": form.idType.value,
       "gender": form.gender.value,
       "dob": this.getDOB(form.dateOfBirth.value),
       "memberContactNo": form.mobNumber.value,
@@ -60,27 +63,47 @@ export class BackendService {
       "fatherName": form.guardName.value,
       "age": this.getAge(form.dateOfBirth.value),
       "memberShipTypeId": form.memID.value,
-      "facilityTypeId":form.facility1.value
+      "facilityTypeId":form.prefSport1.value
     };
     return this.Http.post<any>(this.URL.saveMember, req)
   }
-  saveBooking(form){
+  saveBooking(fac,memID){
+    let timeArray=[];
+    timeArray.push(fac.timeTable.timeTableId);
     let req ={
-      "memberId": 1961,
+      "memberId": memID,
       "active": true,
       "centerId": 2,
-      "facilityId": 9,
-      "subFacilityId": 13,
-      "timeTableId": [474,  475 ],
+      "facilityId": fac.facility.facilityId,
+      "subFacilityId": fac.subFacility.subFacilityId,
+      "timeTableId": timeArray,
       "otherMemberId": []
     }
-    return this.Http.post<any>(this.URL.saveBooking, "")
+    return this.Http.post<any>(this.URL.saveBooking, req)
   }
   getMemberShiptype(){
     return this.Http.get<any>(this.URL.getMembershipType, {})
   }
-
-  //helper functions
+  getAllFacilities(){
+    let req={"centerId":"2"};
+    return this.Http.post<any>(this.URL.getAllFacilities, req)
+  }
+  getsubFacilitiesOfFacility(facilityId){
+    let req={"facility": [facilityId].map(String)};
+    return this.Http.post<any>(this.URL.getsubFacilitiesOfFacility, req)
+  }
+  getTimeSlotsForSubFacility(id){
+    let req = {"subFacility":[id].map(String)}
+    return this.Http.post<any>(this.URL.getTimeSlotsForSubFacility, req)
+  }
+  getMember(id){
+    return this.Http.get<any>(this.URL.getMember+id, {})
+  }
+  getUpcomingBookings(id){
+    //return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
+    return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
+  }
+  //helper functions-move to utility later
   getDOB(date){
     let d= new Date(date);
     let month = d.getMonth();

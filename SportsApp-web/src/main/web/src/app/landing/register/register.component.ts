@@ -5,6 +5,9 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import {Message} from 'primeng//api';
 import {MessageService} from 'primeng/api';
 import {Data} from '../../shared/data/data';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -12,7 +15,7 @@ import {Data} from '../../shared/data/data';
 })
 export class RegisterComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,private BackEnd : BackendService,private ngxService: NgxUiLoaderService,
-    private messageService: MessageService, private Data:Data) {}
+    private messageService: MessageService, private Data:Data,private Router : Router) {}
   preferredSports =[];
   failities=[];
   slotobject : any;
@@ -48,6 +51,7 @@ export class RegisterComponent implements OnInit {
     }
   }
   ngOnInit() {
+   
     this.registerForm = this.formBuilder.group({
       memberName: ['', Validators.required],
       gender: ['', Validators.required],
@@ -116,10 +120,17 @@ export class RegisterComponent implements OnInit {
     let errorMsgs=[];
     let proceedFlag = false;
     let severity;
+    if(this.f.facility1.value=="" || this.f.prefSport1.value==""){
+      this.messageService.clear()
+      this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: 'Please select facility'});
+      return;
+    }
+    this.ngxService.start();
     this.BackEnd.verifyAvailability(this.f.facility1.value)
     .subscribe(
       data  => {
-       // data={"facility":[{"slotAavailable":"Y","facilityId":"10"},{"slotAavailable":"N","facilityId":"8","validation":"Booking window for the facility - Aerobics / Yoga was between Mon Jul 01 00:00:00 UTC 2019 and Fri Jul 05 23:59:59 UTC 2019!!!"}],"status":"Success"} ;
+        this.ngxService.stop();
+        //data={"facility":[{"slotAavailable":"Y","facilityId":"10","validation":"second mesage"},{"slotAavailable":"Y","facilityId":"8","validation":"Booking window for the facility - Aerobics / Yoga was between Mon Jul 01 00:00:00 UTC 2019 and Fri Jul 05 23:59:59 UTC 2019!!!"}],"status":"Success"} ;
         data.facility.forEach(function(i) 
           { 
             if(i.slotAavailable=="N") { 
@@ -130,20 +141,53 @@ export class RegisterComponent implements OnInit {
         });
         if(!proceedFlag){
           severity = "error";
-          this.messageService.clear();
-          this.messageService.add({severity:severity, summary: '', detail:errorMsgs.join("<br/>")});
+          Swal.fire({
+            type : 'error',
+            html: '<b>'+errorMsgs.join("<br/>")+'</b>',
+            allowOutsideClick :false,
+            allowEnterKey:false,
+            allowEscapeKey:false
+          }).then((result) => {
+            if (result.value) {
+           
+            }
+        })
+          //this.messageService.clear();
+          //this.messageService.add({severity:severity, summary: '', detail:errorMsgs.join("<br/>")});
         }else{
           this.showProceedBtn = true;
           if(errorMsgs.length){
             severity = "info";
-            document.querySelector("#fade-in").classList.add("show");
-            this.messageService.clear();
-            this.messageService.add({severity:severity, summary: '', detail:errorMsgs.join("<br/>")});
+            
+            Swal.fire({
+              type : 'info',
+              html: '<b>'+errorMsgs.join("<br/>")+'</b>',
+              allowOutsideClick :false,
+              allowEnterKey:false,
+              allowEscapeKey:false
+            }).then((result) => {
+              if (result.value) {
+                document.querySelector("#fade-in").classList.add("show");
+              }
+          })
+            //this.messageService.clear();
+            //this.messageService.add({severity:severity, summary: '', detail:errorMsgs.join("<br/>")});
           }else{
             severity = "success";
-            document.querySelector("#fade-in").classList.add("show");
-            this.messageService.clear();
-            this.messageService.add({severity:severity, summary: "Please provide personal details.", detail:''});
+            Swal.fire({
+              type : 'success',
+              html: '<b>Please provide personal details</b>',
+              allowOutsideClick :false,
+              allowEnterKey:false,
+              allowEscapeKey:false
+            }).then((result) => {
+              if (result.value) {
+                document.querySelector("#fade-in").classList.add("show");
+              }
+          })
+            
+            //this.messageService.clear();
+            //this.messageService.add({severity:severity, summary: "Please provide personal details.", detail:''});
           }
         }
 
@@ -157,6 +201,7 @@ export class RegisterComponent implements OnInit {
    
   }
   handlePreferredSportSelection(){
+    this.f.facility1.patchValue("");
     this.ngxService.start();
     this.BackEnd.getFacilityBasedOnPreferredSprtsSelected(this.f.prefSport1.value)
     .subscribe(
@@ -214,7 +259,6 @@ export class RegisterComponent implements OnInit {
  }
  proceedToReviewDetails(){
    if(Object.keys(this.selectedFacility.facility).length == 0){
-     //alert("Please select a slot")
      this.messageService.clear();
      this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: 'Please select a slot'});
    }else{
@@ -224,18 +268,42 @@ export class RegisterComponent implements OnInit {
    
  }
  registerMember(){
+    this.ngxService.start();
     this.BackEnd.saveMember(this.f,this.imgURL).subscribe(
       data =>{
-        //get member id
-        this.BackEnd.saveBooking(this.selectedFacility).subscribe(
-          data=>{
-
-          },error =>{
-
-          }
-        )
+        //Call saveBooking
+        if(data && data.status == "Success"){
+          this.BackEnd.saveBooking(this.selectedFacility,data.memberId).subscribe(
+            data=>{
+              this.ngxService.stop();
+              if(data && data.status == "Success"){
+                Swal.fire({
+                  type : 'info',
+                  html: '<b>You will be now redirected to payment page.Booking confirmation will be sent to the registered email and mobile number after the successfull payment.</b>',
+                  allowOutsideClick :false,
+                  allowEnterKey:false,
+                  allowEscapeKey:false
+                }).then((result) => {
+                  if (result.value) {
+                  this.Router.navigateByUrl("/landing/login");
+                  window.open("https://www.google.com","_blank");
+                  }
+              })}else{
+                this.ngxService.stop();
+                alert("server error");
+              }
+            },error =>{
+              this.ngxService.stop();
+              alert("Server error");
+            }
+          )
+        }else{
+          this.ngxService.stop();
+          alert("Server error");
+        }
       },error =>{
-
+        this.ngxService.stop();
+        alert("Server error")
       }
     )
  }

@@ -1,7 +1,8 @@
 .bookingWrapper{
     padding: 10px;
-    background:#315a07;
+    background:#00002d;
     color: wheat;
+    padding-top: 0;
 }
 .slotBox{
     width: 150px;
@@ -14,7 +15,7 @@
 .slotBox input{
     float: right;
     height: 100%;
-  
+    
     width: 26px;
 }
 .slotBox label{
@@ -25,7 +26,7 @@
     border: solid 1px grey;
     text-align: center;
     padding-bottom: 10px;
-    background: #520808;
+    /* background: #520808; */
     padding-top: 10px;
     margin-top: 10px;
     border-radius: 8px;
@@ -38,4 +39,66 @@
 }
 .slotBox.selected{
     background: green;
+}
+.slotContainer ul li{
+    list-style: none;
+    min-width: 175px;
+    background: #0180a9;
+    text-align: left;
+    color: wheat;
+    float: left;
+    margin: 4px;
+    padding: 10px;
+    position: relative;
+}
+.slotContainer ul li input{
+    position: absolute;
+    right: 8px;
+    top: 17px;
+    transform: scale(2);
+    
+}
+.inputArea .form-group{
+    /* width: 60%;
+    margin: 0 auto; */
+}
+.searchBtn{
+    display: block;
+    
+    border: 0;
+    width: 145px;
+}
+.home-banner{
+    height:210px;
+    background-position: center center;
+    background-size: cover;
+}
+#t1{
+    background: url("../../../assets/images/Banner-5.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.banner-text{
+    margin-top: 4%;
+}
+.disableClick{
+    pointer-events: none;
+    /* opacity: 0.4; */
+    filter: brightness(0.5);
+}
+.reviewPopup .row{
+    margin-top: 7px !important;
+}
+
+::ng-deep .ui-dialog-footer{
+    text-align: center !important;
+    background: #515184 !important;
+}
+
+::ng-deep  .ui-dialog-content{
+    background: #00002d !important;
+    color:white !important;
+}
+::ng-deep .ui-dialog-footer{
+    text-align: center !important;
 }

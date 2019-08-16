@@ -257,7 +257,7 @@
                         
                         <!-- <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                           <span style="color:red;" *ngIf="message">{{message}}</span>
-                        </div> -->
+                        </div>  -->
                     </div>
                     </div>
                     <div class="col-md-3 col-sm-12">
@@ -342,8 +342,19 @@
       <div class="row">
         <div class="col-md-3 col-sm-6 col-6">Time Slot:</div>
         <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{slot(selectedFacility.timeTable.sessionStartTime)}}- {{slot(this.selectedFacility.timeTable.sessionEndTime)}}</div>
+        <div class="col-md-3 col-sm-6 col-6">Booking Cost:</div>
+        <div class="col-md-3 col-sm-6 col-6 selectedVal">{{selectedFacility.subFacility.rateMonthly}}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-6">Booking Start Date:</div>
+        <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{selectedFacility.subFacility.bookingStartDate}}</div>
+        <div class="col-md-3 col-sm-6 col-6">Booking End Date:</div>
+        <div class="col-md-3 col-sm-6 col-6 selectedVal">{{selectedFacility.subFacility.bookingEndDate}}</div>
+      </div>
+      <div class="row">
         <div class="col-md-3 col-sm-6 col-6">Total Amount:</div>
-        <div class="col-md-3 col-sm-6 col-6 selectedVal">{{f.memCost.value+selectedFacility.subFacility.rateMonthly}}</div>
+        <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{f.memCost.value+selectedFacility.subFacility.rateMonthly}}</div>
+        
       </div>
     </div>
     <p-footer>

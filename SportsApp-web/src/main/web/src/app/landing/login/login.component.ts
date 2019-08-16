@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BackendService} from '../../shared/service/backend.service';
 import {Config} from '../../shared/constant/config';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,7 +16,8 @@ export class LoginComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private Router: Router,
               private BackEnd : BackendService,
-              private Config: Config) { }
+              private Config: Config,
+              private ngxService: NgxUiLoaderService) { }
     loginForm: FormGroup;
     loading = false;
     submitted = false;
@@ -31,17 +35,41 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
         return;
     }
-    // this.BackEnd.login({})
-    // .subscribe(
-    //   data  => {
-    //     console.log("POST Request is successful ", data);
-    //   },
-    //   error  => {
-    //     console.log("Error", error);
-    //   }
+    this.ngxService.start();
+    let req={"email":this.f.username.value,"password":this.f.password.value};
+    this.BackEnd.login(req)
+    .subscribe(
       
-    //   );
-    this.Router.navigateByUrl("/user");
+      data  => {
+        this.ngxService.stop();
+        if(data && data.memberId){
+          this.BackEnd.memberId = data.memberId.toString();
+          this.Router.navigateByUrl("/user");
+        }
+        else{
+          Swal.fire({
+            type : 'error',
+            html: '<b>Login failed</b>',
+            allowOutsideClick :false,
+            allowEnterKey:false,
+            allowEscapeKey:false
+          });
+        }
+      },
+      error  => {
+        Swal.fire({
+          type : 'error',
+          html: '<b>'+error.error+'</b>',
+          allowOutsideClick :false,
+          allowEnterKey:false,
+          allowEscapeKey:false
+        });
+        this.ngxService.stop();
+        
+      }
+      
+      );
+    //this.Router.navigateByUrl("/user");
   }
 
 }

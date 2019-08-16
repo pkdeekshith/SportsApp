@@ -1,4 +1,207 @@
 
-<div class="row">
-    <div class="col"><h4>User Profile Data,with Edit Feature</h4></div>
-  </div>
+<div class="">
+  <div class="vd_content-section clearfix">
+    <div class="row">
+      <div class="col-md-3 side-content">
+        <div class="panel widget light-widget panel-bd-top topfix">
+          <div class="panel-heading no-title"> </div>
+          <div class="panel-body">
+            <div class="text-center vd_info-parent">
+              <img alt="" src={{memberInfo.memberPhoto}} style="height: 150px;"> </div>
+              
+              <!-- <h5 class="font-semibold mgbt-xs-5 ml-5">{{memberInfo.memberName}}</h5> -->
+              <div class="mgtp-20">
+                <table class="table table-striped table-hover">
+                  <tbody>
+                    <tr>
+                      <td style="width:60%;">Status</td>
+                      <td><span class="label label-success">Active</span></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Membership Ends On</td>
+                      <td>{{memberInfo.memberTypeValidity}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- panel widget -->
+          
+          
+          <!-- panel widget --> 
+        </div>
+        <div class="col-md-9 main-content">
+          <div class="tabs widget topfix">
+            <div class="tab-content">
+              <div id="profile-tab" class="tab-pane active">
+                <div class="pd-20">
+                  <h3 class="mgbt-xs-15 mgtp-10 font-semibold"><i class="fas fa-user-circle"></i> ABOUT</h3>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Name : </label>
+                        <div class="col-xs-7 controls">{{memberInfo.memberName}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Date of Birth:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.dob}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Gender:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.gender}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Guardian Name:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.fatherName}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Street:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.street}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">City:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.city}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">District:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.district}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">PIN Code:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.pincode}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">State:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.state}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Country:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.country}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Email:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.email}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Mobile Number:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.memberContactNo}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">ID Proof:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.memberIdProofType}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">ID Proof Number:</label>
+                        <div class="col-xs-7 controls">{{memberInfo.memberIdProof}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row mgbt-xs-0">
+                        <label class="col-xs-5 control-label">Preferred Sports:</label>
+                        <div class="col-xs-7 controls">{{prefSport}}</div>
+                        <!-- col-sm-10 --> 
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="pd-10">
+                  <div class="row">
+                    <div class="col-sm-12 mgbt-xs-20">
+                      <h3 class="mgbt-xs-15 font-semibold"><i class="fa fa-file-text-o mgr-10 profile-icon"></i> ACTIVE BOOKINGS</h3>
+                      <div class="content-list content-menu activeTable">
+                        <p-table #tt [value]="activeBookings" [paginator]="true" [rows]="4" [globalFilterFields]="['vin','year']">
+                          <ng-template pTemplate="caption">
+                              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                              <input type="text" pInputText size="50" placeholder="Global Filter" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                          </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Facility</th>
+                                <th>SubFacility</th>
+                                <th>Booking Start Date</th>
+                                <th>Booking End Date</th>
+                                <th>Time Slot</th>
+                                <th>Paid Amount</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-activeBooking>
+                            <tr>
+                                <td>{{activeBooking.facilityName}}</td>
+                                <td>{{activeBooking.subFacilityName}}</td>
+                                <td>{{activeBooking.bookingStartDate}}</td>
+                                <td>{{activeBooking.bookingEndDate}}</td>
+                                <td>{{activeBooking.sessionStartTime}}</td>
+                                <td>{{activeBooking.paidAmount}}</td>
+
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <!-- row -->
+                  <hr class="pd-10">
+                  
+                  <!-- row --> 
+                </div>
+                <!-- pd-20 --> 
+              </div>
+              <!-- home-tab -->
+              
+              
+              
+              
+              <!-- photos tab -->  
+              <!-- groups tab -->   
+              
+            </div>
+            <!-- tab-content --> 
+          </div>
+          <!-- tabs-widget -->              </div>
+        </div>
+        <!-- row --> 
+        
+      </div>
+    </div>

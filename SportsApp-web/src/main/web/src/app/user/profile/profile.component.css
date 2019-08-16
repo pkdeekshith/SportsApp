@@ -1,0 +1,29 @@
+.pd-20{
+    padding: 20px;
+}
+.main-content{
+    background: yellow;
+}
+.side-content{
+    background: #00002d;
+    color: white;
+}
+.side-content table{
+    color: white !important;
+}
+.topfix{
+    padding-top: 10px;
+}
+#profile-tab .col-sm-6 .row div{
+    margin-left: 5px;
+    font-weight: 600;
+}
+.vd_info-parent{
+    padding-bottom: 10px;
+}
+::ng-deep .ui-table table tr, ::ng-deep .ui-table-caption.ui-widget-header, ::ng-deep .ui-table table tr th {
+    background: #00002d  !important;
+    color: white !important;
+}
+
+         

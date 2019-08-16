@@ -1,48 +1,87 @@
 <div class="bookingWrapper">
-  <div class="row">
-    <div class="col-md-3 col-sm-12">
-      
-    </div>
-    <div class="col-md-3 col-sm-12">
-      <div class="form-group">
-        <label for="centerName">Centre</label>
-        <input type="text" [(ngModel)]="centreName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-12">
-      <div class="form-group">
-        <label for="facilityName">Facility</label>
-        <input type="text" [(ngModel)]="facilityName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-3 col-sm-12">
-      
-    </div>
-    <div class="col-md-3 col-sm-12">
-        <div class="form-group">
-          <label for="facilityName">Sub Facility</label>
-          <input type="text" [(ngModel)]="subFacility" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+    <div class="row home-banner" id="t1">
+        <div style="background: rgba(0,0,0,0.6);width: 100%">
+          <div class="banner-text container">
+              <div class="row inputArea">
+    
+                  <div class="col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label for="centerName">Centre</label>
+                      <input type="text"  disabled  [(ngModel)]="centreName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label for="facilityName">Facility</label>
+                      <select type="text" [(ngModel)]="facility" class="form-control" (change)="handleFacilityChange()" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" > 
+                        <option *ngFor="let facility of facilityList" [ngValue]="facility">{{facility.facilityName}}</option>
+                      </select>   
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label for="facilityName">Sub Facility</label>
+                      <select type="text" (change)="handleSubFacilityChange()"  [(ngModel)]="subFacility" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" >
+                        <option *ngFor="let subFacility of subFacilityList" [ngValue]="subFacility">{{subFacility.subFacilityName}}</option>
+                      </select>    
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-12">
+                      <div class="form-group">
+                          <label>&nbsp;</label>
+                        <!-- <label for="facilityName">Sub Facility</label> -->
+                        <button (click)="getSlots()" class="btn btn-info searchBtn" style="margin: 0 auto;">Search</button> 
+                      </div>
+                    </div>
+                </div>
+          </div>
         </div>
       </div>
-    <div class="col-md-3 col-sm-12">
-      <div class="form-group">
-        <label for="facilityName">Date</label>
-        <input type="text" [(ngModel)]="selectedDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />    
-      </div>
+  
+ 
+  <div class="slotContainer" *ngIf="availableSlots.length">
+    <div class="">
+      <label class="" style="background: #141442;width: 100%;">
+      {{subFacility.subFacilityName}} ( Rs. {{subFacility.rateMonthly}} )
+    </label>
+  </div>
+    <div class="">
+      <!-- <div class="boxes col">
+        <div class="slotBox" id="tBox" *ngFor="let item of availableSlots; let i = index" (click)="slotClicked()"><label>{{item}}</label></div>
+      </div> -->
+      <ul class="row">
+        <li *ngFor="let time of availableSlots">{{slot(time.sessionStartTime)}} - {{slot(time.sessionEndTime)}}<input class="slotCheck" type="checkbox"   (change)="handleSlotClick(time)"/></li>
+      </ul>
+    </div>
+    <div>
+        <input type="button" value="PROCEED" class="btn btn-success" (click)="proceedToReviewDetails()"/>
     </div>
     
   </div>
-  <div class="row">
-    <button (click)="getSlots()" class="btn btn-info" style="margin: 0 auto;">View Slots</button>
-  </div>
-  <div class="slotContainer">
-    <div class="row"><label class="col">Pick the Slots</label></div>
-    <div class="row">
-      <div class="boxes col">
-        <div class="slotBox" id="tBox" *ngFor="let item of availableSlots; let i = index" (click)="slotClicked()"><label>{{item}}</label></div>
+  <p-dialog modal="true" header="Review & Confirm" draggable=false  [(visible)]="displayReview" [style]="{width: '70%'}" >
+      <div class="container reviewPopup">
+        <div class="row">
+          <div class="col-md-3 col-sm-6 col-6">Facility:</div>
+          <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{facility.facilityName}}</div>
+          <div class="col-md-3 col-sm-6 col-6">Sub Facility:</div>
+          <div class="col-md-3 col-sm-6 col-6 selectedVal">{{subFacility.subFacilityName}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-6">Booking Start Date:</div>
+            <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{bookingRangeObj.bookingStartDate}}</div>
+            <div class="col-md-3 col-sm-6 col-6">Booking End Date:</div>
+            <div class="col-md-3 col-sm-6 col-6 selectedVal">{{bookingRangeObj.bookingEndDate}}</div>
+          </div>
+        <div class="row">
+          <div class="col-md-3 col-sm-6 col-6">Time Slot:</div>
+          <div class="col-md-3 col-sm-6 col-6 selectedVal" >{{slot(this.selectedSlotObj.sessionStartTime)}}- {{slot(this.selectedSlotObj.sessionEndTime)}}</div>
+          <div class="col-md-3 col-sm-6 col-6">Total Amount:</div>
+          <div class="col-md-3 col-sm-6 col-6 selectedVal">{{subFacility.rateMonthly}}</div>
+        </div>
       </div>
-    </div>
-  </div>
+      <p-footer>
+        <input type="button" value="CONFIRM & PAY" class="btn btn-success" (click)="doBooking()"/>
+    </p-footer>
+    </p-dialog>
+    <p-toast key="errorToast" position="top-right"></p-toast>
 </div>

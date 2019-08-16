@@ -1,3 +1,4 @@
+
 .reg-wrapper{
     width: 100%;
     padding-left: 3%;
@@ -47,7 +48,7 @@
 .facilityBlock{
     padding: 14px;
     border: solid 1px grey;
-    background: #f7f1f1;
+    background: #dad4d4;
     color: black;
 }
 .subheader{
