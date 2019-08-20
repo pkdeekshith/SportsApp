@@ -283,6 +283,9 @@ public class MemberServiceImpl implements MemberService{
 				BeanUtils.copyProperties(memberFacility.getFacilityType(), facilityTypeJsonDTO);
 				facilityTypeList.add(facilityTypeJsonDTO);
 			}
+			if(member.get().getMemberTypeValidity().before(new Date())) {
+				memberDetailsJsonDTO.setActive(false);
+			}
 		}
 		if (memberDetailsJsonDTO.getMemberPhoto() != null) {
 			try {
