@@ -1,0 +1,13 @@
+.history-wrapper{
+    padding: 10px;
+    margin: 5px;
+    margin-top: 0px;
+}
+::ng-deep .ui-table table tr, ::ng-deep .ui-table-caption.ui-widget-header, ::ng-deep .ui-table table tr th {
+    background: #00002d  !important;
+    color: white !important;
+}
+.history-page{
+    background: url("../../../assets/images/Banner-5.jpg");
+    padding-bottom: 70px;
+}

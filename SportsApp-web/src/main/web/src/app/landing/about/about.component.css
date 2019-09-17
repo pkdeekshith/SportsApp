@@ -39,4 +39,13 @@
     padding-left: 10%;
     padding-right: 10%;
     padding-top: 3%;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 10px;
+    border-radius: 9px;
+    background: linear-gradient(to right, #3b5c92, #373B44);
+
+
 }
+/* Background Gradient for Analagous Colors */
+

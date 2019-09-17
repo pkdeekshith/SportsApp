@@ -13,7 +13,7 @@
     
 }
 .nav-item:hover{
-    text-decoration: underline;
+    border-bottom: solid 2px #00002d;
 }
 .navbar-toggler{
     background: black;

@@ -10,18 +10,18 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <!-- <div><i class="fas fa-user-circle fa-2x" style="color: green"></i><span style="margin-left: 15px">Welcome User</span></div> -->
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/user/profile">Profile</a>
+          <li class="nav-item" style="">
+            <a class="nav-link" routerLink="/user/profile">PROFILE</a>
           </li>
           <li class="nav-item ">
-            <a class="nav-link" routerLink="/user/history">Booking History</a>
+            <a class="nav-link" routerLink="/user/history">BOOKING HISTORY</a>
           </li>
           
           <li class="nav-item">
-            <a class="nav-link" routerLink="/user/booking">Book Now</a>
+            <a class="nav-link" routerLink="/user/booking">BOOK NOW</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/landing/login">LogOut</a>
+            <a class="nav-link" (click)="logout()">LOGOUT</a>
           </li>
         </ul>
       </div>

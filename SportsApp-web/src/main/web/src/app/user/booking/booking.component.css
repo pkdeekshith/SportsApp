@@ -1,8 +1,9 @@
 .bookingWrapper{
-    padding: 10px;
-    background:#00002d;
     color: wheat;
     padding-top: 0;
+    width:90%;
+    margin:0 auto;
+    margin-top: 10px;
 }
 .slotBox{
     width: 150px;
@@ -30,6 +31,8 @@
     padding-top: 10px;
     margin-top: 10px;
     border-radius: 8px;
+    background:#00002d;
+
 }
 .slotBox, .slotBox label{
     cursor: pointer;

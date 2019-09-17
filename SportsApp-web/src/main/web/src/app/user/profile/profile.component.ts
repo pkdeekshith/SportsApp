@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService} from '../../shared/service/backend.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Utility } from '../../shared/utility/utility';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -12,20 +15,11 @@ export class ProfileComponent implements OnInit {
   prefSport:any="";
   memberId:any="";
   activeBookings:any=[];
-  cars = [
-    {"brand": "VW", "year": 2012, "color": "Orange", "vin": "dsad231ff"},
-    {"brand": "Audi", "year": 2011, "color": "Black", "vin": "gwregre345"},
-    {"brand": "Renault", "year": 2005, "color": "Gray", "vin": "h354htr"},
-    {"brand": "BMW", "year": 2003, "color": "Blue", "vin": "j6w54qgh"},
-    {"brand": "Mercedes", "year": 1995, "color": "Orange", "vin": "hrtwy34"},
-    {"brand": "Volvo", "year": 2005, "color": "Black", "vin": "jejtyj"},
-    {"brand": "Honda", "year": 2012, "color": "Yellow", "vin": "g43gr"},
-    {"brand": "Jaguar", "year": 2013, "color": "Orange", "vin": "greg34"},
-    {"brand": "Ford", "year": 2000, "color": "Black", "vin": "h54hw5"},
-    {"brand": "Fiat", "year": 2013, "color": "Red", "vin": "245t2s"}
-];
+  editMode:boolean=false;
   constructor(private BackEnd: BackendService,
-    private ngxService: NgxUiLoaderService ) { }
+    private ngxService: NgxUiLoaderService,
+    private Utility : Utility,
+    private Router: Router, ) { }
 
   ngOnInit() {
     this.memberId = this.BackEnd.memberId;
@@ -35,6 +29,7 @@ export class ProfileComponent implements OnInit {
         
         if(data){
           this.memberInfo=data;
+          this.BackEnd.memberData = data;
           let e=[];
           data.facilityType.forEach(function(i){e.push(i.facilityTypeName)});
           this.prefSport = e.join();
@@ -53,6 +48,25 @@ export class ProfileComponent implements OnInit {
       },error=>{
         alert("Server error");
         this.ngxService.stop();
+      }
+    )
+  }
+  editMember(){
+   // this.editMode = true;
+    this.BackEnd.editMode = true;
+    this.Router.navigateByUrl("/landing/register");
+  }
+  renewMember(){
+    this.ngxService.start();
+    this.BackEnd.renewMember(this.memberId).subscribe(
+      data =>{
+        this.ngxService.stop();
+        if(data && data.status == "Success"){
+          Swal.fire('Success!','Membership is renewed','success');
+        }
+      },error =>{
+        this.ngxService.stop();
+        Swal.fire('Error!','Failed to renew membership','error');
       }
     )
   }

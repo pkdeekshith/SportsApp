@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Utility} from '../../shared/utility/utility';
+import { BackendService} from '../../shared/service/backend.service';
 
 @Component({
   selector: 'app-nav',
@@ -7,9 +10,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private Router: Router,
+    private Utility : Utility,
+    private BackendService: BackendService
+  ) { }
 
   ngOnInit() {
   }
-
+  logout(){
+    this.Utility.deleteSession();
+    this.BackendService.memberId = undefined;
+    this.Router.navigateByUrl("/landing/login");
+  }
 }

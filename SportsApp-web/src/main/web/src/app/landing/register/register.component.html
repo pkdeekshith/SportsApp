@@ -1,12 +1,13 @@
 <div class="row reg-title">
-  <div ><label>Member Registration</label></div>
+  <div *ngIf="!editMode"><label>MEMBER REGISTRATION</label></div>
+  <div *ngIf="editMode"><label>EDIT MEMBER INFORMATION</label></div>
 </div>
 <div class=" reg-wrapper">
   
 <form [formGroup]="registerForm">
     <p-messages styleClass="prime-slider-override"></p-messages>
-  <div class="facilityBlock">
-    <div class="subheader"><span>Facility Details</span></div>
+  <div class="facilityBlock" *ngIf="!editMode">
+    <div class="subheader"><span>FACILITY DETAILS</span></div>
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-3 col-sm-12">
@@ -22,7 +23,7 @@
           <div class="col-md-3 col-sm-12">
               <div class="form-group">
                 <label for="firstName">Facility</label>
-                <p-multiSelect type="text" [options]="failities" selectionLimit=2 showHeader=false formControlName="facility1"  [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
+                <p-multiSelect type="text" [options]="failities" (onChange)="handlePreferredFacilitySelection()" selectionLimit=2 showHeader=false formControlName="facility1"  [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
                 <div *ngIf="submitted && f.facility1.errors" class="invalid-feedback">
                     <div *ngIf="f.facility1.errors.required">Facility required</div>
                 </div>
@@ -35,9 +36,21 @@
         </div>
       </div>
   </div>
-  <div class="facilityBlock" style="position: relative">
-      <div id="fade-in" class="edit"></div>
-      <div class="subheader"><span>Personal Details</span></div>
+  <div class="facilityBlock edit" id="fade-in" style="position: relative">
+      <!-- <div id="fade-in" class="edit"></div> -->
+      <div class="subheader"><span>PERSONAL DETAILS</span></div>
+      <div class="row" *ngIf="editMode">
+          <div class="col-md-3"></div>
+        <div class="col-md-3 col-sm-12">
+          <div class="form-group">
+            <label for="firstName">Preferred Sports</label>
+            <p-multiSelect [options]="preferredSports" selectionLimit=2 showHeader=false formControlName="prefSport1" styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
+            <div *ngIf="submitted && f.prefSport1.errors" class="invalid-feedback">
+                <div *ngIf="f.prefSport1.errors.required">Preferred sport required</div>
+            </div>
+        </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-3"></div>
           <div class="col-md-3 col-sm-12">
@@ -46,6 +59,7 @@
                 <input type="text" formControlName="memberName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />
                 <div *ngIf="submitted && f.memberName.errors" class="invalid-feedback">
                     <div *ngIf="f.memberName.errors.required">Name is required</div>
+                    <div *ngIf="f.memberName.errors.pattern">Only alphabets and . are allowed</div>
                 </div>
             </div>
             </div>
@@ -82,6 +96,7 @@
                   <input type="text" formControlName="guardName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.guardName.errors }" />
                   <div *ngIf="submitted && f.guardName.errors" class="invalid-feedback">
                       <div *ngIf="f.guardName.errors.required">Guardian name is required</div>
+                      <div *ngIf="f.guardName.errors.pattern">Only alphabets and . are allowed</div>
                   </div>
               </div>
               </div>
@@ -150,9 +165,11 @@
             <div class="col-md-3 col-sm-12">
               <div class="form-group">
                 <label for="pin">PIN Code</label>
-                <input type="number" formControlName="pin" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.pin.errors }" />
+                <input type="text" maxlength="6"  formControlName="pin" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.pin.errors }" />
                 <div *ngIf="submitted && f.pin.errors" class="invalid-feedback">
                     <div *ngIf="f.pin.errors.required">PIN is required</div>
+                    <div *ngIf="f.pin.errors?.minlength">Please provide 6 digit PIN</div>
+                    <div *ngIf="f.pin.errors.pattern">Only numbers are allowed</div>
                 </div>
             </div>
             </div>
@@ -163,18 +180,21 @@
               <div class="col-md-3 col-sm-12">
                   <div class="form-group">
                     <label for="mobNumber">Contact Number</label>
-                    <input type="number" formControlName="mobNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
+                    <input type="text"  maxlength="10"  formControlName="mobNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
                     <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
-                        <div *ngIf="f.mobNumber.errors.required">Number is required</div>
+                        <div *ngIf="f.mobNumber.errors.required">Valid mobile number is required</div>
+                        <div *ngIf="f.mobNumber.errors?.minlength">Please provide 10 digit number</div>
+                        <div *ngIf="f.mobNumber.errors.pattern">Valid mobile number is required</div>
                     </div>
                 </div>
                 </div>
                 <div class="col-md-3 col-sm-12">
                     <div class="form-group">
                       <label for="email">E-Mail</label>
-                      <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                      <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
                       <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
                           <div *ngIf="f.email.errors.required">Email  is required</div>
+                          <div *ngIf="f.email.errors?.email">Please provide valid email address</div>
                       </div>
                   </div>
                   </div>
@@ -268,10 +288,14 @@
                       </div>
                       </div>
               </div>
+              <div class="" *ngIf="editMode" style="text-align: center">
+                <input type="button" style="min-width: 100px;" class="btn btn-success" value="EDIT" (click)="editMember()"/>
+                <input type="button" style="min-width: 100px;margin-left: 6px;" class="btn btn-warning" value="CANCEL" (click)="goBackToProfile()"/>
+              </div>
   </div>
   
-  <div class="facilityBlock">
-      <div class="subheader"><span>Membership Details</span></div>
+  <div class="facilityBlock" *ngIf="!editMode">
+      <div class="subheader"><span>MEMBERSHIP DETAILS</span></div>
       <div class="row">
           <div class="col-md-3 col-sm-12">
               <div class="form-group">

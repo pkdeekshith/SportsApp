@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService} from '../shared/service/backend.service';
+import { Router } from '@angular/router';
+import {Utility} from '../shared/utility/utility';
 
 @Component({
   selector: 'app-user',
@@ -7,9 +10,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserComponent implements OnInit {
 
-  constructor() { }
+  constructor(private BackendService:BackendService,
+              private Utility : Utility,
+              private Router : Router
+              ) { 
+                if(this.BackendService.memberId == undefined){
+                  let s = this.Utility.getSession();
+                  s == false ? (this.Router.navigateByUrl("/landing/login")) : (this.BackendService.memberId=s) ;
+                }
+              }
 
   ngOnInit() {
+   
   }
 
 }

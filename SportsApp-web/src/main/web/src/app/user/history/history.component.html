@@ -1,25 +1,31 @@
-<div class="row">
-    <div class="col"><h4>Booking history window</h4></div>
-    <p-table #tt [value]="cars" [paginator]="true" [rows]="4" [globalFilterFields]="['vin','year']">
+<div class="history-page">
+    <div class="history-wrapper">
+    <h3 class="mgbt-xs-15 font-semibold"><i class="fa fa-file-text-o mgr-10 profile-icon"></i> PREVIOUS BOOKINGS</h3>
+    <p-table #tt [value]="oldBookings" [paginator]="true" [rows]="4" [globalFilterFields]="['facilityName','bookingStartDate']">
         <ng-template pTemplate="caption">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Global Filter" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
         </ng-template>
       <ng-template pTemplate="header">
           <tr>
-              <th>Vin</th>
-              <th>Year</th>
-              <th>Brand</th>
-              <th>Color1</th>
+                <th>Facility</th>
+                <th>SubFacility</th>
+                <th>Booking Start Date</th>
+                <th>Booking End Date</th>
+                <th>Time Slot</th>
+                <th>Paid Amount</th>
           </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-car>
+      <ng-template pTemplate="body" let-oldBooking>
           <tr>
-              <td>{{car.vin}}</td>
-              <td>{{car.year}}</td>
-              <td>{{car.brand}}</td>
-              <td>{{car.color}}</td>
+                <td>{{oldBooking.facilityName}}</td>
+                <td>{{oldBooking.subFacilityName}}</td>
+                <td>{{oldBooking.bookingStartDate}}</td>
+                <td>{{oldBooking.bookingEndDate}}</td>
+                <td>{{Utility.slotFormat(oldBooking.sessionStartTime)}} - {{Utility.slotFormat(oldBooking.sessionEndTime)}}</td>
+                <td>{{oldBooking.paidAmount}}</td>
           </tr>
       </ng-template>
   </p-table>
+</div>
   </div>

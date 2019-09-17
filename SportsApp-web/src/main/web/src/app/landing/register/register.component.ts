@@ -15,7 +15,17 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,private BackEnd : BackendService,private ngxService: NgxUiLoaderService,
-    private messageService: MessageService, private Data:Data,private Router : Router) {}
+    private messageService: MessageService, private Data:Data,private Router : Router) {
+      if(this.BackEnd.editMode == true){
+        this.editMode = true;
+       // document.querySelector("#fade-in").classList.add("show");
+        debugger;
+ 
+        //this.f.patchValue("memberName":"khkjh");
+        
+      }
+    }
+  editMode:boolean = false;  
   preferredSports =[];
   failities=[];
   slotobject : any;
@@ -53,18 +63,18 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
    
     this.registerForm = this.formBuilder.group({
-      memberName: ['', Validators.required],
+      memberName: ['', [Validators.required,Validators.pattern('^[A-Za-z .]+$')]],
       gender: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
-      guardName : ['', Validators.required],
+      guardName : ['', [Validators.required,Validators.pattern('^[A-Za-z .]+$')]],
       address : ['', Validators.required],
       city : ['', Validators.required],
       district : ['', Validators.required],
       country : ['INDIA', Validators.required],
       state : ['', Validators.required],
-      mobNumber : ['', Validators.required],
-      pin : ['', Validators.required],
-      email : ['', Validators.required],
+      mobNumber : ['', [Validators.required,Validators.minLength(10),Validators.pattern('^[0-9]+$')]],
+      pin : ['', [Validators.required,Validators.minLength(6),Validators.pattern('^[0-9]+$')]],
+      email : ['', [Validators.required,Validators.email]],
       idNumber : ['', Validators.required],
       idType : ['', Validators.required],
       student : ['', Validators.required],
@@ -95,6 +105,36 @@ export class RegisterComponent implements OnInit {
            data=>{
               this.f.memCost.patchValue(data[0].memberShipCost);
               this.f.memID.patchValue(data[0].memberShipId);
+              
+              //edit mode on
+              if(this.editMode){
+                document.querySelector("#fade-in").classList.add("show");
+                let {memberName,gender,dob,fatherName,street,country,
+                  state,pincode,district,city,memberContactNo,email,
+                  memberIdProof,memberIdProofType,isCoaching,isGovt,isStudent,memberPhoto,facilityType} = this.BackEnd.memberData;
+                  this.setDistrictOptions(state);
+                  this.registerForm.patchValue({
+                  "memberName": memberName,
+                  "gender": gender,
+                  "dateOfBirth": new Date(dob),
+                  "guardName" : fatherName,
+                  "address" : street,
+                  "city" : city,
+                  "district" :district,
+                  "country" : country,
+                  "state" : state,
+                  "mobNumber" : memberContactNo,
+                  "pin" : pincode,
+                  "email" : email,
+                  "idNumber" : memberIdProof,
+                  "idType" : memberIdProofType,
+                  "student" : isStudent == true ? "Yes" : "No",
+                  "govt" : isGovt == true ? "Yes" : "No",
+                  "coaching" : isCoaching == true ? "Yes" :"No",
+                  "prefSport1" : this.setPreferredSport(facilityType)
+                });
+                this.imgURL = memberPhoto;
+              }
               this.ngxService.stop();
            },error =>{
               alert("Server error!")
@@ -114,6 +154,14 @@ export class RegisterComponent implements OnInit {
   }
   handleStateSelection(){
     this.districtList = this.Data.stateMap[this.f.state.value];
+  }
+  setDistrictOptions(state){
+    this.districtList = this.Data.stateMap[state];
+  }
+  setPreferredSport(facility){
+    let e=[];
+    facility.forEach(function(i){e.push(i.facilityTypeId)});
+    return e;
   }
   proceedAfterSportSelection(){
     //call availablility check
@@ -207,6 +255,9 @@ export class RegisterComponent implements OnInit {
     .subscribe(
       data  => {
         this.ngxService.stop();
+        //cover form if already opened
+        this.showProceedBtn = false;
+        document.querySelector("#fade-in").classList.remove("show");
         this.failities.length=0;
         let temp=[];
         data.forEach(function(i){ 
@@ -218,6 +269,11 @@ export class RegisterComponent implements OnInit {
       }
      
     );
+  }
+  handlePreferredFacilitySelection(){
+    //cover form if already opened
+    this.showProceedBtn = false;
+    document.querySelector("#fade-in").classList.remove("show");
   }
   proceedToSlotSelection(){
      
@@ -269,7 +325,7 @@ export class RegisterComponent implements OnInit {
  }
  registerMember(){
     this.ngxService.start();
-    this.BackEnd.saveMember(this.f,this.imgURL).subscribe(
+    this.BackEnd.saveMember(this.f,this.imgURL,"").subscribe(
       data =>{
         //Call saveBooking
         if(data && data.status == "Success"){
@@ -314,6 +370,46 @@ export class RegisterComponent implements OnInit {
     let minute:any = t%60;
     //if(minute ==0) { minute ="00";}
     return parseInt(hour) +":"+(parseInt(minute)==0?"00":parseInt(minute))+tail;
+ }
+ goBackToProfile(){
+  this.BackEnd.editMode = false; 
+  this.Router.navigateByUrl("/user/profile");
+ }
+ editMember(){
+   this.ngxService.start();
+   this.BackEnd.saveMember(this.f,this.imgURL,this.BackEnd.memberId).subscribe(
+     data =>{
+      this.ngxService.stop();
+       if(data && data.status == "Success"){
+        Swal.fire({
+          type : 'success',
+          html: '<b>Details has been modified successfully</b>',
+          allowOutsideClick :false,
+          allowEnterKey:false,
+          allowEscapeKey:false
+        }).then((result) => {
+          if (result.value) {
+          this.Router.navigateByUrl("/user/profile");
+          }
+      })
+       }else{
+        Swal.fire({
+          type : 'error',
+          html: '<b>Server Error</b>',
+          allowOutsideClick :false,
+          allowEnterKey:false,
+          allowEscapeKey:false
+       }).then((result) => {
+        if (result.value) {
+        this.Router.navigateByUrl("/user/profile");
+        }
+      })
+      }
+       
+     },error=>{
+       this.ngxService.stop();
+     }
+   )
  }
   
 }

@@ -7,6 +7,8 @@ import { Config } from "../constant/config";
 export class BackendService {
   URL:any;
   memberId:any;
+  editMode:any;
+  memberData:any;
   constructor(private Http:HttpClient, private Config: Config) { 
     this.URL = this.Config.URL;
   }
@@ -40,8 +42,10 @@ export class BackendService {
              };
     return this.Http.post<any>(this.URL.getSlotsAvailableToBook, req)
   }
-  saveMember(form,img){
-    let req = {
+  saveMember(form,img,id){
+    let req:any={};
+    debugger;
+     req = {
       "centerId": "2",
       "memberName": form.memberName.value,
       "memberPhoto": img,
@@ -65,6 +69,9 @@ export class BackendService {
       "memberShipTypeId": form.memID.value,
       "facilityTypeId":form.prefSport1.value
     };
+    if(id.length){
+      req.memberId = parseInt(id);
+    }
     return this.Http.post<any>(this.URL.saveMember, req)
   }
   saveBooking(fac,memID){
@@ -102,6 +109,16 @@ export class BackendService {
   getUpcomingBookings(id){
     //return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
     return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
+  }
+  getBookingsHistory(id){
+    return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
+  }
+  renewMember(id){
+    let req = {
+      "centerId":2,
+      "memberId":parseInt(id)
+    };
+    return this.Http.post<any>(this.URL.renewMember, req)
   }
   //helper functions-move to utility later
   getDOB(date){

@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService} from '../../shared/service/backend.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import Swal from 'sweetalert2';
+import { Utility } from '../../shared/utility/utility';
+
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -6,20 +11,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HistoryComponent implements OnInit {
 
-  constructor() { }
-  cars = [
-        {"brand": "VW", "year": 2012, "color": "Orange", "vin": "dsad231ff"},
-        {"brand": "Audi", "year": 2011, "color": "Black", "vin": "gwregre345"},
-        {"brand": "Renault", "year": 2005, "color": "Gray", "vin": "h354htr"},
-        {"brand": "BMW", "year": 2003, "color": "Blue", "vin": "j6w54qgh"},
-        {"brand": "Mercedes", "year": 1995, "color": "Orange", "vin": "hrtwy34"},
-        {"brand": "Volvo", "year": 2005, "color": "Black", "vin": "jejtyj"},
-        {"brand": "Honda", "year": 2012, "color": "Yellow", "vin": "g43gr"},
-        {"brand": "Jaguar", "year": 2013, "color": "Orange", "vin": "greg34"},
-        {"brand": "Ford", "year": 2000, "color": "Black", "vin": "h54hw5"},
-        {"brand": "Fiat", "year": 2013, "color": "Red", "vin": "245t2s"}
-  ];
+  constructor(private BackEnd:BackendService,
+              private ngxService : NgxUiLoaderService,private Utility:Utility) { }
+  
+  memberId:any="";
+  oldBookings:any=[];
   ngOnInit() {
+    this.memberId = this.BackEnd.memberId;
+    this.BackEnd.getUpcomingBookings(this.memberId).subscribe(
+      data=>{ 
+        this.oldBookings=data;
+        this.ngxService.stop();
+
+      }
+    )
   }
 
 }

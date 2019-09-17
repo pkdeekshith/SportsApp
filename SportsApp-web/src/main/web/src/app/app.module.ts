@@ -28,6 +28,8 @@ import { HistoryComponent } from './user/history/history.component';
 import { BookingComponent } from './user/booking/booking.component';
 import { PaymentComponent } from './user/payment/payment.component';
 import {Config} from './shared/constant/config';
+import {Utility} from './shared/utility/utility';
+
 import {Data} from './shared/data/data';
 import {MessageService} from 'primeng/api';
 
@@ -67,7 +69,7 @@ import {MessageService} from 'primeng/api';
     ToastModule
 
   ],
-  providers: [Config,MessageService,Data],
+  providers: [Config,MessageService,Data,Utility],
   exports:[ FormsModule,
     ReactiveFormsModule],
   bootstrap: [AppComponent]

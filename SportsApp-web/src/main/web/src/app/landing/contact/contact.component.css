@@ -4,6 +4,12 @@
 .image-box{
     /* height:165px; */
     background: #00002d;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: solid 1px grey;
+    margin-top: 5px;
+    border-radius: 8px;
+    padding: 5px;
 }
 .cont1{
     background:url("../../../assets/images/Jayathilak.jpg");
@@ -34,10 +40,15 @@
     background: #00002d;
     font-weight: 500;
     color: white;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: solid 1px grey;
+    padding: 5px;
+    text-align: center;
 }
 .cont-title div{
     width: 100%;
-    margin-left: 9%;
+    
 }
 .address{
     color:white;

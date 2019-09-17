@@ -44,7 +44,7 @@ export class BookingComponent implements OnInit {
         );
       }
       getSlots(){
-        if(this.subFacilityList.length == 0){
+        if(this.subFacilityList.length == 0 || Object.keys(this.subFacility).length==0){
           this.messageService.clear();
           this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: 'Please select facility details'});    
          return;
@@ -64,12 +64,14 @@ export class BookingComponent implements OnInit {
         }
         handleFacilityChange(){
           this.availableSlots.length = 0;
+          
           this.ngxService.start();
           this.BackEnd.getsubFacilitiesOfFacility(this.facility.facilityId).subscribe(
             data=>{
               this.ngxService.stop();
               if(data){
                 this.subFacilityList = data[0].subFacility;
+                this.subFacility={};
               }
             },error =>{
               this.ngxService.stop();

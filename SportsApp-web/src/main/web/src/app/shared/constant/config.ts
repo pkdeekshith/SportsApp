@@ -1,10 +1,11 @@
 export class Config {
        URL:any;
-       debug:boolean=false; //make it true only for development
+       debug:boolean=false; 
        baseURL:any;
        
        
        constructor(){
+              this.debug = (location.hostname == "localhost")?true:false;
               if(this.debug){
                      this.baseURL = "http://13.233.160.219:8080/SportsApp/";
               }else{
@@ -24,7 +25,8 @@ export class Config {
                      getTimeSlotsForSubFacility :this.baseURL + "api/timetable/getTimeSlotsForSubFacility",
                      getMember:this.baseURL+"api/member/getMember/",
                      getUpcomingBookings:this.baseURL+"api/booking/getUpcomingBookingForMember/",
-                     getAllBookings:this.baseURL+"api/booking/getAllBookingForMember/"
+                     getAllBookings:this.baseURL+"api/booking/getAllBookingForMember/",
+                     renewMember:this.baseURL+"api/member/renewMember"
               }
        }
        
