@@ -31,6 +31,14 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
@@ -62,6 +70,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.fedbank</groupId>
+			<artifactId>toolkit</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.ins.pos</groupId>
 			<artifactId>SportsApp-web</artifactId>
 			<version>${project.version}</version>
@@ -74,6 +87,27 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<configuration>
+					<groupId>org.fedbank</groupId>
+					<artifactId>toolkit</artifactId>
+					<version>1.0</version>
+					<packaging>jar</packaging>
+					<file>${basedir}/src/main/resources/awl-me-toolkit-1.4.jar</file>
+					<generatePom>true</generatePom>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-jar-lib</id>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

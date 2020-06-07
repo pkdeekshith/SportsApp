@@ -7,7 +7,7 @@ export class Config {
        constructor(){
               this.debug = (location.hostname == "localhost")?true:false;
               if(this.debug){
-                     this.baseURL = "http://13.233.160.219:8080/SportsApp/";
+                     this.baseURL = "http://15.206.200.143:8080/SportsApp/";
               }else{
                      this.baseURL = "/SportsApp/";   
               }
@@ -26,7 +26,18 @@ export class Config {
                      getMember:this.baseURL+"api/member/getMember/",
                      getUpcomingBookings:this.baseURL+"api/booking/getUpcomingBookingForMember/",
                      getAllBookings:this.baseURL+"api/booking/getAllBookingForMember/",
-                     renewMember:this.baseURL+"api/member/renewMember"
+                     renewMember:this.baseURL+"api/member/renewMember",
+                     getBookingSummary:this.baseURL+"api/report/getBookingSummary",
+                     getSpotBookingForDays:this.baseURL+"api/report/getSpotBookingForDays",
+                     getAllAccountsForDays:this.baseURL+"api/report/getAllAccountsForDays",
+                     getAllBookingForDays:this.baseURL+"api/report/getAllBookingForDays",
+                     getConsolidatedReportByDate:this.baseURL+"api/report/getConsolidatedReportByDate",
+                     getConsolidatedReportByFacility:this.baseURL+"api/report/getConsolidatedReportByFacility",
+                     getAllFacilitiesAdmin:this.baseURL+"api/admin/getAllFacilities",
+                     updateFacilities:this.baseURL+"api/admin/updateFacilities",
+                     getAllSubFacilitiesAdmin:this.baseURL+"api/admin/getAllSubFacilities",
+                     updateSubFacilitiesAdmin:this.baseURL+"api/admin/updateSubFacilities"
+
               }
        }
        

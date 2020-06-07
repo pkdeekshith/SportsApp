@@ -13,6 +13,8 @@ public class SubFacilityTimeTableJsonDTO {
 	
 	private String subFacilityName;
 	
+	private String subFacilityPhoto;
+	
 	@JsonFormat(pattern = "dd MMM yyyy")
 	private Date bookingStartDate;
 	@JsonFormat(pattern = "dd MMM yyyy")
@@ -66,6 +68,14 @@ public class SubFacilityTimeTableJsonDTO {
 
 	public void setBookingEndDate(Date bookingEndDate) {
 		this.bookingEndDate = bookingEndDate;
+	}
+
+	public String getSubFacilityPhoto() {
+		return subFacilityPhoto;
+	}
+
+	public void setSubFacilityPhoto(String subFacilityPhoto) {
+		this.subFacilityPhoto = subFacilityPhoto;
 	}
 		
 }

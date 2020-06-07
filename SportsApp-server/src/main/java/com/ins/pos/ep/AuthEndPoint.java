@@ -31,6 +31,7 @@ import com.ins.pos.dto.FacilityTypeJsonDTO;
 import com.ins.pos.dto.LoginJsonDTO;
 import com.ins.pos.dto.MemberDetailsJsonDTO;
 import com.ins.pos.dto.MemberShipTypeJsonDTO;
+import com.ins.pos.dto.RoleJsonDTO;
 import com.ins.pos.entity.Member;
 import com.ins.pos.entity.MemberFacility;
 import com.ins.pos.entity.Role;
@@ -77,8 +78,13 @@ public class AuthEndPoint {
 			User user = users.findByEmail(username);
 			List<UserRoles> userRoles = userRolesRepository.findByUserAndActive(user, true);
 			Set<Role> roleSet = new HashSet<Role>();
+			List<RoleJsonDTO> rolesList = new ArrayList<RoleJsonDTO>();
 			for(UserRoles usrRole:userRoles) {
 				roleSet.add(usrRole.getRole());
+				RoleJsonDTO roleJsonDTO = new RoleJsonDTO();
+				roleJsonDTO.setRoleId(usrRole.getRole().getRoleId());
+				roleJsonDTO.setRoleName(usrRole.getRole().getRoleName());
+				rolesList.add(roleJsonDTO);
 			}
 			String token = jwtTokenProvider.createToken(username, roleSet);
 			
@@ -109,6 +115,7 @@ public class AuthEndPoint {
 
 				}
 			}
+			memberDetailsJsonDTO.setRoles(rolesList);
 			
 			HttpHeaders responseHeaders = new HttpHeaders();
 		    responseHeaders.set("token",token);

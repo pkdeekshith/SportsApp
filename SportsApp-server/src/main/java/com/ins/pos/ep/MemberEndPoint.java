@@ -34,6 +34,16 @@ public class MemberEndPoint {
 		return memberService.saveMember(memberJsonDTO);
 	}
 	
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestBody String requestJSON) {
+		return memberService.changePassword(requestJSON);
+	}
+	
+	@PostMapping("/forgetPassword")
+	public String forgetPassword(@RequestBody String requestJSON) {
+		return memberService.forgetPassword(requestJSON);
+	}
+	
 	@PostMapping("/renewMember")
 	public String renewMember(@RequestBody String requestJSON) {
 		return memberService.renewMember(requestJSON);

@@ -89,6 +89,9 @@ public class Member {
 	@Column
 	private String memberIdProofType;
 	
+	@Column(columnDefinition="tinyint(1) default 1")
+	private Boolean firstLogin;
+	
 	@Column(columnDefinition="tinyint(1) default 0")
 	private Boolean isOnline;
 
@@ -421,6 +424,14 @@ public class Member {
 
 	public void setIsOnline(Boolean isOnline) {
 		this.isOnline = isOnline;
+	}
+
+	public Boolean getFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(Boolean firstLogin) {
+		this.firstLogin = firstLogin;
 	}
 
 }

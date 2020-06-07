@@ -38,6 +38,7 @@ public class MemberDetailsJsonDTO {
 	private String memberIdProofType;
 	private MemberShipTypeJsonDTO memberShipType;
 	private List<FacilityTypeJsonDTO> facilityType;
+	private List<RoleJsonDTO> roles;
 
 	public Long getMemberId() {
 		return memberId;
@@ -247,4 +248,11 @@ public class MemberDetailsJsonDTO {
 		this.memberTypeStartDate = memberTypeStartDate;
 	}
 
+	public List<RoleJsonDTO> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<RoleJsonDTO> roles) {
+		this.roles = roles;
+	}
 }

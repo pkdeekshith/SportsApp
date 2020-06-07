@@ -12,5 +12,7 @@ public interface MemberService {
 	List<MemberShipTypeJsonDTO> getMemberShipTypes();
 	public MemberDetailsJsonDTO getMember(long parseLong);
 	String renewMember(String memberJson);
+	public String changePassword(String requestJSON);
+	public String forgetPassword(String requestJSON);
 	
 }

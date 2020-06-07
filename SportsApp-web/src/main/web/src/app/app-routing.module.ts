@@ -10,8 +10,9 @@ import  { UserComponent } from './user/user.component';
 import  { ProfileComponent } from './user/profile/profile.component';
 import  { HistoryComponent } from './user/history/history.component';
 import  { BookingComponent } from './user/booking/booking.component';
-
-
+import {AdminComponent} from './admin/admin.component';
+import {SettingsComponent} from './admin/settings/settings.component';
+import {ReportsComponent} from './admin/reports/reports.component';
 
 const routes: Routes = [
   { path: 'landing', component: LandingComponent,
@@ -32,6 +33,13 @@ const routes: Routes = [
       {path:'booking',component: BookingComponent},
       {path:'profile',component: ProfileComponent},
       {path:'history',component: HistoryComponent}
+    ]
+  },
+  { path: 'admin', component: AdminComponent,
+    children : [
+      {path:'',redirectTo:'reports',pathMatch:'full'},
+      {path:'settings',component: SettingsComponent},
+      {path:'reports',component: ReportsComponent}
     ]
   },
   { path: '', redirectTo:'landing', pathMatch:'full'}

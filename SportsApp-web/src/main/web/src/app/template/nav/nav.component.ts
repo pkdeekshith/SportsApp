@@ -9,7 +9,7 @@ import { BackendService} from '../../shared/service/backend.service';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
-
+  
   constructor(
     private Router: Router,
     private Utility : Utility,
@@ -17,10 +17,12 @@ export class NavComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.BackendService.memberRole)
   }
   logout(){
     this.Utility.deleteSession();
     this.BackendService.memberId = undefined;
+    this.BackendService.memberRole = undefined;
     this.Router.navigateByUrl("/landing/login");
   }
 }

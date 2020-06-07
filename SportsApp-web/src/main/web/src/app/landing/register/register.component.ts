@@ -342,7 +342,7 @@ export class RegisterComponent implements OnInit {
                 }).then((result) => {
                   if (result.value) {
                   this.Router.navigateByUrl("/landing/login");
-                  window.open("https://www.google.com","_blank");
+                  window.open("http://15.206.200.143:8080/SportsApp/api/admin/sendCommunications/"+data.accountId,"_blank");
                   }
               })}else{
                 this.ngxService.stop();
@@ -389,7 +389,8 @@ export class RegisterComponent implements OnInit {
           allowEscapeKey:false
         }).then((result) => {
           if (result.value) {
-          this.Router.navigateByUrl("/user/profile");
+          //this.Router.navigateByUrl("/user/profile");
+          this.goBackToProfile();
           }
       })
        }else{
@@ -401,7 +402,8 @@ export class RegisterComponent implements OnInit {
           allowEscapeKey:false
        }).then((result) => {
         if (result.value) {
-        this.Router.navigateByUrl("/user/profile");
+        //this.Router.navigateByUrl("/user/profile");
+        this.goBackToProfile();
         }
       })
       }

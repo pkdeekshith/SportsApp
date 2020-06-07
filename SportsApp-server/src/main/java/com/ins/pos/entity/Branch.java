@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -92,6 +94,7 @@ public class Branch {
 	private String contactEmail;
 	
 	@Column(columnDefinition="tinyint(1) default 1")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean active;
 
 	public Long getBranchId() {

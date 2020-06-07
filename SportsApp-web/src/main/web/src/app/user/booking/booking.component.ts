@@ -50,17 +50,36 @@ export class BookingComponent implements OnInit {
          return;
         }
         this.ngxService.start();
-        this.BackEnd.getTimeSlotsForSubFacility(this.subFacility.subFacilityId).subscribe(
-          data =>{
-            if(data){
+        
+        this.BackEnd.verifyAvailability([this.facility.facilityId])
+        .subscribe(
+          data  => {
+            if(data.status == "Success" && data.facility[0].slotAavailable=="Y"){
+              this.BackEnd.getTimeSlotsForSubFacility(this.subFacility.subFacilityId).subscribe(
+                data =>{
+                  if(data){
+                    this.ngxService.stop();
+                    this.bookingRangeObj = data[0];
+                    this.availableSlots = data[0].timetable;
+                  }
+                },error=>{
+                  this.ngxService.stop();
+                }
+                )
+            }else{
+              //Booking window closed
               this.ngxService.stop();
-              this.bookingRangeObj = data[0];
-              this.availableSlots = data[0].timetable;
+              try{
+                this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: data.facility[0].validation});    
+              }catch(er){
+                this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: "No Slots Available"});    
+              }
             }
-          },error=>{
+          },error =>{
             this.ngxService.stop();
-          }
-          )
+          })
+        
+        
         }
         handleFacilityChange(){
           this.availableSlots.length = 0;

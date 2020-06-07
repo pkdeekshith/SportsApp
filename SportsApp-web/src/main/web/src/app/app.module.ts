@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from  '@angular/common/http';
@@ -32,6 +33,9 @@ import {Utility} from './shared/utility/utility';
 
 import {Data} from './shared/data/data';
 import {MessageService} from 'primeng/api';
+import { AdminComponent } from './admin/admin.component';
+import { SettingsComponent } from './admin/settings/settings.component';
+import { ReportsComponent } from './admin/reports/reports.component';
 
 
 @NgModule({
@@ -50,10 +54,14 @@ import {MessageService} from 'primeng/api';
     ProfileComponent,
     HistoryComponent,
     BookingComponent,
-    PaymentComponent
+    PaymentComponent,
+    AdminComponent,
+    SettingsComponent,
+    ReportsComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,

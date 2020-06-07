@@ -8,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 export class AboutComponent implements OnInit {
 
   constructor() { }
-
+  swap:any;
   ngOnInit() {
     this.setBackgroundImages(4000,4);
+  }
+  ngOnDestroy(){
+    window.clearInterval(this.swap);
   }
   setBackgroundImages(interval,frames){
     let int=1;
@@ -20,6 +23,6 @@ export class AboutComponent implements OnInit {
       if(int == frames){ int=1;}
 
     }
-    var swap = window.setInterval(func,interval);
+     this.swap = window.setInterval(func,interval);
   }
 }

@@ -46,8 +46,15 @@ export class LoginComponent implements OnInit {
         this.ngxService.stop();
         if(data && data.memberId){
           this.BackEnd.memberId = data.memberId.toString();
+
           this.Utility.saveSession(data.memberId);
-          this.Router.navigateByUrl("/user");
+          if(data.roles[0].roleName == "ROLE_ADMIN"){
+            this.BackEnd.memberRole="admin";
+            this.Router.navigateByUrl("/admin");
+          }else{
+            this.Router.navigateByUrl("/user");
+          }
+          //If admin, then redirect to /admin
         }
         else{
           Swal.fire({

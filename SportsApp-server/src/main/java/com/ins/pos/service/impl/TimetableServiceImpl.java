@@ -1,14 +1,18 @@
 package com.ins.pos.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilitySubFacilityTimeTableJsonDTO;
@@ -48,6 +52,12 @@ public class TimetableServiceImpl implements TimetableService {
 	
 	@Autowired
 	private OnlineBookingWindowRepository onlineBookingWindowRepository;
+	
+	@Value("${sportsapp.facility.photos.path}")
+	private String facilityPhotoPath;
+	
+	@Value("${sportsapp.subfacility.photos.path}")
+	private String subFacilityPhotoPath;
 
 	@Override
 	public List<FacilitySubFacilityTimeTableJsonDTO> getAvailableTimeTables(String data) {
@@ -118,6 +128,20 @@ public class TimetableServiceImpl implements TimetableService {
 							facilityOpt.get());
 										
 					BeanUtils.copyProperties(facilityOpt.get(), facilitySubFacilityTimeTableJsonDTO);
+					try {
+						File file = new File(facilityPhotoPath+facilityOpt.get().getFacilityId().toString()+".png");
+						if(!file.exists()) {
+							file = new File(facilityPhotoPath+"noimage.png");
+						}
+						byte[] fileContent = FileUtils.readFileToByteArray(file);
+						String encodedString = Base64.getEncoder().encodeToString(fileContent);
+						facilitySubFacilityTimeTableJsonDTO.setFacilityPhoto(encodedString);
+					}catch(Exception e) {
+						e.printStackTrace();
+					}
+					
+					
+					
 					List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActiveAndOnlineActive(facilityOpt.get(), true,true);
 					List<SubFacilityTimeTableJsonDTO> subFacilityTimeTableJsonDTOList = new ArrayList<SubFacilityTimeTableJsonDTO>();
 					for(SubFacility subFacility:subFacilityList) {
@@ -141,6 +165,19 @@ public class TimetableServiceImpl implements TimetableService {
 						if(priceList!=null&&!priceList.isEmpty()) {
 							subFacilityTimeTableJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 						}
+						
+						try {
+							File file = new File(subFacilityPhotoPath+subFacility.getSubFacilityId().toString()+".png");
+							if(!file.exists()) {
+								file = new File(subFacilityPhotoPath+"noimage.png");
+							}
+							byte[] fileContent = FileUtils.readFileToByteArray(file);
+							String encodedString = Base64.getEncoder().encodeToString(fileContent);
+							subFacilityTimeTableJsonDTO.setSubFacilityPhoto(encodedString);
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+						
 						subFacilityTimeTableJsonDTOList.add(subFacilityTimeTableJsonDTO);
 					}
 					facilitySubFacilityTimeTableJsonDTO.setSubFacility(subFacilityTimeTableJsonDTOList);
@@ -240,6 +277,19 @@ public class TimetableServiceImpl implements TimetableService {
 					if (priceList != null && !priceList.isEmpty()) {
 						subFacilityTimeTableJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 					}
+					
+					try {
+						File file = new File(subFacilityPhotoPath+subFacilityOpt.get().getSubFacilityId().toString()+".png");
+						if(!file.exists()) {
+							file = new File(subFacilityPhotoPath+"noimage.png");
+						}
+						byte[] fileContent = FileUtils.readFileToByteArray(file);
+						String encodedString = Base64.getEncoder().encodeToString(fileContent);
+						subFacilityTimeTableJsonDTO.setSubFacilityPhoto(encodedString);
+					}catch(Exception e) {
+						e.printStackTrace();
+					}
+					
 					subFacilityTimeTableJsonDTOList.add(subFacilityTimeTableJsonDTO);
 				}
 

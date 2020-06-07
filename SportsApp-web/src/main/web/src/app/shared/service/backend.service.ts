@@ -9,6 +9,7 @@ export class BackendService {
   memberId:any;
   editMode:any;
   memberData:any;
+  memberRole:any;
   constructor(private Http:HttpClient, private Config: Config) { 
     this.URL = this.Config.URL;
   }
@@ -119,6 +120,38 @@ export class BackendService {
       "memberId":parseInt(id)
     };
     return this.Http.post<any>(this.URL.renewMember, req)
+  }
+  getBookingSummary(req){
+    return this.Http.post<any>(this.URL.getBookingSummary, req)
+  }
+  getSpotBookingForDays(req){
+    return this.Http.post<any>(this.URL.getSpotBookingForDays, req)
+  }
+  getAllAccountsForDays(req){
+    return this.Http.post<any>(this.URL.getAllAccountsForDays, req)
+  }
+  getAllBookingForDays(req){
+    return this.Http.post<any>(this.URL.getAllBookingForDays, req)
+  }
+  getConsolidatedReportByDate(req){
+    return this.Http.post<any>(this.URL.getConsolidatedReportByDate, req)
+  }
+  getConsolidatedReportByFacility(req){
+    return this.Http.post<any>(this.URL.getConsolidatedReportByFacility, req)
+  }
+  getFacilitiesForAdmin(){
+    let req={"centerId":"2"};
+    return this.Http.post<any>(this.URL.getAllFacilitiesAdmin, req)
+  }
+  updateFacilities(req){
+    return this.Http.post<any>(this.URL.updateFacilities, req)
+  }
+  getAllSubFacilitiesAdmin(facilityId){
+    let req={"facility": [facilityId].map(String)};
+    return this.Http.post<any>(this.URL.getAllSubFacilitiesAdmin, req)
+  }
+  updateSubFacilitiesAdmin(req){
+    return this.Http.post<any>(this.URL.updateSubFacilitiesAdmin, req)
   }
   //helper functions-move to utility later
   getDOB(date){

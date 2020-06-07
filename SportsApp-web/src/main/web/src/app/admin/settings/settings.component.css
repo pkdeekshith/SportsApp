@@ -1,0 +1,30 @@
+.leftMenu{
+    background: #152844;
+    padding-bottom: 10px;
+    color: white;
+    padding-top: 10px;
+}
+.leftMenu ul{
+    list-style-type: none !important;
+    margin-top: 25px;
+}
+.leftMenu ul li{
+    padding: 4px 0px 9px 0px;
+    border-bottom: solid 1px grey;
+    cursor: pointer;
+}
+.leftMenu ul li:hover {
+    background: #162354;
+}
+.settings-content{
+    min-height: 400px;
+    background:  #00002d;
+    color: wheat;
+}
+
+.report-title{
+    text-align: center;
+    font-size: 17px;
+    background: #454556;
+    margin-bottom: 7px;
+}

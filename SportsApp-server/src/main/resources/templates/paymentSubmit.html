@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title></title>
+<meta charset="UTF-8">
+</head>
+<body>
+
+
+	<form action="#"
+		th:action="@{https://cgt.in.worldline.com/ipg/doMEPayRequest}"
+		th:object="${paymentRequest}" method="post">
+		<input type="text" th:field="*{merchantRequest}" id="merchantRequest"
+			placeholder="Name"> <input type="text"
+			th:field="*{merchantID}" id="merchantID" placeholder="merchantID">
+		<input type="submit" class="btn btn-primary" value="Submit">
+	</form>
+
+</body>
+</html>

@@ -1,16 +1,20 @@
 package com.ins.pos.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityJsonDTO;
@@ -66,6 +70,12 @@ public class FacilicyServiceImpl implements FacilityService{
 	@Autowired 
 	AccountsSubSectorRepository accountsSubSectorRepository;
 	
+	@Value("${sportsapp.facility.photos.path}")
+	private String facilityPhotoPath;
+	
+	@Value("${sportsapp.subfacility.photos.path}")
+	private String subFacilityPhotoPath;
+	
 	@Override
 	public List<FacilityTypeJsonDTO> getAllFacilityTypes() {
 		List<FacilityTypeJsonDTO> facilityTypeJsonDTOList= new ArrayList<FacilityTypeJsonDTO>();
@@ -97,6 +107,27 @@ public class FacilicyServiceImpl implements FacilityService{
 					for (Facility facility : facilityList) {
 						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
 						BeanUtils.copyProperties(facility, facilityJsonDTO);
+						List<SubFacility> subFacilityList = subFacilityRepository
+								.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
+						if(!subFacilityList.isEmpty()) {
+							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacilityList.get(0));
+							if(priceList!=null&&!priceList.isEmpty()) {
+								facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+							}
+						}
+						try {
+							File file = new File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
+							if(!file.exists()) {
+								file = new File(facilityPhotoPath+"noimage.png");
+							}
+							byte[] fileContent = FileUtils.readFileToByteArray(file);
+							String encodedString = Base64.getEncoder().encodeToString(fileContent);
+							facilityJsonDTO.setFacilityPhoto(encodedString);
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						
 						facilityJsonDTOList.add(facilityJsonDTO);
 					}
 				}
@@ -216,6 +247,27 @@ public class FacilicyServiceImpl implements FacilityService{
 					for (Facility facility : facilityList) {
 						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
 						BeanUtils.copyProperties(facility, facilityJsonDTO);
+						
+						List<SubFacility> subFacilityList = subFacilityRepository
+								.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
+						if(!subFacilityList.isEmpty()) {
+							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacilityList.get(0));
+							if(priceList!=null&&!priceList.isEmpty()) {
+								facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+							}
+						}
+						
+						try {
+							File file = new File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
+							if(!file.exists()) {
+								file = new File(facilityPhotoPath+"noimage.png");
+							}
+							byte[] fileContent = FileUtils.readFileToByteArray(file);
+							String encodedString = Base64.getEncoder().encodeToString(fileContent);
+							facilityJsonDTO.setFacilityPhoto(encodedString);
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
 						facilityJsonDTOList.add(facilityJsonDTO);
 					}
 			}
@@ -245,6 +297,19 @@ public class FacilicyServiceImpl implements FacilityService{
 						List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacility);
 						SubFacilityJsonDTO subFacilityJsonDTO = new SubFacilityJsonDTO();
 						BeanUtils.copyProperties(subFacility, subFacilityJsonDTO);
+						
+						try {
+							File file = new File(subFacilityPhotoPath+subFacility.getSubFacilityId().toString()+".png");
+							if(!file.exists()) {
+								file = new File(subFacilityPhotoPath+"noimage.png");
+							}
+							byte[] fileContent = FileUtils.readFileToByteArray(file);
+							String encodedString = Base64.getEncoder().encodeToString(fileContent);
+							subFacilityJsonDTO.setSubFacilityPhoto(encodedString);
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+						
 						subFacilityJsonDTOList.add(subFacilityJsonDTO);
 						if(priceList!=null&&!priceList.isEmpty()) {
 							subFacilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());

@@ -9,6 +9,8 @@ public class SubFacilityJsonDTO {
 	
 	private String subFacilityName;
 	
+	private String subFacilityPhoto;
+	
 	public Long getSubFacilityId() {
 		return subFacilityId;
 	}
@@ -31,6 +33,14 @@ public class SubFacilityJsonDTO {
 
 	public void setSubFacilityName(String subFacilityName) {
 		this.subFacilityName = subFacilityName;
+	}
+
+	public String getSubFacilityPhoto() {
+		return subFacilityPhoto;
+	}
+
+	public void setSubFacilityPhoto(String subFacilityPhoto) {
+		this.subFacilityPhoto = subFacilityPhoto;
 	}
 
 }
