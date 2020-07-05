@@ -18,13 +18,25 @@
 }
 .settings-content{
     min-height: 400px;
-    background:  #00002d;
-    color: wheat;
+    background:  #E5E5E5;
 }
 
 .report-title{
     text-align: center;
     font-size: 17px;
-    background: #454556;
+    background: #152844;
     margin-bottom: 7px;
+    color: white
+}
+.setting_wrapper{
+    min-height: 100%;
+}
+::ng-deep .ui-datepicker table td{
+    padding: 0 !important;
+}
+::ng-deep .ui-datepicker-header{
+    display: none !important;
+}
+::ng-deep .ui-multiselect-label{
+    min-height: 30px;
 }

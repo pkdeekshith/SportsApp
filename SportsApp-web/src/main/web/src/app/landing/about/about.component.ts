@@ -9,6 +9,7 @@ export class AboutComponent implements OnInit {
 
   constructor() { }
   swap:any;
+  hideFirst = true;
   ngOnInit() {
     this.setBackgroundImages(4000,4);
   }

@@ -7,6 +7,7 @@ public class FacilitySubFacilityTimeTableJsonDTO {
 	private Long facilityId;
 	private String facilityName;
 	private String facilityPhoto;
+	private String centerName;
 	private List<SubFacilityTimeTableJsonDTO> subFacility;
 
 	public Long getFacilityId() {
@@ -39,5 +40,13 @@ public class FacilitySubFacilityTimeTableJsonDTO {
 
 	public void setFacilityPhoto(String facilityPhoto) {
 		this.facilityPhoto = facilityPhoto;
+	}
+
+	public String getCenterName() {
+		return centerName;
+	}
+
+	public void setCenterName(String centerName) {
+		this.centerName = centerName;
 	}
 }

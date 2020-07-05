@@ -1,4 +1,4 @@
-<div class="">
+<div class="menu-wrapper">
   <nav class="navbar navbar-expand-lg navbar-dark  static-top row toprow">
     <div class="container">
       <a class="navbar-brand logoBox" href="#">
@@ -10,24 +10,24 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <!-- <div><i class="fas fa-user-circle fa-2x" style="color: green"></i><span style="margin-left: 15px">Welcome User</span></div> -->
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item" *ngIf="this.BackendService.memberRole!='admin'">
-            <a class="nav-link" routerLink="/user/profile">PROFILE</a>
+          <li class="nav-item" *ngIf="this.BackendService.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/profile">Profile</a>
           </li>
-          <li class="nav-item " *ngIf="this.BackendService.memberRole!='admin'">
-            <a class="nav-link" routerLink="/user/history">BOOKING HISTORY</a>
+          <li class="nav-item " *ngIf="this.BackendService.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/history">Booking History</a>
           </li>
           
-          <li class="nav-item" *ngIf="this.BackendService.memberRole!='admin'">
-            <a class="nav-link" routerLink="/user/booking">BOOK NOW</a>
+          <li class="nav-item" *ngIf="this.BackendService.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/sport">Book Now</a>
           </li>
-           <li class="nav-item" *ngIf="this.BackendService.memberRole=='admin'">
-            <a class="nav-link" routerLink="/admin/settings">SETTINGS</a>
+           <li class="nav-item" *ngIf="this.BackendService.memberRole =='admin'">
+            <a class="nav-link" routerLink="/admin/settings">Settings</a>
           </li> 
           <li class="nav-item" *ngIf="this.BackendService.memberRole=='admin'">
-            <a class="nav-link" routerLink="/admin/reports">REPORTS</a>
+            <a class="nav-link" routerLink="/admin/reports">Reports</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" (click)="logout()">LOGOUT</a>
+          <li class="nav-item" *ngIf="this.BackendService.memberRole=='admin' || this.BackendService.memberRole=='user'">
+            <a class="nav-link" (click)="logout()">Logout</a>
           </li>
          
           

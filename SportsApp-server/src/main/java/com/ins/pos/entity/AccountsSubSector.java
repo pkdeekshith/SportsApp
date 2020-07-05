@@ -74,7 +74,6 @@ public class AccountsSubSector {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
-	
-	
 
+	
 }

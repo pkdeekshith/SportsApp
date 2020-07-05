@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,11 +35,13 @@ import com.ins.pos.dto.MemberShipTypeJsonDTO;
 import com.ins.pos.dto.RoleJsonDTO;
 import com.ins.pos.entity.Member;
 import com.ins.pos.entity.MemberFacility;
+import com.ins.pos.entity.PaymentOrderStatus;
 import com.ins.pos.entity.Role;
 import com.ins.pos.entity.User;
 import com.ins.pos.entity.UserRoles;
 import com.ins.pos.repository.MemberFacilityRepository;
 import com.ins.pos.repository.MemberRepository;
+import com.ins.pos.repository.PaymentOrderStatusRepository;
 import com.ins.pos.repository.UserRepository;
 import com.ins.pos.repository.UserRolesRepository;
 import com.ins.pos.service.impl.CustomUserDetailsServiceImpl;
@@ -56,18 +59,21 @@ public class AuthEndPoint {
 
 	@Autowired
 	UserRepository users;
-	
+
 	@Autowired
 	UserRolesRepository userRolesRepository;
 
 	@Autowired
 	private CustomUserDetailsServiceImpl userService;
-	
+
 	@Autowired
 	private MemberRepository memberRepository;
-	
+
 	@Autowired
 	private MemberFacilityRepository memberFacilityRepository;
+	
+	@Autowired
+	private PaymentOrderStatusRepository paymentOrderStatusRepository;
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/login")
@@ -79,7 +85,7 @@ public class AuthEndPoint {
 			List<UserRoles> userRoles = userRolesRepository.findByUserAndActive(user, true);
 			Set<Role> roleSet = new HashSet<Role>();
 			List<RoleJsonDTO> rolesList = new ArrayList<RoleJsonDTO>();
-			for(UserRoles usrRole:userRoles) {
+			for (UserRoles usrRole : userRoles) {
 				roleSet.add(usrRole.getRole());
 				RoleJsonDTO roleJsonDTO = new RoleJsonDTO();
 				roleJsonDTO.setRoleId(usrRole.getRole().getRoleId());
@@ -87,19 +93,19 @@ public class AuthEndPoint {
 				rolesList.add(roleJsonDTO);
 			}
 			String token = jwtTokenProvider.createToken(username, roleSet);
-			
+
 			MemberDetailsJsonDTO memberDetailsJsonDTO = new MemberDetailsJsonDTO();
-			List<Member> memberList = memberRepository.findByUserName(username);
+			List<Member> memberList = memberRepository.findByUserNameAndActive(username,true);
 			Member member = memberList.get(0);
 			List<FacilityTypeJsonDTO> facilityTypeList = new ArrayList<FacilityTypeJsonDTO>();
 			memberDetailsJsonDTO.setFacilityType(facilityTypeList);
-			if(member!=null) {
+			if (member != null) {
 				MemberShipTypeJsonDTO memberShipTypeJsonDTO = new MemberShipTypeJsonDTO();
 				BeanUtils.copyProperties(member, memberDetailsJsonDTO);
 				BeanUtils.copyProperties(member.getMemberShipTypeId(), memberShipTypeJsonDTO);
 				memberDetailsJsonDTO.setMemberShipType(memberShipTypeJsonDTO);
 				List<MemberFacility> memberFacList = memberFacilityRepository.findByMemberAndActive(member, true);
-				for(MemberFacility memberFacility:memberFacList) {
+				for (MemberFacility memberFacility : memberFacList) {
 					FacilityTypeJsonDTO facilityTypeJsonDTO = new FacilityTypeJsonDTO();
 					memberFacility.getFacilityType();
 					BeanUtils.copyProperties(memberFacility.getFacilityType(), facilityTypeJsonDTO);
@@ -116,20 +122,18 @@ public class AuthEndPoint {
 				}
 			}
 			memberDetailsJsonDTO.setRoles(rolesList);
-			
+
 			HttpHeaders responseHeaders = new HttpHeaders();
-		    responseHeaders.set("token",token);
-		    responseHeaders.set("status","Success");
-		 
-		    return ResponseEntity.ok()
-		    	      .headers(responseHeaders)
-		    	      .body(memberDetailsJsonDTO);
-			
-			
+			responseHeaders.set("auth-token", token);
+			responseHeaders.set("status", "Success");
+
+			return ResponseEntity.ok().headers(responseHeaders).body(memberDetailsJsonDTO);
+
 		} catch (AuthenticationException e) {
 			HttpHeaders responseHeaders = new HttpHeaders();
-		    responseHeaders.set("status","Failure");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body("Invalid Username or Password!");
+			responseHeaders.set("status", "Failure");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders)
+					.body("Invalid Username or Password!");
 		}
 	}
 
@@ -144,5 +148,55 @@ public class AuthEndPoint {
 		Map<Object, Object> model = new HashMap<>();
 		model.put("message", "User registered successfully");
 		return ok(model);
+	}
+
+	@PostMapping("/validateUserName")
+	public ResponseEntity validateUserName(@RequestBody String data) {
+		JSONObject requestJSON = new JSONObject(data);
+		JSONObject responseJSON = new JSONObject();
+		String email = requestJSON.getString("email");
+		User userExists = userService.findUserByEmail(email);
+
+		if (userExists != null) {
+			responseJSON.put("isValid", false);
+			responseJSON.put("message", "User with username: " + email + " already exists");
+		} else {
+			responseJSON.put("isValid", true);
+		}
+
+		return ResponseEntity.ok().body(responseJSON.toString());
+
+	}
+	
+	@PostMapping("/getMemberCred")
+	public ResponseEntity getMemberCred(@RequestBody String data) {
+		JSONObject requestJSON = new JSONObject(data);
+		JSONObject responseJSON = new JSONObject();
+		String encodedString = requestJSON.getString("orderId");
+		String restString = encodedString.substring(6);
+		String orderId = restString.substring(0, restString.length() - 6);
+		boolean status = false;
+		String roleName = "";
+		Member member = null;
+		PaymentOrderStatus paymenOrderStatus = paymentOrderStatusRepository.findByOrderId(orderId);
+		if(paymenOrderStatus!=null&&("S".equals(paymenOrderStatus.getStatus())||"F".equals(paymenOrderStatus.getStatus()))) {
+			member = paymenOrderStatus.getMemberId();
+			if(member!=null&&!member.getFirstLogin()) {
+				status=true;
+				User user = users.findByEmail(member.getEmail());
+				List<UserRoles> userRoles = userRolesRepository.findByUserAndActive(user, true);
+				roleName = userRoles.get(0).getRole().getRoleName();
+			}
+			
+		}
+		if(status) {
+			responseJSON.put("status", "S");
+			responseJSON.put("memberId", paymenOrderStatus.getMemberId().getMemberId());
+			responseJSON.put("memberRole",roleName);
+		} else {
+			responseJSON.put("status", "F");
+		}
+		return ResponseEntity.ok().body(responseJSON.toString());
+
 	}
 }

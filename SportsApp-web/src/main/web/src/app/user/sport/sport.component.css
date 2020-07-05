@@ -1,0 +1,80 @@
+.facility-data .info-box{
+    width: 75%;
+    float: left;
+    }
+    .facility-data .rate-box{
+        width: 25%;
+        float: left;
+        margin-top: 20px;
+        text-align: center;
+    }
+    .facility-horizon-box{
+        color: black;
+        background: #FFFFFF;
+        border: 1px solid #DBDBDB;
+        box-sizing: border-box;
+        margin-top: 12px;
+        box-shadow: 0px 4px 13px rgba(0, 0, 0, 0.06);
+        border-radius: 4px;
+        margin-bottom: 2px;
+        padding-bottom: 20px;
+        padding-top: 10px;
+        /* height: 144px; */
+    }
+    .coach-text{
+        font-weight: 500;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        color: #F25822;
+    }
+    .center-main{
+    font-weight: 500;
+    font-size: 18px;
+    /* identical to box height */
+    color: #333333;
+    }
+    .center-place{
+        font-weight: 500;
+    font-size: 13px;
+    /* identical to box height */
+    color: #333333;
+    }
+    .rupee{
+        height: 17px;
+        width: 20px;
+        background: url("../../../assets/images/rupee.png") no-repeat;
+        display: inline-block;
+        /* margin-right: 5px; */
+        background-size: contain;
+    }
+    .month-text{
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 16px;
+        color: #6A6A6A;
+        margin-left: 6px;
+    }
+    .price-text{
+        font-weight: bold;
+        font-size: 17px;
+        line-height: 20px;
+        color: #333333;
+    }
+    .explore-btn{
+        background: #68AE3E !important;
+        border: 1px solid #68AE3E !important;
+        box-sizing: border-box !important;
+        border-radius: 3px !important;
+        margin-top: 5px !important;
+    }
+    .feature-text{
+        background: rgba(0, 121, 255, 0.16);
+        border-radius: 2px;
+        font-weight: 500;
+    font-size: 12px;
+    /* identical to box height */
+    
+    margin-left: 5px;
+    color: #0079FF;
+    padding: 2px;
+    }

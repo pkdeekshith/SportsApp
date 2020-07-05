@@ -46,6 +46,8 @@ public class Accounts {
 	@Column
 	private Double cautionDeposit;
 	
+	@Column
+	private Boolean onHold;
 	
 	@Column
 	private Boolean cautionStatus;
@@ -94,6 +96,8 @@ public class Accounts {
 	@Column
 	private Boolean active;
 	
+	
+	
 	@Column
 	private Boolean isCentreBooking;
 	
@@ -111,6 +115,7 @@ public class Accounts {
 	
 	@Column
 	private String bookingApp;
+	
 	
 	public Double getCreditAmount() {
 		return creditAmount;
@@ -334,7 +339,14 @@ public class Accounts {
 	public void setAccountsSubId(Set<AccountsSubSector> accountsSubId) {
 		this.accountsSubId = accountsSubId;
 	}
-	
+
+	public Boolean getOnHold() {
+		return onHold;
+	}
+
+	public void setOnHold(Boolean onHold) {
+		this.onHold = onHold;
+	}
 
 
 }

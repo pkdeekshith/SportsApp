@@ -14,25 +14,27 @@ import com.ins.pos.entity.Member;
 import com.ins.pos.entity.SubFacility;
 
 public interface AccountsRepository extends CrudRepository<Accounts, Long> {
+	
+	List<Accounts> findByAccountsIdIn(List<Long> accountsId);
 
 	@Query("select a from Accounts a join a.memberId where a.memberId=:memberId and a.typeOfBooking=:typeOfBooking and a.active=:active")
 	public List<Accounts> getAllBookingForMember(@Param("memberId") Member memberId,
 			@Param("typeOfBooking") String typeOfBooking, @Param("active") Boolean active);
 
-	@Query("select a from Accounts a where a.bookingDate>=:bookingStartDate and a.bookingDate<=:bookingEndDate and a.active=:active and a.bookingApp IN :bookingApp")
+	@Query("select a from Accounts a where a.bookingDate>=:bookingStartDate and a.bookingDate<=:bookingEndDate and a.active=:active and a.bookingApp IN :bookingApp and a.centerId IN :centerId")
 	public List<Accounts> getAllBookingForDays(@Param("bookingStartDate") Date bookingStartDate,
 			@Param("bookingEndDate") Date bookingEndDate, @Param("active") Boolean active,
-			@Param("bookingApp") List<String> bookingApp);
+			@Param("bookingApp") List<String> bookingApp,@Param("centerId") List<Center> centerId);
 
 	@Query("select a from Accounts a join a.memberId where a.memberId=:memberId and a.bookingDateLast>=:bookingEndDate and a.typeOfBooking=:typeOfBooking and a.active=:active")
 	public List<Accounts> getUpcomingBookingForMember(@Param("memberId") Member memberId,
 			@Param("typeOfBooking") String typeOfBooking, @Param("active") Boolean active,
 			@Param("bookingEndDate") Date bookingEndDate);
 
-	@Query("select a from Accounts a where a.bookingDate>=:bookingStartDate and a.bookingDate<=:bookingEndDate and a.typeOfBooking=:typeOfBooking and a.active=:active and a.bookingApp IN :bookingApp")
+	@Query("select a from Accounts a where a.bookingDate>=:bookingStartDate and a.bookingDate<=:bookingEndDate and a.typeOfBooking=:typeOfBooking and a.active=:active and a.bookingApp IN :bookingApp and a.centerId IN :centerId")
 	public List<Accounts> getSpotBookingForDays(@Param("bookingStartDate") Date bookingStartDate,
 			@Param("bookingEndDate") Date bookingEndDate, @Param("typeOfBooking") String typeOfBooking,
-			@Param("active") Boolean active, @Param("bookingApp") List<String> bookingApp);
+			@Param("active") Boolean active, @Param("bookingApp") List<String> bookingApp,@Param("centerId") List<Center> centerId);
 
 	@Query(value = "SELECT a FROM Accounts a WHERE a.paidDate>=:startDate and a.paidDate<:endDate and a.active=1 and a.bookingApp IN :bookingApp")
 	public List<Accounts> getAllSelectedDays(@Param("startDate") Date startDate, @Param("endDate") Date endDate,

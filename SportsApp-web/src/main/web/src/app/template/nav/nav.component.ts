@@ -13,7 +13,7 @@ export class NavComponent implements OnInit {
   constructor(
     private Router: Router,
     private Utility : Utility,
-    private BackendService: BackendService
+    public BackendService: BackendService
   ) { }
 
   ngOnInit() {
@@ -23,6 +23,7 @@ export class NavComponent implements OnInit {
     this.Utility.deleteSession();
     this.BackendService.memberId = undefined;
     this.BackendService.memberRole = undefined;
+    localStorage.clear();
     this.Router.navigateByUrl("/landing/login");
   }
 }

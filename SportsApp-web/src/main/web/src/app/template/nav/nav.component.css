@@ -1,19 +1,30 @@
+.menu-wrapper{
+    height: 80px;
+}
 .logoBox{
     height: 55px;
     padding: 0;
 }
 .toprow{
-    
+    height: 79px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    box-shadow: 0px 4px 13px rgba(0, 0, 0, 0.06) !important;
 }
+
+
+    
+
 .nav-link{
-    color:black !important;
-    font-weight: 600;
+    color:#3C4852 !important;
+    font-weight: 500 !important;
+    cursor: pointer;
 }
 .nav-item.active{
     
 }
 .nav-item:hover{
-    border-bottom: solid 2px #00002d;
+    /* border-bottom: solid 2px #00002d; */
 }
 .navbar-toggler{
     background: black;
@@ -25,3 +36,10 @@ li:hover{
     /* background: #1a1a5d;
     color: wheat !important;*/
 } 
+.navbar-collapse.collapse.show{
+    z-index: 1 !important;
+    background: #e8e8e8 !important;
+}
+li.nav-item:hover {
+    background: #f3f1f1 !important;
+}

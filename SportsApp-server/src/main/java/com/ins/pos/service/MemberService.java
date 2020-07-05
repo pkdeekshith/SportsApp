@@ -15,4 +15,6 @@ public interface MemberService {
 	public String changePassword(String requestJSON);
 	public String forgetPassword(String requestJSON);
 	
+	
+	
 }

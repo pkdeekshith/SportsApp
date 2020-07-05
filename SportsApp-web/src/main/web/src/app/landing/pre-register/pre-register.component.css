@@ -1,0 +1,34 @@
+.validate-wrapper{
+    background: #e5e5e5;
+    min-height: calc(100% - 125px);
+
+}
+.validate-form{
+    background: #FFFFFF;
+    box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11);
+    border-radius: 6px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+.validate-form .form-group{
+    width:50% !important;
+    margin: 0 auto;
+}
+.valid-title{
+    font-size: 20px;
+    font-weight: 500;
+}
+.validate-image{
+    background: url("../../../assets/images/home-image.JPG") no-repeat;
+    height: 355px;
+    width: 100%;
+    background-size: 100% 100%;
+}
+.avail-btn{
+    background: #68AE3E !important;
+    border: 1px solid #68AE3E !important;
+    box-sizing: border-box !important;
+    border-radius: 3px !important;
+    margin-top: 5px !important;
+    min-width: 125PX;
+}

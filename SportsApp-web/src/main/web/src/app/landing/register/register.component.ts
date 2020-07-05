@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  constructor(private formBuilder: FormBuilder,private BackEnd : BackendService,private ngxService: NgxUiLoaderService,
+  constructor(private formBuilder: FormBuilder,public BackEnd : BackendService,private ngxService: NgxUiLoaderService,
     private messageService: MessageService, private Data:Data,private Router : Router) {
       if(this.BackEnd.editMode == true){
         this.editMode = true;
@@ -80,9 +80,7 @@ export class RegisterComponent implements OnInit {
       student : ['', Validators.required],
       govt : ['', Validators.required],
       coaching : ['', Validators.required],
-      prefSport1 : ['', Validators.required],
-      facility1: ['', Validators.required],
-      center : ['Jimmy George', Validators.required],
+      center : ['', Validators.required],
       memCost : ['', Validators.required],
       memID :[],
       memStartDate:[new Date(),Validators.required],
@@ -105,6 +103,14 @@ export class RegisterComponent implements OnInit {
            data=>{
               this.f.memCost.patchValue(data[0].memberShipCost);
               this.f.memID.patchValue(data[0].memberShipId);
+              //this.f.center.patchValue(this.BackEnd.facilityToValidate.centerName);
+              if(this.BackEnd.facilityToValidate){
+                this.f.center.patchValue(this.BackEnd.facilityToValidate.centerName);
+              }
+              else if(this.BackEnd.memberData){
+                this.f.center.patchValue(this.BackEnd.memberData.centerName);
+              }
+              this.BackEnd.cardAmount= data[0].memberIdCardAmount;
               
               //edit mode on
               if(this.editMode){
@@ -250,25 +256,25 @@ export class RegisterComponent implements OnInit {
   }
   handlePreferredSportSelection(){
     this.f.facility1.patchValue("");
-    this.ngxService.start();
-    this.BackEnd.getFacilityBasedOnPreferredSprtsSelected(this.f.prefSport1.value)
-    .subscribe(
-      data  => {
-        this.ngxService.stop();
-        //cover form if already opened
-        this.showProceedBtn = false;
-        document.querySelector("#fade-in").classList.remove("show");
-        this.failities.length=0;
-        let temp=[];
-        data.forEach(function(i){ 
-          temp.push({"label":i.facilityName,"value":i.facilityId})});
-        this.failities=temp;  
-      },
-      error  => {
-        console.log("Error", error);
-      }
+    // this.ngxService.start();
+    // this.BackEnd.getFacilityBasedOnPreferredSprtsSelected(this.f.prefSport1.value)
+    // .subscribe(
+    //   data  => {
+    //     this.ngxService.stop();
+    //     //cover form if already opened
+    //     this.showProceedBtn = false;
+    //     document.querySelector("#fade-in").classList.remove("show");
+    //     this.failities.length=0;
+    //     let temp=[];
+    //     data.forEach(function(i){ 
+    //       temp.push({"label":i.facilityName,"value":i.facilityId})});
+    //     this.failities=temp;  
+    //   },
+    //   error  => {
+    //     console.log("Error", error);
+    //   }
      
-    );
+    // );
   }
   handlePreferredFacilitySelection(){
     //cover form if already opened
@@ -281,24 +287,52 @@ export class RegisterComponent implements OnInit {
     this.f.isChecked.patchValue(false);
     // stop here if form is invalid
     if (this.registerForm.invalid) {
-        return;
+      try{
+        let e= document.querySelectorAll(".form-block input.ng-invalid,.form-block select.ng-invalid") as NodeList;
+        if(e && e.length){
+          let r= e[0] as HTMLInputElement;
+          r.focus();
+        }
+      }catch(er){
+        console.log(er);
+        
+      }
+      return;
     }
     if(this.imgURL == undefined){
       this.messageService.clear();
       this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: 'Please upload your photo'});
       return;
     }
-     
-    this.ngxService.start();
-    this.BackEnd.getSlotsAvailableToBook(this.f.facility1.value).subscribe(
-      data =>{
-        this.ngxService.stop();
-        this.display = true;
-        this.slotobject = data;
-      },error =>{
-
+    this.validateUserName();
+  }
+  validateUserName(){
+    let req={
+      "email": this.f.email.value,
+      "ignore": this.BackEnd.editMode? true : false
       }
-    )
+    this.ngxService.start();
+    this.BackEnd.validateUserName(req).subscribe(
+      data=>{
+        this.ngxService.stop();
+        if(data.isValid){
+          this.BackEnd.memberRole = "newuser";
+          this.BackEnd.preRegData.form = this.f;
+          this.BackEnd.preRegData.imgURL = this.imgURL;
+          this.Router.navigateByUrl("/user/book");
+        }else{
+          Swal.fire({
+            type : 'error',
+            html: '<b>'+data.message+'</b>',
+            allowOutsideClick :false
+          });
+        }
+      },error=>{
+        this.ngxService.stop();
+        alert("Network Error");
+      }
+    );
+
     
   }
   checkValue(fac,subfac,time){
@@ -342,7 +376,7 @@ export class RegisterComponent implements OnInit {
                 }).then((result) => {
                   if (result.value) {
                   this.Router.navigateByUrl("/landing/login");
-                  window.open("http://15.206.200.143:8080/SportsApp/api/admin/sendCommunications/"+data.accountId,"_blank");
+                  window.open("https://www.google.com","_blank");
                   }
               })}else{
                 this.ngxService.stop();

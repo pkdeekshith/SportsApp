@@ -1,12 +1,50 @@
+.login-wrapper{
+    min-height: calc(100vh - 125px) !important;
+    background: #E5E5E5;
+    
+}
+.login-image{
+    background: url("../../../assets/images/home-image.JPG") no-repeat;
+    height: 475px;
+    width: 100%;
+    background-size: 100% 100%;
+}
 .login-card{
+    background: #FFFFFF;
+    /* box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11); */
+    border-radius: 6px;
+    padding: 12px;
+    /* margin-top: 2%; */
+    padding: 10px;
+}
+.card-header{
+    border-bottom: 0 !important;
+}
+.loginbtn{
+    background: #68AE3E !important;
+    border: 1px solid #68AE3E !important;
+    box-sizing: border-box !important;
+    border-radius: 3px !important;
+    min-width: 135px !important;
+}
+.forgot-btn{
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: underline;
+}
+.newpass,.confpass,.emailpass{
+    margin: 0 auto !important;
+}
+.pass-error{
+    color:red;
+}
+/* .login-card{
     background:#00002d;
     color: white;
 }
-.login-wrapper{
-    background: url("../../../assets/images/Banner-6.jpg"); 
-    height: 100%;
-    
-}
+
 .loginbtn{
     background: #d8d0d0;
     color: #315a07;
@@ -21,7 +59,6 @@
     color:#dcbfbf;
 }
 .log2{
-    /* margin-left:7%; */
 }
 .log3{
     margin-left: 2px;
@@ -29,3 +66,7 @@
 .loginbtn:hover{
     background: #56c38c;
 }
+:host/deep{
+    background-color: yellow;
+    min-height: 100%;
+} */

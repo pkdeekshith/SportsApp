@@ -1,4 +1,4 @@
-<div class="bookingWrapper">
+<!-- <div class="bookingWrapper">
     <div class="row home-banner" id="t1">
         <div style="background: rgba(0,0,0,0.6);width: 100%;border-radius: 8px;">
           <div class="banner-text container">
@@ -29,7 +29,6 @@
                   <div class="col-md-3 col-sm-12">
                       <div class="form-group">
                           <label>&nbsp;</label>
-                        <!-- <label for="facilityName">Sub Facility</label> -->
                         <button (click)="getSlots()" class="btn btn-info searchBtn" style="margin: 0 auto;">Search</button> 
                       </div>
                     </div>
@@ -46,9 +45,7 @@
     </label>
   </div>
     <div class="">
-      <!-- <div class="boxes col">
-        <div class="slotBox" id="tBox" *ngFor="let item of availableSlots; let i = index" (click)="slotClicked()"><label>{{item}}</label></div>
-      </div> -->
+     
       <ul class="row">
         <li *ngFor="let time of availableSlots">{{slot(time.sessionStartTime)}} - {{slot(time.sessionEndTime)}}<input class="slotCheck" type="checkbox"   (change)="handleSlotClick(time)"/></li>
       </ul>
@@ -84,4 +81,5 @@
     </p-footer>
     </p-dialog>
     <p-toast key="errorToast" position="top-right"></p-toast>
-</div>
+</div> -->
+<span></span>

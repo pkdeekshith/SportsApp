@@ -10,23 +10,38 @@ export class BackendService {
   editMode:any;
   memberData:any;
   memberRole:any;
+  preRegData:any;
+  exploredFacility:any;
+  facilityToValidate:any;
+  cardAmount=0;
+  searchCenter:any;
+  centerIdFromLogin:any;
   constructor(private Http:HttpClient, private Config: Config) { 
     this.URL = this.Config.URL;
   }
 
   login(data){
-    return this.Http.post<any>(this.URL.login, data)
+    return this.Http.post<any>(this.URL.login, data,{observe: 'response' as 'body'})
   }
   getCentreList(){
-    return this.Http.post<any>("", {})
+    return this.Http.get<any>(this.URL.getCentreList, {})
+  }
+  getCenterListAdmin(){
+    return this.Http.get<any>(this.URL.getCenterListAdmin, {})
+  }
+  getOnlineBookingWindow(){
+    return this.Http.get<any>(this.URL.getOnlineBookingWindow, {})
+  }
+  saveBookingWindow(req){
+    return this.Http.post<any>(this.URL.saveBookingWindow, req)
   }
   getPreferredSports(){
     //return this.Http.get<any>(this.Config.baseURL+this.Config.URL.getPreferredSports, {})
     return this.Http.get<any>(this.URL.getPreferredSports, {})
   }
-  getFacilityBasedOnPreferredSprtsSelected(prefId){
+  getFacilityBasedOnPreferredSprtsSelected(id,prefId){
     let req={
-      "centerId":"2",
+      "centerId": id.toString(),
       "facilityTypeId":prefId.map(String)
     };
     return this.Http.post<any>(this.URL.getFacilityBasedOnPreferredSprtsSelected, req)
@@ -45,9 +60,19 @@ export class BackendService {
   }
   saveMember(form,img,id){
     let req:any={};
-    debugger;
+    let temp:any;
+    let center;
+    if(this.facilityToValidate){
+      center = this.facilityToValidate.centreId;
+    }
+    if(this.editMode){
+      temp= [this.memberData.facilityType[0].facilityTypeId];
+      center = this.memberData.centreId;
+    }else{
+      temp=this.preRegData.prefsport;
+    }
      req = {
-      "centerId": "2",
+      "centerId": center.toString(),
       "memberName": form.memberName.value,
       "memberPhoto": img,
       "isStudent": form.student.value =="Yes" ? true :false,
@@ -68,7 +93,8 @@ export class BackendService {
       "fatherName": form.guardName.value,
       "age": this.getAge(form.dateOfBirth.value),
       "memberShipTypeId": form.memID.value,
-      "facilityTypeId":form.prefSport1.value
+      //"facilityTypeId":form.prefSport1.value
+      "facilityTypeId": temp
     };
     if(id.length){
       req.memberId = parseInt(id);
@@ -78,10 +104,16 @@ export class BackendService {
   saveBooking(fac,memID){
     let timeArray=[];
     timeArray.push(fac.timeTable.timeTableId);
+    let cid;
+     if(this.exploredFacility){ //login user come form sport html
+       cid = this.exploredFacility.centreId;
+     }else{
+       cid = this.facilityToValidate.centreId; //new user come from facility html 
+    }
     let req ={
-      "memberId": memID,
+      "memberId": memID.toString(),
       "active": true,
-      "centerId": 2,
+      "centerId": cid.toString(),
       "facilityId": fac.facility.facilityId,
       "subFacilityId": fac.subFacility.subFacilityId,
       "timeTableId": timeArray,
@@ -92,8 +124,9 @@ export class BackendService {
   getMemberShiptype(){
     return this.Http.get<any>(this.URL.getMembershipType, {})
   }
-  getAllFacilities(){
-    let req={"centerId":"2"};
+  getAllFacilities(data){
+    if(!data) { data = "0" };
+    let req={"centerId": data};
     return this.Http.post<any>(this.URL.getAllFacilities, req)
   }
   getsubFacilitiesOfFacility(facilityId){
@@ -139,12 +172,19 @@ export class BackendService {
   getConsolidatedReportByFacility(req){
     return this.Http.post<any>(this.URL.getConsolidatedReportByFacility, req)
   }
-  getFacilitiesForAdmin(){
-    let req={"centerId":"2"};
+  getFacilitiesForAdmin(id){
+    let req={"centerId":id.toString()};
     return this.Http.post<any>(this.URL.getAllFacilitiesAdmin, req)
+  }
+  getPreferedSportAndFacilities(id){
+    let req={"centerId":id};
+    return this.Http.post<any>(this.URL.getPrefSportAndfacilities, req)
   }
   updateFacilities(req){
     return this.Http.post<any>(this.URL.updateFacilities, req)
+  }
+  updateCenters(req){
+    return this.Http.post<any>(this.URL.updateCenters, req)
   }
   getAllSubFacilitiesAdmin(facilityId){
     let req={"facility": [facilityId].map(String)};
@@ -152,6 +192,22 @@ export class BackendService {
   }
   updateSubFacilitiesAdmin(req){
     return this.Http.post<any>(this.URL.updateSubFacilitiesAdmin, req)
+  }
+  resetPassword(req){
+    return this.Http.post<any>(this.URL.resetPassword, req)
+  }
+  forgotPassword(req){
+    return this.Http.post<any>(this.URL.forgotPassword, req);
+  }
+  initiatePayment(req){
+   
+      return this.Http.post<any>(this.URL.initiatePayment, req);  
+  }
+  validateUserName(req){
+    return this.Http.post<any>(this.URL.validateUserName, req);  
+  }
+  getMemberCred(req){
+    return this.Http.post<any>(this.URL.getMemberCred, req)
   }
   //helper functions-move to utility later
   getDOB(date){

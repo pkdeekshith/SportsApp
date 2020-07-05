@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from  '@angular/common/http';
+import { HttpClientModule,HTTP_INTERCEPTORS } from  '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import {TableModule} from 'primeng/table';
 import {CalendarModule} from 'primeng/calendar';
@@ -36,6 +36,12 @@ import {MessageService} from 'primeng/api';
 import { AdminComponent } from './admin/admin.component';
 import { SettingsComponent } from './admin/settings/settings.component';
 import { ReportsComponent } from './admin/reports/reports.component';
+import { PreRegisterComponent } from './landing/pre-register/pre-register.component';
+import { BookComponent } from './user/book/book.component';
+import { FacilityComponent } from './landing/facility/facility.component';
+import { SportComponent } from './user/sport/sport.component';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import {APIInterceptor} from '../app/shared/service/interceptor.service';
 
 
 @NgModule({
@@ -57,7 +63,11 @@ import { ReportsComponent } from './admin/reports/reports.component';
     PaymentComponent,
     AdminComponent,
     SettingsComponent,
-    ReportsComponent
+    ReportsComponent,
+    PreRegisterComponent,
+    BookComponent,
+    FacilityComponent,
+    SportComponent
   ],
   imports: [
     BrowserModule,
@@ -74,10 +84,11 @@ import { ReportsComponent } from './admin/reports/reports.component';
     MessagesModule,
     MessageModule,
     DialogModule,
-    ToastModule
+    ToastModule,
+    AngularFontAwesomeModule
 
   ],
-  providers: [Config,MessageService,Data,Utility],
+  providers: [Config,MessageService,Data,Utility,{provide: HTTP_INTERCEPTORS, useClass: APIInterceptor, multi: true}],
   exports:[ FormsModule,
     ReactiveFormsModule],
   bootstrap: [AppComponent]

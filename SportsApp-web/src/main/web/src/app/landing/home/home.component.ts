@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
+import { Router } from '@angular/router';
+import { BackendService} from '../../shared/service/backend.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-home',
@@ -8,15 +11,30 @@ import { interval } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() {
+  constructor(private Router: Router,private BackEnd : BackendService,private ngxService: NgxUiLoaderService) {
     
    }
    swap: any;
+   centerList=[];
+   searchedCenter:any;
   ngOnInit() {
-    this.setBackgroundImages(4000,4);
+    //this.centerList = [{id:2,name:'jimmy'},{id:3,name:'Newone'}];
+    
+    this.ngxService.start();
+    this.BackEnd.getCentreList().subscribe(
+      data=>{
+        this.ngxService.stop();
+        this.centerList = data;
+      },error=>{
+        this.ngxService.stop();
+        console.log(error);
+        
+      }
+    )
+
   }
   ngOnDestroy(){
-    window.clearInterval(this.swap);
+    //window.clearInterval(this.swap);
   }
   setBackgroundImages(interval,frames){
     let int=1;
@@ -27,5 +45,9 @@ export class HomeComponent implements OnInit {
 
     }
      this.swap = window.setInterval(func,interval);
+  }
+  goToJoinPage(){
+    this.BackEnd.searchCenter = this.searchedCenter;
+    this.Router.navigateByUrl("/landing/facility");
   }
 }

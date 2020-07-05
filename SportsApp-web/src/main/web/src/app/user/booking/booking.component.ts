@@ -28,7 +28,7 @@ export class BookingComponent implements OnInit {
     ngOnInit() {
       this.centreName = "Jimmy George";
       this.ngxService.start();
-      this.BackEnd.getAllFacilities()
+      this.BackEnd.getAllFacilities("0")
       .subscribe(
         data  => {
           if(data){

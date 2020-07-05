@@ -1,7 +1,7 @@
 package com.ins.pos.service.impl;
 
+import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.json.JSONException;
+import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,9 @@ import com.ins.pos.dto.ConsolidatedReportByDateDTO;
 import com.ins.pos.dto.ConsolidatedReportByDateOutputDTO;
 import com.ins.pos.dto.ConsolidatedReportByFacilityDTO;
 import com.ins.pos.dto.ConsolidatedReportByFacilityOutputDTO;
+import com.ins.pos.dto.MemberContactDetailsJsonDTO;
+import com.ins.pos.dto.PaymentOrderReportDTO;
+import com.ins.pos.dto.PaymentOrderReportOutputDTO;
 import com.ins.pos.dto.SpotBookingReportDTO;
 import com.ins.pos.dto.SpotBookingReportOutputDTO;
 import com.ins.pos.dto.SummaryReportDTO;
@@ -34,16 +40,29 @@ import com.ins.pos.entity.Accounts;
 import com.ins.pos.entity.Booking;
 import com.ins.pos.entity.Center;
 import com.ins.pos.entity.Facility;
+import com.ins.pos.entity.Member;
+import com.ins.pos.entity.PaymentOrderStatus;
 import com.ins.pos.entity.SubFacility;
+import com.ins.pos.pdf.PDFGeneratorService;
+import com.ins.pos.pdf.PDFRequest;
+import com.ins.pos.pdf.Transactions;
 import com.ins.pos.repository.AccountsRepository;
 import com.ins.pos.repository.BookingRepository;
 import com.ins.pos.repository.CenterRepository;
 import com.ins.pos.repository.FacilityRepository;
+import com.ins.pos.repository.MemberCenterRepository;
+import com.ins.pos.repository.MemberRepository;
+import com.ins.pos.repository.PaymentOrderStatusRepository;
 import com.ins.pos.repository.SubFacilityRepository;
 import com.ins.pos.service.ReportService;
 
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
+
 @Service
 public class ReportServiceImpl implements ReportService {
+
+	private final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
 
 	@Autowired
 	private AccountsRepository accountsRepository;
@@ -60,8 +79,17 @@ public class ReportServiceImpl implements ReportService {
 	@Autowired
 	private SubFacilityRepository subFacilityRepository;
 
+	@Autowired
+	private PaymentOrderStatusRepository paymentOrderStatusRepository;
+
+	@Autowired
+	MemberRepository memberRepository;
+
+	@Autowired
+	private MemberCenterRepository memberCenterRepository;
+
 	@Override
-	public SummaryReportOutputDTO getAllBookingForDays(String data) {
+	public SummaryReportOutputDTO getAllBookingForDays(String data, HttpServletResponse response) {
 		String status = "Failure";
 		SummaryReportOutputDTO summaryReportOutputDTO = new SummaryReportOutputDTO();
 		List<SummaryReportDTO> list = null;
@@ -78,6 +106,17 @@ public class ReportServiceImpl implements ReportService {
 			} else {
 				bookingApp.add(bookingAppInput);
 			}
+			List<Center> centers = new ArrayList<Center>();
+			Long center = request.getLong("center");
+			if ("All".equals(center)) {
+				Iterable<Center> centerIterable = centerRepository.findByActive(true);
+				centerIterable.forEach((c) -> {
+					centers.add(c);
+				});
+			} else {
+				Optional<Center> centerOpt = centerRepository.findById(center);
+				centers.add(centerOpt.get());
+			}
 			Date fromDate = simpleDateFormat.parse(request.getString("fromDate"));
 			Date endDate = simpleDateFormat.parse(request.getString("endDate"));
 			Calendar endDateCalender = new GregorianCalendar();
@@ -86,7 +125,8 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
-			List<Accounts> accountList = accountsRepository.getAllBookingForDays(fromDate, endDate, true, bookingApp);
+			List<Accounts> accountList = accountsRepository.getAllBookingForDays(fromDate, endDate, true, bookingApp,
+					centers);
 			for (Accounts account : accountList) {
 				SummaryReportDTO summaryReportDTO;
 				String date = simpleDateFormat.format(account.getBookingDate());
@@ -107,7 +147,8 @@ public class ReportServiceImpl implements ReportService {
 				} else if (account.getTypeOfBooking().equals("Member Renewal")) {
 					summaryReportDTO.setRenewal(summaryReportDTO.getRenewal() + account.getPaidAmount());
 					summaryReportDTO.setTotal(summaryReportDTO.getTotal() + account.getPaidAmount());
-				} else if (account.getTypeOfBooking().equals("Bookings")||account.getTypeOfBooking().equals("Monthly")) {
+				} else if (account.getTypeOfBooking().equals("Bookings")
+						|| account.getTypeOfBooking().equals("Monthly")) {
 					summaryReportDTO.setBooking(summaryReportDTO.getBooking() + account.getPaidAmount());
 					summaryReportDTO.setTotal(summaryReportDTO.getTotal() + account.getPaidAmount());
 				}
@@ -115,20 +156,35 @@ public class ReportServiceImpl implements ReportService {
 			}
 			list = new ArrayList<SummaryReportDTO>(map.values());
 			status = "Success";
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception - ", e);
 		}
+		double memberRegistration = 0;
+		double renewal = 0;
+		double booking = 0;
+		double quickBooking = 0;
+		double total = 0;
+
+		for (SummaryReportDTO summaryReportDTO : list) {
+			memberRegistration = memberRegistration + summaryReportDTO.getMemberRegistration();
+			renewal = renewal + summaryReportDTO.getRenewal();
+			booking = booking + summaryReportDTO.getBooking();
+			quickBooking = quickBooking + summaryReportDTO.getQuickBooking();
+			total = total + summaryReportDTO.getTotal();
+		}
+		summaryReportOutputDTO.setBooking(booking);
+		summaryReportOutputDTO.setMemberRegistration(memberRegistration);
+		summaryReportOutputDTO.setQuickBooking(quickBooking);
+		summaryReportOutputDTO.setRenewal(renewal);
+		summaryReportOutputDTO.setTotal(total);
 		summaryReportOutputDTO.setStatus(status);
 		summaryReportOutputDTO.setData(list);
+
 		return summaryReportOutputDTO;
 	}
 
 	@Override
-	public SpotBookingReportOutputDTO getSpotBookingForDays(String data) {
+	public SpotBookingReportOutputDTO getSpotBookingForDays(String data, HttpServletResponse response) {
 		String status = "Failure";
 		SpotBookingReportOutputDTO spotBookingReportOutputDTO = new SpotBookingReportOutputDTO();
 		List<SpotBookingReportDTO> list = null;
@@ -155,9 +211,19 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
+			List<Center> centers = new ArrayList<Center>();
+			Long center = request.getLong("center");
+			if ("All".equals(center)) {
+				Iterable<Center> centerIterable = centerRepository.findByActive(true);
+				centerIterable.forEach((c) -> {
+					centers.add(c);
+				});
+			} else {
+				Optional<Center> centerOpt = centerRepository.findById(center);
+				centers.add(centerOpt.get());
+			}
 			List<Accounts> accountList = accountsRepository.getSpotBookingForDays(fromDate, endDate, "Quick Bookings",
-					true, bookingApp);
-			System.out.println(accountList.size());
+					true, bookingApp, centers);
 
 			for (Accounts account : accountList) {
 				SpotBookingReportDTO spotBookingReportDTO = null;
@@ -219,12 +285,8 @@ public class ReportServiceImpl implements ReportService {
 			}
 			list = new ArrayList<SpotBookingReportDTO>(map.values());
 			status = "Success";
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception - ", e);
 		}
 		spotBookingReportOutputDTO.setStatus(status);
 		spotBookingReportOutputDTO.setData(list);
@@ -268,7 +330,7 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public BookingReportOutputDTO getBookingReport(String data) {
+	public BookingReportOutputDTO getBookingReport(String data, HttpServletResponse response) {
 		String status = "Failure";
 		BookingReportOutputDTO bookingReportOutputDTO = new BookingReportOutputDTO();
 		List<BookingReportDTO> listBooking = new ArrayList<BookingReportDTO>();
@@ -294,14 +356,14 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
-			String center = request.getString("centerId");
+			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
 			String subFacility = request.getString("subfacilityId");
 			if (center.equals("All") && facility.equals("All") && subFacility.equals("All")) {
 				bookingList = bookingRepository.getAllBookingForDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && subFacility.equals("All")) {
 				if (!center.equals("All")) {
-					Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+					Optional<Center> centerOpt = centerRepository.findById(center);
 					bookingList = bookingRepository.getAllBookingForDaysAndCenter(fromDate, endDate, centerOpt.get(),
 							bookingApp);
 				}
@@ -309,7 +371,7 @@ public class ReportServiceImpl implements ReportService {
 			} else if (subFacility.equals("All")) {
 				if (!facility.equals("All")) {
 					if (!(center.equals("All"))) {
-						Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+						Optional<Center> centerOpt = centerRepository.findById(center);
 						Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 								centerOpt.get());
 						bookingList = bookingRepository.getAllBookingForDaysAndCenterAndFacility(fromDate, endDate,
@@ -318,7 +380,7 @@ public class ReportServiceImpl implements ReportService {
 				}
 			} else {
 				if ((!center.equals("All") && !facility.equals("All") && !subFacility.equals("All"))) {
-					Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+					Optional<Center> centerOpt = centerRepository.findById(center);
 					Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 							centerOpt.get());
 					SubFacility subFacilities = subFacilityRepository.findByFacilityIdAndSubFacilityId(facilities,
@@ -342,7 +404,7 @@ public class ReportServiceImpl implements ReportService {
 			}
 			status = "Success";
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Exception - ", e);
 		}
 		bookingReportOutputDTO.setStatus(status);
 		return bookingReportOutputDTO;
@@ -350,7 +412,7 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public AccountReportOutputDTO getAccountReport(String data) {
+	public AccountReportOutputDTO getAccountReport(String data, HttpServletResponse response) {
 		String status = "Failure";
 		Map<String, String> keyMap = new HashMap<String, String>();
 		keyMap.put("MemberRegistration", "New Member");
@@ -385,7 +447,7 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
-			String center = request.getString("centerId");
+			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
 			String subFacility = request.getString("subfacilityId");
 			String paymentType = request.getString("typeOfPayment");
@@ -400,7 +462,7 @@ public class ReportServiceImpl implements ReportService {
 
 					if (!center.equals("All")) {
 
-						Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+						Optional<Center> centerOpt = centerRepository.findById(center);
 
 						accountList = accountsRepository.getAllSelectedDaysAndCenterAllPayment(fromDate, endDate,
 								centerOpt.get(), bookingApp);
@@ -408,7 +470,7 @@ public class ReportServiceImpl implements ReportService {
 				} else if (subFacility.equals("All")) {
 					if (!facility.equals("All")) {
 						if (!(center.equals("All"))) {
-							Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+							Optional<Center> centerOpt = centerRepository.findById(center);
 							Facility facilities = facilityRepository
 									.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
 							accountList = accountsRepository.getAllSelectedDaysCenterAndFacilityAllPayment(fromDate,
@@ -417,7 +479,7 @@ public class ReportServiceImpl implements ReportService {
 					}
 				} else {
 					if ((!center.equals("All") && !facility.equals("All") && !subFacility.equals("All"))) {
-						Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+						Optional<Center> centerOpt = centerRepository.findById(center);
 						Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 								centerOpt.get());
 						SubFacility subFacilities = subFacilityRepository.findByFacilityIdAndSubFacilityId(facilities,
@@ -433,7 +495,7 @@ public class ReportServiceImpl implements ReportService {
 						accountList = accountsRepository.getAllMemberAccountSelectedDays(fromDate, endDate, paymentType,
 								bookingApp);
 					} else {
-						Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+						Optional<Center> centerOpt = centerRepository.findById(center);
 						accountList = accountsRepository.getAllMemberAccountSelectedDaysCenter(fromDate, endDate,
 								paymentType, centerOpt.get(), bookingApp);
 					}
@@ -445,7 +507,7 @@ public class ReportServiceImpl implements ReportService {
 
 						if (!center.equals("All")) {
 
-							Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+							Optional<Center> centerOpt = centerRepository.findById(center);
 
 							accountList = accountsRepository.getAllSelectedDaysAndCenter(fromDate, endDate,
 									centerOpt.get(), paymentType, bookingApp);
@@ -453,7 +515,7 @@ public class ReportServiceImpl implements ReportService {
 					} else if (subFacility.equals("All")) {
 						if (!facility.equals("All")) {
 							if (!(center.equals("All"))) {
-								Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+								Optional<Center> centerOpt = centerRepository.findById(center);
 								Facility facilities = facilityRepository
 										.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
 								accountList = accountsRepository.getAllSelectedDaysCenterAndFacility(fromDate, endDate,
@@ -462,7 +524,7 @@ public class ReportServiceImpl implements ReportService {
 						}
 					} else {
 						if ((!center.equals("All") && !facility.equals("All") && !subFacility.equals("All"))) {
-							Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+							Optional<Center> centerOpt = centerRepository.findById(center);
 							Facility facilities = facilityRepository
 									.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
 							SubFacility subFacilities = subFacilityRepository
@@ -489,7 +551,7 @@ public class ReportServiceImpl implements ReportService {
 			}
 			status = "Success";
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Exception - ", e);
 		}
 		accountReportOutputDTO.setTotalCreditAmount(totalCreditAmount);
 		accountReportOutputDTO.setTotalDebitAmount(totalDebitAmount);
@@ -500,7 +562,7 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public ConsolidatedReportByDateOutputDTO getConsolidatedReportByDate(String data) {
+	public ConsolidatedReportByDateOutputDTO getConsolidatedReportByDate(String data, HttpServletResponse response) {
 
 		String status = "Failure";
 		double totalAmount = 0;
@@ -529,18 +591,18 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
-			String center = request.getString("centerId");
+			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
 			if (center.equals("All") && facility.equals("All")) {
 				accountList = accountsRepository.getAllSelectedDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && (!center.equals("All"))) {
 
-				Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+				Optional<Center> centerOpt = centerRepository.findById(center);
 
 				accountList = accountsRepository.getAllSelectedDaysAndCenterAllPayment(fromDate, endDate,
 						centerOpt.get(), bookingApp);
 			} else if (!facility.equals("All") && !(center.equals("All"))) {
-				Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+				Optional<Center> centerOpt = centerRepository.findById(center);
 				Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 						centerOpt.get());
 				accountList = accountsRepository.getAllSelectedDaysCenterAndFacilityAllPayment(fromDate, endDate,
@@ -569,7 +631,7 @@ public class ReportServiceImpl implements ReportService {
 			listBooking = new ArrayList<ConsolidatedReportByDateDTO>(map.values());
 			status = "Success";
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Exception - ", e);
 		}
 		consolidatedReportByDateOutputDTO.setData(listBooking);
 		consolidatedReportByDateOutputDTO.setTotalAmount(totalAmount);
@@ -579,7 +641,8 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public ConsolidatedReportByFacilityOutputDTO getConsolidatedReportByFacility(String data) {
+	public ConsolidatedReportByFacilityOutputDTO getConsolidatedReportByFacility(String data,
+			HttpServletResponse response) {
 
 		String status = "Failure";
 		double totalAmount = 0;
@@ -608,18 +671,18 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.set(Calendar.MINUTE, 59);
 			endDateCalender.set(Calendar.SECOND, 29);
 			endDate = endDateCalender.getTime();
-			String center = request.getString("centerId");
+			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
 			if (center.equals("All") && facility.equals("All")) {
 				accountList = accountsRepository.getAllSelectedDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && (!center.equals("All"))) {
 
-				Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+				Optional<Center> centerOpt = centerRepository.findById(center);
 
 				accountList = accountsRepository.getAllSelectedDaysAndCenterAllPayment(fromDate, endDate,
 						centerOpt.get(), bookingApp);
 			} else if (!facility.equals("All") && !(center.equals("All"))) {
-				Optional<Center> centerOpt = centerRepository.findById(Long.parseLong(center));
+				Optional<Center> centerOpt = centerRepository.findById(center);
 				Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 						centerOpt.get());
 				accountList = accountsRepository.getAllSelectedDaysCenterAndFacilityAllPayment(fromDate, endDate,
@@ -651,7 +714,7 @@ public class ReportServiceImpl implements ReportService {
 			listBooking = new ArrayList<ConsolidatedReportByFacilityDTO>(map.values());
 			status = "Success";
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Exception - ", e);
 		}
 		consolidatedReportByFacilityOutputDTO.setData(listBooking);
 		consolidatedReportByFacilityOutputDTO.setTotalAmount(totalAmount);
@@ -659,4 +722,128 @@ public class ReportServiceImpl implements ReportService {
 		return consolidatedReportByFacilityOutputDTO;
 
 	}
+
+	@Override
+	public PaymentOrderReportOutputDTO getPaymentDetailsForDays(String data, HttpServletResponse response) {
+
+		PaymentOrderReportOutputDTO paymentOrderReportOutputDTO = new PaymentOrderReportOutputDTO();
+		List<PaymentOrderReportDTO> paymentOrderReportDTOList = new ArrayList<PaymentOrderReportDTO>();
+		String status = "Failure";
+		double totalAmount = 0;
+		try {
+			JSONObject request = new JSONObject(data);
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String paymentStatus = request.getString("status");
+			Date fromDate = simpleDateFormat.parse(request.getString("fromDate"));
+			Date endDate = simpleDateFormat.parse(request.getString("endDate"));
+			Calendar endDateCalender = new GregorianCalendar();
+			endDateCalender.setTime(endDate);
+			endDateCalender.set(Calendar.HOUR_OF_DAY, 23);
+			endDateCalender.set(Calendar.MINUTE, 59);
+			endDateCalender.set(Calendar.SECOND, 29);
+			endDate = endDateCalender.getTime();
+			List<String> paymentStatuses = new ArrayList<String>();
+			List<PaymentOrderStatus> paymentOrders = new ArrayList<PaymentOrderStatus>();
+
+			if ("All".equals(paymentStatus)) {
+				paymentStatuses.add("S");
+				paymentStatuses.add("F");
+				paymentStatuses.add("C");
+				paymentStatuses.add("I");
+			} else {
+				paymentStatuses.add(paymentStatus);
+			}
+			paymentOrders = paymentOrderStatusRepository.getAllPaymentOrders(fromDate, endDate, paymentStatuses);
+			for (PaymentOrderStatus po : paymentOrders) {
+				PaymentOrderReportDTO paymentOrderReportDTO = new PaymentOrderReportDTO();
+				paymentOrderReportDTO.setAccountId1(po.getAccountId1().getAccountsId());
+				paymentOrderReportDTO.setBookingType1(po.getAccountId1().getTypeOfBooking());
+				if (po.getAccountId2() != null) {
+					paymentOrderReportDTO.setAccountId2(po.getAccountId2().getAccountsId());
+					paymentOrderReportDTO.setBookingType2(po.getAccountId2().getTypeOfBooking());
+				}
+				paymentOrderReportDTO.setMemberId(po.getMemberId().getMemberId());
+				paymentOrderReportDTO.setOrderId(po.getOrderId());
+				switch (po.getStatus()) {
+				case "S":
+					paymentOrderReportDTO.setStatus("Success");
+					break;
+				case "F":
+					paymentOrderReportDTO.setStatus("Failed");
+					break;
+				case "C":
+					paymentOrderReportDTO.setStatus("Cancelled");
+					break;
+				case "I":
+					paymentOrderReportDTO.setStatus("In Progress");
+					break;
+				default:
+					paymentOrderReportDTO.setStatus(po.getStatus());
+				}
+
+				paymentOrderReportDTO.setTotalAmount(po.getTotalAmount());
+				paymentOrderReportDTOList.add(paymentOrderReportDTO);
+				totalAmount += po.getTotalAmount();
+			}
+			status = "Success";
+		} catch (Exception e) {
+			LOGGER.error("Exception - ", e);
+		}
+		paymentOrderReportOutputDTO.setData(paymentOrderReportDTOList);
+		paymentOrderReportOutputDTO.setStatus(status);
+		paymentOrderReportOutputDTO.setTotalAmount(totalAmount);
+		return paymentOrderReportOutputDTO;
+
+	}
+
+	@Override
+	public List<MemberContactDetailsJsonDTO> getAllMemberContactDetails(String data, HttpServletResponse response) {
+
+		JSONObject request = new JSONObject(data);
+		Long center = request.getLong("centerId");
+		List<MemberContactDetailsJsonDTO> memberJSONList = new ArrayList<MemberContactDetailsJsonDTO>();
+		List<Member> memberLst = null;
+		if (center == 0) {
+			memberLst = memberRepository.findByActiveAndMemberTypeValidityGreaterThanEqual(true, new Date());
+		} else {
+			Optional<Center> centerOpt = centerRepository.findById(center);
+			memberLst = memberCenterRepository.getMemberforCenter(centerOpt.get(), new Date(), true);
+		}
+		memberLst.forEach((m) -> {
+			MemberContactDetailsJsonDTO memberContactDetailsJsonDTO = new MemberContactDetailsJsonDTO();
+			memberContactDetailsJsonDTO.setMemberContactNo(m.getMemberContactNo());
+			memberContactDetailsJsonDTO.setMemberId(m.getMemberId());
+			memberContactDetailsJsonDTO.setMemberName(m.getMemberName());
+			memberJSONList.add(memberContactDetailsJsonDTO);
+		});
+
+		return memberJSONList;
+	}
+
+	@Override
+	public String triggerSMS(String data) {
+		JSONObject request = new JSONObject(data);
+		JSONObject response = new JSONObject();
+		Long center = request.getLong("centerId");
+		String msg = request.getString("message");
+		List<MemberContactDetailsJsonDTO> memberJSONList = new ArrayList<MemberContactDetailsJsonDTO>();
+		List<Member> memberLst = null;
+		if (center == 0) {
+			memberLst = memberRepository.findByActiveAndMemberTypeValidityGreaterThanEqual(true, new Date());
+		} else {
+			Optional<Center> centerOpt = centerRepository.findById(center);
+			memberLst = memberCenterRepository.getMemberforCenter(centerOpt.get(), new Date(), true);
+		}
+		memberLst.forEach((m) -> {
+			MemberContactDetailsJsonDTO memberContactDetailsJsonDTO = new MemberContactDetailsJsonDTO();
+			memberContactDetailsJsonDTO.setMemberContactNo(m.getMemberContactNo());
+			memberContactDetailsJsonDTO.setMemberId(m.getMemberId());
+			memberContactDetailsJsonDTO.setMemberName(m.getMemberName());
+			memberJSONList.add(memberContactDetailsJsonDTO);
+		});
+
+		response.put("status", "S");
+		return response.toString();
+	}
+
 }

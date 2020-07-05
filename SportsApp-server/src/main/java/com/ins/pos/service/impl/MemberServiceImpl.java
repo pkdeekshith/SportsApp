@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,21 +20,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ins.pos.dto.FacilityTypeJsonDTO;
+import com.ins.pos.dto.MemberContactDetailsJsonDTO;
 import com.ins.pos.dto.MemberDetailsJsonDTO;
 import com.ins.pos.dto.MemberJsonDTO;
 import com.ins.pos.dto.MemberShipTypeJsonDTO;
 import com.ins.pos.entity.Accounts;
 import com.ins.pos.entity.Branch;
 import com.ins.pos.entity.Center;
+import com.ins.pos.entity.CommunicationLog;
 import com.ins.pos.entity.FacilityType;
 import com.ins.pos.entity.Member;
+import com.ins.pos.entity.MemberCenter;
 import com.ins.pos.entity.MemberFacility;
 import com.ins.pos.entity.MemberShipType;
 import com.ins.pos.entity.Role;
 import com.ins.pos.entity.User;
 import com.ins.pos.repository.AccountsRepository;
 import com.ins.pos.repository.CenterRepository;
+import com.ins.pos.repository.CommunicationLogRepository;
 import com.ins.pos.repository.FacilityTypeRepository;
+import com.ins.pos.repository.MemberCenterRepository;
 import com.ins.pos.repository.MemberFacilityRepository;
 import com.ins.pos.repository.MemberRepository;
 import com.ins.pos.repository.MemberShipTypeRepository;
@@ -46,6 +51,8 @@ import com.ins.pos.service.util.PasswordGenerator;
 
 @Service
 public class MemberServiceImpl implements MemberService {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(MemberServiceImpl.class);
 
 	@Autowired
 	private MemberShipTypeRepository memberShipTypeRepository;
@@ -79,15 +86,23 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	CommunicationUtil communicationUtil;
+	
+	@Autowired
+	private CommunicationLogRepository communicationLogRepository;
+	
+	@Autowired
+	private MemberCenterRepository memberCenterRepository;
 
 	@Override
 	public List<MemberShipTypeJsonDTO> getMemberShipTypes() {
 		List<MemberShipTypeJsonDTO> memberShipTypeJsonDTOList = new ArrayList<MemberShipTypeJsonDTO>();
 		List<MemberShipType> memberShipTypeList = memberShipTypeRepository.findByActiveAndOnlineActive(true, true);
 		for (MemberShipType memberShipType : memberShipTypeList) {
-			MemberShipTypeJsonDTO memberShipTypeJsonDTO = new MemberShipTypeJsonDTO();
-			BeanUtils.copyProperties(memberShipType, memberShipTypeJsonDTO);
-			memberShipTypeJsonDTOList.add(memberShipTypeJsonDTO);
+			if (memberShipType.getMemberShipTypeName().equals("ONLINE")) {
+				MemberShipTypeJsonDTO memberShipTypeJsonDTO = new MemberShipTypeJsonDTO();
+				BeanUtils.copyProperties(memberShipType, memberShipTypeJsonDTO);
+				memberShipTypeJsonDTOList.add(memberShipTypeJsonDTO);
+			}
 		}
 		return memberShipTypeJsonDTOList;
 	}
@@ -109,7 +124,7 @@ public class MemberServiceImpl implements MemberService {
 				calender.add(Calendar.YEAR, 1);
 				member.setMemberTypeStartDate(new Date());
 				member.setMemberTypeValidity(calender.getTime());
-				//password = PasswordGenerator.generateRandomPassword(8);
+				// password = PasswordGenerator.generateRandomPassword(8);
 				password = "password";
 				member.setPassword(password);
 				isNewMember = true;
@@ -145,6 +160,7 @@ public class MemberServiceImpl implements MemberService {
 				throw new BadCredentialsException("User with username: " + member.getEmail() + " already exists");
 			}
 
+			
 			member.setRoleId(roleId);
 			Branch branchId = new Branch();
 			branchId.setBranchId(1l);
@@ -159,11 +175,12 @@ public class MemberServiceImpl implements MemberService {
 					fos.close();
 					member.setMemberPhoto(path);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.error("Exception : ", e);
 				}
 			}
-			member.setActive(true);
+			member.setActive(false);
 			member.setIsOnline(true);
+			member.setFirstLogin(true);
 			member.setCreatedDate(new Date());
 			member.setUpdatedDate(new Date());
 			member = memberRepository.save(member);
@@ -172,7 +189,7 @@ public class MemberServiceImpl implements MemberService {
 
 				account.setActualAmount(member.getPaidAmount());
 				account.setWords(member.getWord());
-				account.setActive(true);
+				account.setActive(false);
 				account.setTypeOfBooking("New Member");
 				account.setBranchId(member.getBranchId());
 				account.setCautionDeposit(0.00);
@@ -181,20 +198,21 @@ public class MemberServiceImpl implements MemberService {
 				account.setExtraAmount(0.00);
 				account.setCreditAmount(0.00);
 				account.setDiscount(0.00);
-				account.setPaidAmount(member.getPaidAmount());
-				account.setPaidDate(new Date());
-				account.setPayableAmount(0.00);
+				// account.setPaidAmount();
+				// account.setPaidDate();
+				account.setPayableAmount(member.getPaidAmount());
 				account.setBookingApp("Online");
+				account.setBookingDate(new Date());
 				member.getMemberId();
 				account.setMemberId(member);
 				account.setCenterId(centerOpt.get());
 				account = accountsRepository.save(account);
-				User user = new User();
-				user.setUsername(member.getEmail());
-				user.setEmail(member.getEmail());
-				user.setPassword(password);
-				customUserDetailsServiceImpl.saveUser(user);
-
+				
+				MemberCenter memberCenter = new MemberCenter();
+				memberCenter.setActive(true);
+				memberCenter.setCenter(account.getCenterId());
+				memberCenter.setMember(member);
+				memberCenterRepository.save(memberCenter);
 			}
 
 			if (memberJsonDTO.getFacilityTypeId() != null) {
@@ -216,7 +234,7 @@ public class MemberServiceImpl implements MemberService {
 			response.put("accountId", account.getAccountsId());
 		} catch (Exception e) {
 			response.put("status", "Failure");
-			e.printStackTrace();
+			LOGGER.error("Exception : ", e);
 		}
 		return response.toString();
 	}
@@ -264,7 +282,7 @@ public class MemberServiceImpl implements MemberService {
 
 			account.setActualAmount(member.getPaidAmount());
 			account.setWords(member.getWord());
-			account.setActive(true);
+			account.setActive(false);
 			account.setTypeOfBooking("Member Renewal");
 			account.setBranchId(member.getBranchId());
 			account.setCautionDeposit(0.00);
@@ -273,9 +291,10 @@ public class MemberServiceImpl implements MemberService {
 			account.setExtraAmount(0.00);
 			account.setCreditAmount(0.00);
 			account.setDiscount(0.00);
-			account.setPaidAmount(member.getPaidAmount());
-			account.setPaidDate(new Date());
-			account.setPayableAmount(0.00);
+			//account.setPaidAmount(member.getPaidAmount());
+			//account.setPaidDate(new Date());
+			account.setPayableAmount(member.getPaidAmount());
+			account.setBookingDate(new Date());
 			account.setBookingApp("Online");
 			member.getMemberId();
 			account.setMemberId(member);
@@ -286,7 +305,7 @@ public class MemberServiceImpl implements MemberService {
 			response.put("accountId", account.getAccountsId());
 		} catch (Exception e) {
 			response.put("status", "Failure");
-			e.printStackTrace();
+			LOGGER.error("Exception : ", e);
 		}
 		return response.toString();
 	}
@@ -312,6 +331,11 @@ public class MemberServiceImpl implements MemberService {
 			if (member.get().getMemberTypeValidity().before(new Date())) {
 				memberDetailsJsonDTO.setActive(false);
 			}
+			MemberCenter memberCenter = memberCenterRepository.findByMember(member.get());
+			if(memberCenter!=null) {
+				memberDetailsJsonDTO.setCenterName(memberCenter.getCenter().getCentreName());
+				memberDetailsJsonDTO.setCentreId(memberCenter.getCenter().getCentreId());
+			}
 		}
 		if (memberDetailsJsonDTO.getMemberPhoto() != null) {
 			try {
@@ -319,7 +343,7 @@ public class MemberServiceImpl implements MemberService {
 				String byteString = new String(fileContent);
 				memberDetailsJsonDTO.setMemberPhoto(byteString);
 			} catch (Exception e) {
-
+				LOGGER.error("Exception : ", e);
 			}
 		}
 		return memberDetailsJsonDTO;
@@ -354,9 +378,15 @@ public class MemberServiceImpl implements MemberService {
 		JSONObject reqJson = new JSONObject(requestJSON);
 		JSONObject response = new JSONObject();
 		String password = PasswordGenerator.generateRandomPassword(8);
-		long memberId = reqJson.getLong("memberId");
-		Optional<Member> member = memberRepository.findById(memberId);
-		member.ifPresent((m) -> {
+		String email = reqJson.getString("email");
+
+		List<Member> memberList = memberRepository.findByUserNameAndActive(email, true);
+		if (memberList.isEmpty()) {
+			response.put("status", "Failure");
+			response.put("message", "Username doesn't exist!!!");
+		} else {
+			Member m = memberList.get(0);
+
 			m.setPassword(password);
 			m.setFirstLogin(true);
 			User user = userRepository.findByEmail(m.getEmail());
@@ -368,15 +398,21 @@ public class MemberServiceImpl implements MemberService {
 			String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">Password reset is successfull!</h3><h5></h5><h4>Please find the details below.</h4><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID: ${userId}</strong></h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: ${password}</strong></h5><h5></h5><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
 			mailbody = mailbody.replace("${name}", m.getMemberName()).replace("${userId}", m.getUserName())
 					.replace("${password}", m.getPassword());
-			try {
-				communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
-				communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic", smsBody, "TXTLCL",
-						"91" + m.getMemberContactNo());
-			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+			boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
+			boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic", smsBody, "TXTLCL",
+					"91" + m.getMemberContactNo());
+			CommunicationLog communicationLog = new CommunicationLog();
+			communicationLog.setCreatedDate(new Date());
+			communicationLog.setMailBody(mailbody);
+			communicationLog.setMailId(m.getEmail());
+			communicationLog.setMailStatus(emailStatus);
+			communicationLog.setOrderId("M"+m.getMemberId()+"FP"+(new Date()).getTime());
+			communicationLog.setPhoneNumber("91" + m.getMemberContactNo());
+			communicationLog.setSmsContent(smsBody);
+			communicationLog.setSmsStatus(smsStatus);
+			communicationLogRepository.save(communicationLog);
+			
+		}
 
 		response.put("status", "Success");
 		return response.toString();

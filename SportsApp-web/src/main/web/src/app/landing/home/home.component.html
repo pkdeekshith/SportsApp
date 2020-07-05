@@ -1,46 +1,37 @@
-<div>
-  <div class="row home-banner" id="t1">
-    <div style="background: rgba(0,0,0,0.4);width: 100%">
-      <div class="banner-text">
-        <span>REGISTER | BOOK | PLAY</span>
-      </div>
-    </div>
-  </div>
-  <div class="row testi-head">
-    <div><span>TESTIMONIALS</span></div>
-  </div>
-  <div id="demo" class="carousel slide" data-ride="carousel">
+<div class="home-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <div class="container pt-5 home-info">
+          <div class="headline">
+            <label>FIND AND BOOK SPORT <br/>FACILITIES ACROSS KERALA</label>
+          </div>
+          <div class="head-text mt-4">
+            <p>Find sport facilities from football picthes to swimming</p>
+            <p>pools in a range of cities across Kerala.Find and take</p>
+            <p>membership for your favourite sport and train with the </p>
+            <p>best coaches</p>
+          </div>
+          <div class="search-section mt-4">
+            <div>
+              
+              <fa name="map-marker"></fa>
+              <select id="mySelect" class="form-control home-select-fix col-md-9"  [(ngModel)]="searchedCenter">
+                <!-- <option>Jimmy George Sports Hub</option> -->
+                <option *ngFor="let center of centerList" [ngValue]="center">{{center.centreName}}</option>
+  
 
-    <!-- Indicators -->
-    <ul class="carousel-indicators">
-      <li data-target="#demo" data-slide-to="0" class="active"></li>
-      <li data-target="#demo" data-slide-to="1"></li>
-      <li data-target="#demo" data-slide-to="2"></li>
-    </ul>
-  
-    <!-- The slideshow -->
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        
-        <div><span>Great facility indeed !</span></div>
+              </select>
+            </div>
+            <div class="col-md-9 mt-3" style="text-align: center;">
+              <input type="button" class="btn btn-secondary search-btn" value="SEARCH" (click)="goToJoinPage()"/>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="carousel-item">
-       
-        <div><span>World class facilities.</span></div>
-      </div>
-      <div class="carousel-item">
-        
-        <div><span>Multiple and hassle free payment options</span></div>
+      <div class="col-md-5">
+          <div class="home-image"></div>
       </div>
     </div>
-  
-    <!-- Left and right controls -->
-    <a class="carousel-control-prev" href="#demo" data-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </a>
-    <a class="carousel-control-next" href="#demo" data-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </a>
-  
   </div>
 </div>

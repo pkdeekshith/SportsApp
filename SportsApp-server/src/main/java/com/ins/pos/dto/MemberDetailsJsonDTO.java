@@ -3,8 +3,6 @@ package com.ins.pos.dto;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class MemberDetailsJsonDTO {
@@ -39,6 +37,9 @@ public class MemberDetailsJsonDTO {
 	private MemberShipTypeJsonDTO memberShipType;
 	private List<FacilityTypeJsonDTO> facilityType;
 	private List<RoleJsonDTO> roles;
+	private Boolean firstLogin;
+	private String centerName;
+	private Long centreId;
 
 	public Long getMemberId() {
 		return memberId;
@@ -254,5 +255,29 @@ public class MemberDetailsJsonDTO {
 
 	public void setRoles(List<RoleJsonDTO> roles) {
 		this.roles = roles;
+	}
+
+	public Boolean getFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(Boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
+	public String getCenterName() {
+		return centerName;
+	}
+
+	public void setCenterName(String centerName) {
+		this.centerName = centerName;
+	}
+
+	public Long getCentreId() {
+		return centreId;
+	}
+
+	public void setCentreId(Long centreId) {
+		this.centreId = centreId;
 	}
 }

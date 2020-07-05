@@ -42,12 +42,19 @@ public class CommunicationUtil {
 		return status;
 	}
 
-	public void sendEmail(String to, String subject, String mailbody) throws MessagingException {
-		MimeMessage msg = javaMailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(msg, true);
-		helper.setTo(to);
-		helper.setSubject(subject);
-		helper.setText(mailbody, true);
-		javaMailSender.send(msg);
+	public boolean sendEmail(String to, String subject, String mailbody) {
+		boolean status = false;
+		try {
+			MimeMessage msg = javaMailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(mailbody, true);
+			javaMailSender.send(msg);
+			status = true;
+		} catch (Exception e) {
+			status = false;
+		}
+		return status;
 	}
 }

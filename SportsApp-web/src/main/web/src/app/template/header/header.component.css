@@ -1,20 +1,50 @@
+.header-wrapper{
+    height: 80px;
+}
 .logoBox{
     height: 55px;
     padding: 0;
 }
 .toprow{
-    
+    height: 79px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    box-shadow: 0px 4px 13px rgba(0, 0, 0, 0.06) !important;
+
+
 }
 .nav-link{
-    color:black !important;
-    font-weight: 600;
+    color:#3C4852 !important;
+    font-weight: 500;
 }
 .nav-item.active{
     
 }
 .nav-item:hover{
-    border-bottom: solid 2px #00002d;
+    /* border-bottom: solid 2px #00002d; */
 }
 .navbar-toggler{
     background: black;
+}
+.special{
+    color:#68AE3E !important;
+    border: solid 1px #68AE3E;
+    width: 96px;
+    text-align: center;
+    margin-left: 10px;
+    border-radius: 4px !important;
+}
+.special .nav-link{
+    color: #68AE3E !important;
+}
+.nav-link{
+    font-weight: 500 !important;
+    padding: 2px;
+}
+.navbar-collapse.collapse.show{
+    z-index: 1 !important;
+    background: #e8e8e8 !important;
+}
+li.nav-item:hover {
+    background: #f3f1f1 !important;
 }

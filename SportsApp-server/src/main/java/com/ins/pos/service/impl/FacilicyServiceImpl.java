@@ -10,8 +10,9 @@ import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.ins.pos.dto.FacilityJsonDTO;
 import com.ins.pos.dto.FacilitySubFacilityJsonDTO;
 import com.ins.pos.dto.FacilityTypeJsonDTO;
+import com.ins.pos.dto.PreferredSportsJsonDTO;
 import com.ins.pos.dto.SubFacilityJsonDTO;
 import com.ins.pos.entity.AccountsSubSector;
 import com.ins.pos.entity.Center;
@@ -41,47 +43,49 @@ import com.ins.pos.repository.TimeTableRepository;
 import com.ins.pos.service.FacilityService;
 
 @Service
-public class FacilicyServiceImpl implements FacilityService{
+public class FacilicyServiceImpl implements FacilityService {
+
+	private final Logger LOGGER = LoggerFactory.getLogger(FacilicyServiceImpl.class);
 
 	@Autowired
 	private FacilityTypeRepository facilityTypeRepository;
-	
+
 	@Autowired
 	private FacilityRepository facilityRepository;
-	
+
 	@Autowired
 	private CenterRepository centerRepository;
-	
+
 	@Autowired
 	private OnlineBookingWindowRepository onlineBookingWindowRepository;
-	
+
 	@Autowired
 	SubFacilityRepository subFacilityRepository;
-	
+
 	@Autowired
 	TimeTableRepository timeTableRepository;
-	
+
 	@Autowired
 	BookingRepository bookingRepository;
-	
+
 	@Autowired
 	PriceRepository priceRepository;
-	
-	@Autowired 
+
+	@Autowired
 	AccountsSubSectorRepository accountsSubSectorRepository;
-	
+
 	@Value("${sportsapp.facility.photos.path}")
 	private String facilityPhotoPath;
-	
+
 	@Value("${sportsapp.subfacility.photos.path}")
 	private String subFacilityPhotoPath;
-	
+
 	@Override
 	public List<FacilityTypeJsonDTO> getAllFacilityTypes() {
-		List<FacilityTypeJsonDTO> facilityTypeJsonDTOList= new ArrayList<FacilityTypeJsonDTO>();
-		for(FacilityType facilityType:facilityTypeRepository.findByActiveAndOnlineActive(true, true)) {
+		List<FacilityTypeJsonDTO> facilityTypeJsonDTOList = new ArrayList<FacilityTypeJsonDTO>();
+		for (FacilityType facilityType : facilityTypeRepository.findByActiveAndOnlineActive(true, true)) {
 			FacilityTypeJsonDTO facilityTypeJsonDTO = new FacilityTypeJsonDTO();
-			BeanUtils.copyProperties(facilityType,facilityTypeJsonDTO );
+			BeanUtils.copyProperties(facilityType, facilityTypeJsonDTO);
 			facilityTypeJsonDTOList.add(facilityTypeJsonDTO);
 		}
 		return facilityTypeJsonDTOList;
@@ -103,37 +107,35 @@ public class FacilicyServiceImpl implements FacilityService{
 			if (center.isPresent() && facilityType != null) {
 				for (FacilityType facType : facilityType) {
 					List<Facility> facilityList = facilityRepository
-							.findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(center.get(), facType, true,true);
+							.findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(center.get(), facType, true, true);
 					for (Facility facility : facilityList) {
 						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
 						BeanUtils.copyProperties(facility, facilityJsonDTO);
 						List<SubFacility> subFacilityList = subFacilityRepository
 								.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
-						if(!subFacilityList.isEmpty()) {
-							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacilityList.get(0));
-							if(priceList!=null&&!priceList.isEmpty()) {
+						if (!subFacilityList.isEmpty()) {
+							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true,
+									subFacilityList.get(0));
+							if (priceList != null && !priceList.isEmpty()) {
 								facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 							}
 						}
-						try {
-							File file = new File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
-							if(!file.exists()) {
-								file = new File(facilityPhotoPath+"noimage.png");
-							}
-							byte[] fileContent = FileUtils.readFileToByteArray(file);
-							String encodedString = Base64.getEncoder().encodeToString(fileContent);
-							facilityJsonDTO.setFacilityPhoto(encodedString);
-						}catch(Exception e) {
-							e.printStackTrace();
-						}
-						
-						
+						/*
+						 * try { File file = new
+						 * File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
+						 * if(!file.exists()) { file = new File(facilityPhotoPath+"noimage.png"); }
+						 * byte[] fileContent = FileUtils.readFileToByteArray(file); String
+						 * encodedString = Base64.getEncoder().encodeToString(fileContent);
+						 * facilityJsonDTO.setFacilityPhoto(encodedString); }catch(Exception e) {
+						 * e.printStackTrace(); }
+						 */
+
 						facilityJsonDTOList.add(facilityJsonDTO);
 					}
 				}
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
 		}
 
 		return facilityJsonDTOList;
@@ -171,15 +173,15 @@ public class FacilicyServiceImpl implements FacilityService{
 						endCalender.set(Calendar.MINUTE, 59);
 						endCalender.set(Calendar.SECOND, 59);
 						endCalender.set(Calendar.MILLISECOND, 0);
-						if(onlineBookingWindow.getBookingStartDate()>onlineBookingWindow.getBookingEndDate()) {
-							if(date.get(Calendar.DAY_OF_MONTH)>=onlineBookingWindow.getBookingStartDate()) {
+						if (onlineBookingWindow.getBookingStartDate() > onlineBookingWindow.getBookingEndDate()) {
+							if (date.get(Calendar.DAY_OF_MONTH) >= onlineBookingWindow.getBookingStartDate()) {
 								endCalender.add(Calendar.MONTH, 1);
 							} else {
 								startCalender.add(Calendar.MONTH, -1);
 							}
-						
+
 						}
-						
+
 						isValid = true;
 					}
 					if (isValid) {
@@ -187,24 +189,25 @@ public class FacilicyServiceImpl implements FacilityService{
 								&& date.getTime().compareTo(endCalender.getTime()) <= 0) {
 							isSlotAvailable = isSlotAvailableForFacility(facility.get());
 						} else {
-							facilityJSON.put("validation","Booking window for the facility - " + facility.get().getFacilityName() + " was between "
-									+ startCalender.getTime() + " and " + endCalender.getTime() + "!!!");
+							facilityJSON.put("validation",
+									"Booking window for the facility - " + facility.get().getFacilityName()
+											+ " was between " + startCalender.getTime() + " and "
+											+ endCalender.getTime() + "!!!");
 						}
 					} else {
 						isSlotAvailable = isSlotAvailableForFacility(facility.get());
 					}
 				}
-				if(isSlotAvailable) {
+				if (isSlotAvailable) {
 					facilityJSON.put("slotAavailable", "Y");
-				}
-				else {
+				} else {
 					facilityJSON.put("slotAavailable", "N");
 				}
 			}
-			
+
 			reponseJSON.put("status", "Success");
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
 			reponseJSON.put("status", "Failure");
 		}
 		return reponseJSON.toString();
@@ -218,16 +221,19 @@ public class FacilicyServiceImpl implements FacilityService{
 		calendar.setTime(selectedDate);
 		int daynum = calendar.get(Calendar.DAY_OF_WEEK);
 		List<TimeTable> timeTableList = timeTableRepository.findByActiveAndDayNumAndFacilityId(true, daynum, facility);
-		List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActiveAndOnlineActive(facility, true,true);
-		for(SubFacility subFacility:subFacilityList) {
-			for(TimeTable timetable:timeTableList) {
-				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(selectedDate, selectedDate, timetable.getSessionStartTime(), timetable.getSessionEndTime(), "Monthly", true, subFacility);
-				if(accountSubSectorList.size()<subFacility.getSlotLimit()) {
-					isAvailable =true;
+		List<SubFacility> subFacilityList = subFacilityRepository.findByFacilityIdAndActiveAndOnlineActive(facility,
+				true, true);
+		for (SubFacility subFacility : subFacilityList) {
+			for (TimeTable timetable : timeTableList) {
+				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository
+						.findActiveBookingForSubFacility(selectedDate, selectedDate, timetable.getSessionStartTime(),
+								timetable.getSessionEndTime(), "Monthly", true, subFacility, true);
+				if (accountSubSectorList.size() < subFacility.getSlotLimit()) {
+					isAvailable = true;
 					break;
 				}
 			}
-			if(isAvailable) {
+			if (isAvailable) {
 				break;
 			}
 		}
@@ -240,44 +246,50 @@ public class FacilicyServiceImpl implements FacilityService{
 		try {
 			JSONObject jsonData = new JSONObject(data);
 			String centerId = jsonData.getString("centerId");
-			Optional<Center> center = centerRepository.findById(Long.parseLong(centerId));
-			if (center.isPresent()) {
+			if ("0".equals(centerId)) {
+				facilityJsonDTOList = getAllFacilities();
+			} else {
+				Optional<Center> center = centerRepository.findById(Long.parseLong(centerId));
+				if (center.isPresent()) {
 					List<Facility> facilityList = facilityRepository
-							.findByCenterIdAndOnlineActiveAndActive(center.get(), true,true);
+							.findByCenterIdAndOnlineActiveAndActive(center.get(), true, true);
 					for (Facility facility : facilityList) {
 						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
 						BeanUtils.copyProperties(facility, facilityJsonDTO);
-						
+						facilityJsonDTO.setCenterName(center.get().getCentreName());
+						facilityJsonDTO.setCentreId(center.get().getCentreId());
 						List<SubFacility> subFacilityList = subFacilityRepository
 								.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
-						if(!subFacilityList.isEmpty()) {
-							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacilityList.get(0));
-							if(priceList!=null&&!priceList.isEmpty()) {
+						if (!subFacilityList.isEmpty()) {
+							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true,
+									subFacilityList.get(0));
+							if (priceList != null && !priceList.isEmpty()) {
 								facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 							}
 						}
-						
+
 						try {
-							File file = new File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
-							if(!file.exists()) {
-								file = new File(facilityPhotoPath+"noimage.png");
+							File file = new File(facilityPhotoPath + facility.getFacilityId().toString() + ".png");
+							if (!file.exists()) {
+								file = new File(facilityPhotoPath + "noimage.png");
 							}
 							byte[] fileContent = FileUtils.readFileToByteArray(file);
 							String encodedString = Base64.getEncoder().encodeToString(fileContent);
 							facilityJsonDTO.setFacilityPhoto(encodedString);
-						}catch(Exception e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						facilityJsonDTOList.add(facilityJsonDTO);
 					}
+				}
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
 		}
 
 		return facilityJsonDTOList;
 	}
-	
+
 	@Override
 	public List<FacilitySubFacilityJsonDTO> getSubFacilitiesForFacility(String data) {
 		List<FacilitySubFacilityJsonDTO> facilitySubFacilityJsonDTOArray = new ArrayList<FacilitySubFacilityJsonDTO>();
@@ -297,21 +309,22 @@ public class FacilicyServiceImpl implements FacilityService{
 						List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacility);
 						SubFacilityJsonDTO subFacilityJsonDTO = new SubFacilityJsonDTO();
 						BeanUtils.copyProperties(subFacility, subFacilityJsonDTO);
-						
+
 						try {
-							File file = new File(subFacilityPhotoPath+subFacility.getSubFacilityId().toString()+".png");
-							if(!file.exists()) {
-								file = new File(subFacilityPhotoPath+"noimage.png");
+							File file = new File(
+									subFacilityPhotoPath + subFacility.getSubFacilityId().toString() + ".png");
+							if (!file.exists()) {
+								file = new File(subFacilityPhotoPath + "noimage.png");
 							}
 							byte[] fileContent = FileUtils.readFileToByteArray(file);
 							String encodedString = Base64.getEncoder().encodeToString(fileContent);
 							subFacilityJsonDTO.setSubFacilityPhoto(encodedString);
-						}catch(Exception e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						
+
 						subFacilityJsonDTOList.add(subFacilityJsonDTO);
-						if(priceList!=null&&!priceList.isEmpty()) {
+						if (priceList != null && !priceList.isEmpty()) {
 							subFacilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
 						}
 					}
@@ -319,12 +332,106 @@ public class FacilicyServiceImpl implements FacilityService{
 				}
 				facilitySubFacilityJsonDTOArray.add(facilitySubFacilityJsonDTO);
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
 		}
 		return facilitySubFacilityJsonDTOArray;
 
 	}
 
+	@Override
+	public List<PreferredSportsJsonDTO> getAllFacilitiesAndPreferredSports(String data) {
+		List<PreferredSportsJsonDTO> preferredSportsJsonDTOList = new ArrayList<PreferredSportsJsonDTO>();
+		try {
+			JSONObject jsonData = new JSONObject(data);
+			String centerId = jsonData.getString("centerId");
+			Optional<Center> center = centerRepository.findById(Long.parseLong(centerId));
+			List<FacilityType> facilityType = facilityTypeRepository.findByActiveAndOnlineActive(true, true);
+			if (center.isPresent() && facilityType != null) {
+				for (FacilityType facType : facilityType) {
+					PreferredSportsJsonDTO preferredSportsJsonDTO = new PreferredSportsJsonDTO();
+					BeanUtils.copyProperties(facType, preferredSportsJsonDTO);
+					List<Facility> facilityList = facilityRepository
+							.findByCenterIdAndFacilityTypeIdAndOnlineActiveAndActive(center.get(), facType, true, true);
+					List<FacilityJsonDTO> facilityJsonDTOList = new ArrayList<FacilityJsonDTO>();
+					for (Facility facility : facilityList) {
+						FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
+						BeanUtils.copyProperties(facility, facilityJsonDTO);
+						List<SubFacility> subFacilityList = subFacilityRepository
+								.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
+						if (!subFacilityList.isEmpty()) {
+							List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true,
+									subFacilityList.get(0));
+							if (priceList != null && !priceList.isEmpty()) {
+								facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+							}
+						}
+						/*
+						 * try { File file = new
+						 * File(facilityPhotoPath+facility.getFacilityId().toString()+".png");
+						 * if(!file.exists()) { file = new File(facilityPhotoPath+"noimage.png"); }
+						 * byte[] fileContent = FileUtils.readFileToByteArray(file); String
+						 * encodedString = Base64.getEncoder().encodeToString(fileContent);
+						 * facilityJsonDTO.setFacilityPhoto(encodedString); }catch(Exception e) {
+						 * e.printStackTrace(); }
+						 */
+
+						facilityJsonDTOList.add(facilityJsonDTO);
+					}
+					preferredSportsJsonDTO.setFacilities(facilityJsonDTOList);
+					preferredSportsJsonDTOList.add(preferredSportsJsonDTO);
+				}
+
+			}
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
+		}
+
+		return preferredSportsJsonDTOList;
+	}
+
+	@Override
+	public List<FacilityJsonDTO> getAllFacilities() {
+		List<FacilityJsonDTO> facilityJsonDTOList = new ArrayList<FacilityJsonDTO>();
+		try {
+			List<Center> centers = centerRepository.findByOnlineActiveAndActive(true, true);
+			for (Center center : centers) {
+				List<Facility> facilityList = facilityRepository.findByCenterIdAndOnlineActiveAndActive(center, true,
+						true);
+				for (Facility facility : facilityList) {
+					FacilityJsonDTO facilityJsonDTO = new FacilityJsonDTO();
+					BeanUtils.copyProperties(facility, facilityJsonDTO);
+					facilityJsonDTO.setCenterName(center.getCentreName());
+					facilityJsonDTO.setCentreId(center.getCentreId());
+					List<SubFacility> subFacilityList = subFacilityRepository
+							.findByFacilityIdAndActiveAndOnlineActive(facility, true, true);
+					if (!subFacilityList.isEmpty()) {
+						List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true,
+								subFacilityList.get(0));
+						if (priceList != null && !priceList.isEmpty()) {
+							facilityJsonDTO.setRateMonthly(priceList.get(0).getRatePerMonth());
+						}
+					}
+
+					try {
+						File file = new File(facilityPhotoPath + facility.getFacilityId().toString() + ".png");
+						if (!file.exists()) {
+							file = new File(facilityPhotoPath + "noimage.png");
+						}
+						byte[] fileContent = FileUtils.readFileToByteArray(file);
+						String encodedString = Base64.getEncoder().encodeToString(fileContent);
+						facilityJsonDTO.setFacilityPhoto(encodedString);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					facilityJsonDTOList.add(facilityJsonDTO);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Exception : ", e);
+		}
+
+		return facilityJsonDTOList;
+	}
 
 }

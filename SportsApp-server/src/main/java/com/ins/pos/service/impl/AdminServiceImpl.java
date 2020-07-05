@@ -1,33 +1,44 @@
 package com.ins.pos.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
+import com.ins.pos.dto.CenterDetailsJsonDTO;
 import com.ins.pos.dto.FacilityDetailsJsonDTO;
 import com.ins.pos.dto.FacilitySubFacilityDetailsJsonDTO;
 import com.ins.pos.dto.OnlineBookingWindowDTO;
+import com.ins.pos.dto.SendCommunicationFormDTO;
 import com.ins.pos.dto.SubFacilityDetailJsonDTO;
-import com.ins.pos.entity.Accounts;
 import com.ins.pos.entity.Center;
+import com.ins.pos.entity.CommunicationLog;
 import com.ins.pos.entity.Facility;
 import com.ins.pos.entity.Member;
 import com.ins.pos.entity.OnlineBookingWindow;
+import com.ins.pos.entity.PaymentOrderStatus;
+import com.ins.pos.entity.PaymentResponse;
 import com.ins.pos.entity.SubFacility;
-import com.ins.pos.repository.AccountsRepository;
 import com.ins.pos.repository.CenterRepository;
+import com.ins.pos.repository.CommunicationLogRepository;
 import com.ins.pos.repository.FacilityRepository;
 import com.ins.pos.repository.MemberRepository;
 import com.ins.pos.repository.OnlineBookingWindowRepository;
+import com.ins.pos.repository.PaymentOrderStatusRepository;
+import com.ins.pos.repository.PaymentResponseRepository;
 import com.ins.pos.repository.PriceRepository;
 import com.ins.pos.repository.SubFacilityRepository;
 import com.ins.pos.service.AdminService;
@@ -35,6 +46,8 @@ import com.ins.pos.service.util.CommunicationUtil;
 
 @Service
 public class AdminServiceImpl implements AdminService {
+
+	private final Logger LOGGER = LoggerFactory.getLogger(AdminServiceImpl.class);
 
 	@Autowired
 	private FacilityRepository facilityRepository;
@@ -58,7 +71,16 @@ public class AdminServiceImpl implements AdminService {
 	MemberRepository memberRepository;
 
 	@Autowired
-	private AccountsRepository accountsRepository;
+	private PaymentOrderStatusRepository paymentOrderStatusRepository;
+
+	@Autowired
+	private PaymentResponseRepository paymentResponseRepository;
+
+	@Autowired
+	private CommunicationLogRepository communicationLogRepository;
+
+	@Value("${sportsapp.payment.appURL}")
+	private String appURL;
 
 	@Override
 	public List<FacilityDetailsJsonDTO> getAllFacilities(String data) {
@@ -74,9 +96,11 @@ public class AdminServiceImpl implements AdminService {
 					BeanUtils.copyProperties(facility, facilityJsonDTO);
 					facilityJsonDTOList.add(facilityJsonDTO);
 				}
+			} else {
+				LOGGER.error("Center -" + centerId + " does nt exist!!");
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LOGGER.error("Exception", e);
 		}
 
 		return facilityJsonDTOList;
@@ -102,11 +126,13 @@ public class AdminServiceImpl implements AdminService {
 						subFacilityJsonDTOList.add(subFacilityJsonDTO);
 					}
 					facilitySubFacilityJsonDTO.setSubFacility(subFacilityJsonDTOList);
+				} else {
+					LOGGER.error("Facility -" + (String) value + " does nt exist!!");
 				}
 				facilitySubFacilityJsonDTOArray.add(facilitySubFacilityJsonDTO);
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LOGGER.error("Exception", e);
 		}
 		return facilitySubFacilityJsonDTOArray;
 
@@ -124,11 +150,13 @@ public class AdminServiceImpl implements AdminService {
 					fac.setActive(facility.getActive());
 					fac.setOnlineActive(facility.getOnlineActive());
 					facilityRepository.save(fac);
+				} else {
+					LOGGER.error("Facility -" + facility.getFacilityId() + " does nt exist!!");
 				}
 			}
 			status = "Success";
 		} catch (Exception e) {
-
+			LOGGER.error("Exception", e);
 		}
 		response.put("status", status);
 		return response.toString();
@@ -150,7 +178,7 @@ public class AdminServiceImpl implements AdminService {
 			}
 			status = "Success";
 		} catch (Exception e) {
-
+			LOGGER.error("Exception", e);
 		}
 		response.put("status", status);
 		return response.toString();
@@ -193,26 +221,104 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public void sendCommunications(long accountId) {
+	public RedirectView sendCommunications(SendCommunicationFormDTO request, HttpServletResponse response) {
+		try {
+			if (communicationLogRepository.findByOrderId(request.getOrderID()) == null) {
+				PaymentOrderStatus paymenOrderStatus = paymentOrderStatusRepository.findByOrderId(request.getOrderID());
+				if ("S".equals(paymenOrderStatus.getStatus()) && "Y".equals(paymenOrderStatus.getIsNewMember())) {
+					PaymentResponse paymentResponse = paymentResponseRepository.findByOrderId(request.getOrderID());
+					if (paymenOrderStatus.getMemberId() != null) {
+						Member m = paymenOrderStatus.getMemberId();
+						String subject = "SportsApp - Payment successfull - Account created for " + m.getMemberName();
+						String smsBody = "SportsApp - Payment is successfull and account has been created. Please check your mail for login details.";
+						String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">Payment is successfull and account has been created for you within SportsApp!</h3><h5></h5><h4>Please follow these instructions for logging in to the system.</h4><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Browse to ${url}</h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter your credentials</h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID: ${userId}</strong></h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: ${password}</strong></h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payment Reference ID: ${refID}</h5><h5></h5><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
+						mailbody = mailbody.replace("${name}", m.getMemberName()).replace("${userId}", m.getUserName())
+								.replace("${password}", m.getPassword())
+								.replace("${refID}", paymentResponse.getPgMeTrnRefNo()).replace("${url}", appURL);
+						boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
+						boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic",
+								smsBody, "TXTLCL", "91" + m.getMemberContactNo());
+						CommunicationLog communicationLog = new CommunicationLog();
+						communicationLog.setCreatedDate(new Date());
+						communicationLog.setMailBody(mailbody);
+						communicationLog.setMailId(m.getEmail());
+						communicationLog.setMailStatus(emailStatus);
+						communicationLog.setOrderId(request.getOrderID());
+						communicationLog.setPhoneNumber("91" + m.getMemberContactNo());
+						communicationLog.setSmsContent(smsBody);
+						communicationLog.setSmsStatus(smsStatus);
+						communicationLogRepository.save(communicationLog);
+					}
+				} else if ("Y".equals(paymenOrderStatus.getIsNewMember())) {
+					if (paymenOrderStatus.getMemberId() != null) {
+						Member m = paymenOrderStatus.getMemberId();
+						String subject = "Failed Payment on SportsApp";
+						String smsBody = "SportsApp - We are sorry that your payment was not successful. Please check your mail for details.";
+						String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">We are sorry that your payment was not successful.</h3><h5></h5><h4>The amount for the said transaction has not been charged by us. In case, the amount has been charged, the refund will be processed by your respective bank.</h4><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
+						mailbody = mailbody.replace("${name}", m.getMemberName());
+						boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
+						boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic",
+								smsBody, "TXTLCL", "91" + m.getMemberContactNo());
+						CommunicationLog communicationLog = new CommunicationLog();
+						communicationLog.setCreatedDate(new Date());
+						communicationLog.setMailBody(mailbody);
+						communicationLog.setMailId(m.getEmail());
+						communicationLog.setMailStatus(emailStatus);
+						communicationLog.setOrderId(request.getOrderID());
+						communicationLog.setPhoneNumber("91" + m.getMemberContactNo());
+						communicationLog.setSmsContent(smsBody);
+						communicationLog.setSmsStatus(smsStatus);
+						communicationLogRepository.save(communicationLog);
 
-		Optional<Accounts> account = accountsRepository.findById(accountId);
-		account.ifPresent((a) -> {
-			Member m = a.getMemberId();
-			String subject = "SportsApp - Payment successfull - Account created for " + m.getMemberName();
-			String smsBody = "SportsApp - Payment is successfull and account has been created. Please check your mail for login details.";
-			String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">Payment is successfull and account has been created for you within SportsApp!</h3><h5></h5><h4>Please follow these instructions for logging in to the system.</h4><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Browse to ${url}</h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter your credentials</h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID: ${userId}</strong></h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: ${password}</strong></h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payment Reference ID: ${refID}</h5><h5></h5><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
-			mailbody = mailbody.replace("${name}", m.getMemberName()).replace("${userId}", m.getUserName())
-					.replace("${password}", m.getPassword()).replace("${refID}", "Dummy code")
-					.replace("${url}", "http://15.206.200.143:8080/SportsApp");
-			try {
-				communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
-				communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic", smsBody, "TXTLCL",
-						"91" + m.getMemberContactNo());
-			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					}
+				}
 			}
-		});
+		} catch (Exception e) {
+			LOGGER.error("Exception - ", e);
+		}
+		return new RedirectView("/", true);
+	}
+
+	@Override
+	public List<CenterDetailsJsonDTO> getAllCenters() {
+		List<CenterDetailsJsonDTO> centerJsonDTOList = new ArrayList<CenterDetailsJsonDTO>();
+		try {
+			Iterable<Center> centers = centerRepository.findAll();
+			centers.forEach((c) -> {
+				CenterDetailsJsonDTO centerDetailsJsonDTO = new CenterDetailsJsonDTO();
+				centerDetailsJsonDTO.setCentreId(c.getCentreId());
+				centerDetailsJsonDTO.setCentreName(c.getCentreName());
+				centerDetailsJsonDTO.setActive(c.getActive());
+				centerDetailsJsonDTO.setOnlineActive(c.getOnlineActive());
+				centerJsonDTOList.add(centerDetailsJsonDTO);
+			});
+		} catch (JSONException e) {
+			LOGGER.error("Exception", e);
+		}
+
+		return centerJsonDTOList;
+	}
+
+	@Override
+	public String updateCenters(List<CenterDetailsJsonDTO> data) {
+
+		String status = "Failure";
+		JSONObject response = new JSONObject();
+		try {
+			for (CenterDetailsJsonDTO center : data) {
+				Optional<Center> centerOpt = centerRepository.findById(center.getCentreId());
+				centerOpt.ifPresent((c) -> {
+					c.setActive(center.getActive());
+					c.setOnlineActive(center.getOnlineActive());
+					centerRepository.save(c);
+				});
+			}
+			status = "Success";
+		} catch (Exception e) {
+			LOGGER.error("Exception", e);
+		}
+		response.put("status", status);
+		return response.toString();
 
 	}
 }

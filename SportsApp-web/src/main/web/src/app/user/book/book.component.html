@@ -1,0 +1,70 @@
+<div class="book-wrapper">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="facility-image">
+        <img alt="" src="data:image/png;base64,{{slotobject[0].facilityPhoto}}" style="height:100%;width:100%;">
+      </div>
+      <div class="sub-facility-list">
+          <div class="facility-info">
+            <div><span>{{slotobject[0].centerName}} - {{slotobject[0].facilityName}}</span></div>
+            <div class="locn">Thiruvanathapuram</div>
+          </div>
+          <div><p class="mt-4 slot-title mb-4 ">SELECT THE SLOTS</p></div>
+          <div *ngFor="let item of slotobject; let i = index" class="container">
+            
+            <div *ngFor="let subFacility of item.subFacility"  class="subfac-box row mt-4">
+              <div class="box-1 col-md-3">
+                
+                  <img alt="" src="data:image/png;base64,{{subFacility.subFacilityPhoto}}" style="height: 100%;width: 100%;">
+               
+              </div>
+              <div class="box-2 col-md-9">
+                <label class="">{{subFacility.subFacilityName}}  &nbsp; ( Rs.{{subFacility.rateMonthly}} )</label>
+                  <ul class="row">
+                    <li *ngFor="let time of subFacility.timetable" (click)="checkValue(item,subFacility,time)" class="slotcheck">{{slot(time.sessionStartTime)}} - {{slot(time.sessionEndTime)}}</li>
+                  </ul>
+              </div>
+
+              
+            </div>
+          </div>
+
+
+      </div>
+      </div>
+      <div class="col-md-4">
+        <div class="review-info" *ngIf="slotSelected">
+            <div class="rev-title">SELECTED FACILITY</div>
+            <div class="rev-data"> {{selectedFacility.facility.facilityName}}</div>
+            <div class="rev-title mt-3">SELECTED TIME SLOT</div>
+            <div class="rev-data">{{slot(selectedFacility.timeTable.sessionStartTime)}}- {{slot(this.selectedFacility.timeTable.sessionEndTime)}}</div>
+            <div class="rev-title mt-3">TOTAL AMOUNT PAYABLE</div>
+            <div class="rev-data"><span class="rupee"></span>{{cardCost+ memCost +selectedFacility.subFacility.rateMonthly}}<span class="split-price" (click)='showSplit = !showSplit'>Show Breakup</span>
+            <div class="split-info ml-2" [hidden]='!showSplit'>
+              <p>Registration : <fa name="inr" style="margin-right: 5px;"></fa>{{memCost}}</p>
+              <p>Member Card Fee :<fa name="inr" style="margin-right: 5px;"></fa>{{cardCost}}</p>
+              <p>Booking Fee  : <fa name="inr" style="margin-right: 5px;"></fa>{{selectedFacility.subFacility.rateMonthly}}</p>
+            </div>
+            </div>
+            <div><input type="button" class="btn btn-success col-12 mt-5"   (click)="doBooking()" value="CONFIRM AND BOOK NOW"/></div>
+          </div>
+      </div>
+  </div>
+
+</div>
+
+
+<!--
+
+    <div *ngFor="let item of slotobject; let i = index" class="facBlock">
+      <label class="row facName"><b>{{item.facilityName}}</b></label>
+      <div *ngFor="let subFacility of item.subFacility">
+        <label class="row">{{subFacility.subFacilityName}}  &nbsp; ( Rs.{{subFacility.rateMonthly}} )</label>
+        <ul class="row">
+          <li *ngFor="let time of subFacility.timetable">{{slot(time.sessionStartTime)}} - {{slot(time.sessionEndTime)}}<input class="slotCheck" type="checkbox" formControlName="isChecked" (change)="checkValue(item,subFacility,time)"/></li>
+        </ul>
+      </div>
+    </div>
+   
+
+-->

@@ -8,6 +8,12 @@
     color: white !important;
 }
 .history-page{
-    background: url("../../../assets/images/Banner-5.jpg");
-    padding-bottom: 70px;
+    /* background: url("../../../assets/images/Banner-5.jpg"); */
+    padding-bottom: 20px;
+    padding-bottom: 35px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11);
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 2%;
 }

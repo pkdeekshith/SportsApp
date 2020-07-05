@@ -18,15 +18,18 @@
 }
 .report-content{
     min-height: 400px;
-    background:  #00002d;
-    color: wheat;
+    background: #E5E5E5;
 }
 .report-title{
     text-align: center;
     font-size: 17px;
-    background: #454556;
+    background: #152844;
     margin-bottom: 7px;
+    color: white
 }
 .displayFix{
     display: inline !important;
+}
+.report_wrapper{
+    min-height: 100%;
 }

@@ -36,7 +36,19 @@ export class Config {
                      getAllFacilitiesAdmin:this.baseURL+"api/admin/getAllFacilities",
                      updateFacilities:this.baseURL+"api/admin/updateFacilities",
                      getAllSubFacilitiesAdmin:this.baseURL+"api/admin/getAllSubFacilities",
-                     updateSubFacilitiesAdmin:this.baseURL+"api/admin/updateSubFacilities"
+                     updateSubFacilitiesAdmin:this.baseURL+"api/admin/updateSubFacilities",
+                     getPrefSportAndfacilities:this.baseURL+"api/facility/getAllFacilitiesAndPreferredSports",
+                     resetPassword:this.baseURL+"api/member/changePassword",
+                     forgotPassword:this.baseURL+"api/member/forgetPassword",
+                     initiatePayment :this.baseURL+"api/payment/initiatePayment",
+                     paymentFinal : this.baseURL+"api/payment/proceedToPayment/",
+                     validateUserName:this.baseURL+"api/auth/validateUserName",
+                     getMemberCred:this.baseURL+"api/auth/getMemberCred",
+                     getCentreList : this.baseURL+"api/center/getAllCenters",
+                     updateCenters:this.baseURL+"api/admin/updateCenters",
+                     getCenterListAdmin: this.baseURL+"api/admin/getAllCenters",
+                     getOnlineBookingWindow: this.baseURL+"api/admin/getOnlineBookingWindow",
+                     saveBookingWindow:  this.baseURL+"api/admin/saveBookingWindow"
 
               }
        }

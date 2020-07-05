@@ -5,6 +5,8 @@ public class FacilityJsonDTO {
 	private String facilityName;
 	private String facilityPhoto;
 	private Double rateMonthly;
+	private String centerName;
+	private Long centreId;;
 	
 
 	public Long getFacilityId() {
@@ -37,5 +39,21 @@ public class FacilityJsonDTO {
 
 	public void setRateMonthly(Double rateMonthly) {
 		this.rateMonthly = rateMonthly;
+	}
+
+	public String getCenterName() {
+		return centerName;
+	}
+
+	public void setCenterName(String centerName) {
+		this.centerName = centerName;
+	}
+
+	public Long getCentreId() {
+		return centreId;
+	}
+
+	public void setCentreId(Long centreId) {
+		this.centreId = centreId;
 	}
 }

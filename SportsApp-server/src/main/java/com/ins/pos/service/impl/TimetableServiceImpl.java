@@ -128,6 +128,7 @@ public class TimetableServiceImpl implements TimetableService {
 							facilityOpt.get());
 										
 					BeanUtils.copyProperties(facilityOpt.get(), facilitySubFacilityTimeTableJsonDTO);
+					facilitySubFacilityTimeTableJsonDTO.setCenterName(facilityOpt.get().getCenterId().getCentreName());
 					try {
 						File file = new File(facilityPhotoPath+facilityOpt.get().getFacilityId().toString()+".png");
 						if(!file.exists()) {
@@ -147,7 +148,7 @@ public class TimetableServiceImpl implements TimetableService {
 					for(SubFacility subFacility:subFacilityList) {
 						List<TimeTableJsonDTO> timeTableJsonArray = new ArrayList<TimeTableJsonDTO>();
 						for(TimeTable timeTable:timeTableList) {
-							List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), "Monthly", true, subFacility);
+							List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), "Monthly", true, subFacility,true);
 							if(accountSubSectorList.size()<subFacility.getSlotLimit()) {
 								TimeTableJsonDTO timeTableJsonDTO = new TimeTableJsonDTO();
 								BeanUtils.copyProperties(timeTable, timeTableJsonDTO);
@@ -260,7 +261,7 @@ public class TimetableServiceImpl implements TimetableService {
 							subFacilityOpt.get().getFacilityId());
 					List<TimeTableJsonDTO> timeTableJsonArray = new ArrayList<TimeTableJsonDTO>();
 					for (TimeTable timeTable : timeTableList) {
-						List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), "Monthly", true, subFacilityOpt.get());
+						List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTable.getSessionStartTime(), timeTable.getSessionEndTime(), "Monthly", true, subFacilityOpt.get(),true);
 						if(accountSubSectorList.size()<subFacilityOpt.get().getSlotLimit()) {
 						TimeTableJsonDTO timeTableJsonDTO = new TimeTableJsonDTO();
 						timeTableJsonDTO.setTotalSlots(subFacilityOpt.get().getSlotLimit());

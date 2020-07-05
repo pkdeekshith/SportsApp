@@ -2,15 +2,16 @@
     width: 100%;
 }
 .app-content-area{
-    min-height: calc(100% - 116px);
+    min-height: calc(100% - 125px);
     overflow-y: auto;
     /* background: #dcf7d5; */
     overflow-x: hidden;
     /* padding-top: 4px; */
-    padding-bottom: 4px;
+    /* padding-bottom: 4px; */
     margin-left: -15px;
     margin-right: -15px;
-    background: url("../../assets/images/about-back.jpg");
+    background: #e5e5e5;
+    /* background: url("../../assets/images/about-back.jpg"); */
 }
 #app-area::-webkit-scrollbar-track{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -23,4 +24,7 @@
 } 
 #app-area::-webkit-scrollbar-thumb {
     background-color: green;
+}
+:host/deep{
+    height: 100%;
 }

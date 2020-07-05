@@ -13,13 +13,14 @@ export class AdminComponent implements OnInit {
     private Utility : Utility,
     private Router : Router) { 
       if(this.BackendService.memberId == undefined){
-        let s = this.Utility.getSession();
-        if(s){
-          this.BackendService.memberId=s;
-          this.BackendService.memberRole="admin";
-        }else{
-          this.Router.navigateByUrl("/landing/login")
-        }
+        this.Router.navigateByUrl("/landing/login");
+       // let s = this.Utility.getSession();
+        // if(s){
+        //   this.BackendService.memberId=s;
+        //   this.BackendService.memberRole="admin";
+        // }else{
+        //   this.Router.navigateByUrl("/landing/login")
+        // }
        
       }
     }

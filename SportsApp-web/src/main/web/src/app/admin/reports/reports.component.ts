@@ -11,6 +11,9 @@ export class ReportsComponent implements OnInit {
   facilityList=[];
   subFacilityList=[];
   
+  summaryBookingCenterId="";
+  spotBookinCenter="";
+
   WIN = 0; //To switch multiple report windows
   bookingSummary=[];
   spotBookingSummary=[];
@@ -22,7 +25,7 @@ export class ReportsComponent implements OnInit {
   allBokingFromDate=new Date();
   allBookingToDate=new Date();
   allBookingBookingMode="Online";
-  allBookingCenterId;
+  allBookingCenterId="";
   allBookingFacilityId;
   allBookingSubFacilityId;
   
@@ -30,7 +33,7 @@ export class ReportsComponent implements OnInit {
   allAccountFromDate=new Date();
   allAccountToDate = new Date();
   allAccountBookingMode="Online";
-  allAccountCenterId;
+  allAccountCenterId="";
   allAccountFacilityId;
   allAccountSubFacilityId;
   allAccountPayment;
@@ -39,34 +42,51 @@ export class ReportsComponent implements OnInit {
   consolidatedByDateFromDate=new Date();
   consolidatedByDateToDate = new Date();
   consolidatedByDateBookingMode="Online";
-  consolidatedByDateCenterId;
+  consolidatedByDateCenterId="";
   consolidatedByDateFacilityId;
   consolidatedByDate=[];
   consolidatedByFacilityFromDate=new Date();
   consolidatedByFacilityToDate=new Date();
   consolidatedByFacilityBookingMode="Online";
-  consolidatedByFacilityCenterId;
+  consolidatedByFacilityCenterId="";
   consolidatedByFacilityFacilityId;
   consolidatedByFacility=[];
 
+  totalAmount=0; 
+  centerList=[];
   constructor(private ngxService: NgxUiLoaderService,
     private BackEnd : BackendService,) { }
-    
+    calculateTotal(arr){
+      this.totalAmount = 100;
+    }
     ngOnInit() {
-      this.getBookingSummary();
+     // this.getBookingSummary();
+     this.ngxService.start();
+     this.BackEnd.getCentreList().subscribe(
+       data=>{
+         this.ngxService.stop();
+         this.centerList = data;
+       },error=>{
+         this.ngxService.stop();
+         console.log(error);
+         
+       }
+     )
     }
     getBookingSummary(){
       this.ngxService.start();
       let req={
         "fromDate":this.summaryFromDate.toISOString().split("T")[0],
         "endDate":this.summaryToDate.toISOString().split("T")[0],
-        "bookingApp":this.summaryBookingMode
+        "bookingApp":this.summaryBookingMode,
+        "center":this.summaryBookingCenterId
       };
       this.BackEnd.getBookingSummary(req).subscribe(
         data=>{
           this.ngxService.stop();
           if(data.status == "Success"){
             this.bookingSummary = data.data;
+            this.calculateTotal(data.data);
           }else{
             this.bookingSummary=[];
           }
@@ -83,7 +103,8 @@ export class ReportsComponent implements OnInit {
         let req = {
           "date": this.spotBookinDdate.toISOString().split("T")[0],
           "bookingApp": this.spotBookingMode,
-          "sessionType":""
+          "sessionType":"",
+          "center":this.spotBookinCenter
         }
         this.BackEnd.getSpotBookingForDays(req).subscribe(
           data=>{
@@ -210,7 +231,7 @@ export class ReportsComponent implements OnInit {
                 this.WIN = id;
               }
               handleCenterSelection(center,winID){
-                this.BackEnd.getAllFacilities().subscribe(
+                this.BackEnd.getAllFacilities(center.toString()).subscribe(
                   data=>{
                     this.facilityList = data;
                   },

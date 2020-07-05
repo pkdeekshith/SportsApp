@@ -3,8 +3,8 @@
   <div class="col-md-3 leftMenu">
     
     <ul>
-      <!-- <li (click)="setScreen(0)">REGISTRATION</li> -->
-      <!-- <li (click)="setScreen(1)">CENTER</li> -->
+      <li (click)="setScreen(0)">BOOKING WINDOW</li> 
+      <li (click)="setScreen(1)">CENTER SETTINGS</li>
       <li (click)="setScreen(2)">FACILITY SETTINGS</li>
       <li (click)="setScreen(3)">SUB FACILITY SETTINGS</li>
       <!-- <li (click)="setScreen(4)">BADMINTON GROUP</li> -->
@@ -12,31 +12,73 @@
   </div>
   <div class="col-md-9 settings-content" *ngIf="WID == 0">
     <div class="p-2">
-        <div class="p-2 report-title">REGISTRATION</div>
+        <div class="p-2 report-title">BOOKING WINDOW</div>
     </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="firstName"> Enable center </label>
-        <p-multiSelect [options]="centerList"  selectionLimit=2 showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
-        <div *ngIf="submitted && f.prefSport1.errors" class="invalid-feedback">
-            <div *ngIf="f.prefSport1.errors.required">Preferred sport required</div>
+    <div class="form-group row">
+        <label for="staticEmail" class="col-md-3 col-form-label">Center</label>
+        <div class="col-md-4">
+            <select class="form-control" [(ngModel)]="windowcenter" (change)="handleCenterSelection(windowcenter,3)">
+              <option value=""></option>
+              <option *ngFor="let item of centerList" [value]="item.centreId">{{item.centreName}}</option>
+            </select>
         </div>
     </div>
+    <div class="form-group row">
+        <label for="staticEmail" class="col-md-3 col-form-label">Facility</label>
+        <div class="col-md-4">
+            <select class="form-control" [(ngModel)]="windowFacility" (change)="getCurrentBookingWindow(windowFacility)">
+              <option value=""></option>
+              <option *ngFor="let item of facilityList" [value]="item.facilityId">{{item.facilityName}}</option>
+            </select>
+        </div>
     </div>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Booking From(Date)</label>
+        <div class="col-md-4">
+            <input [(ngModel)]="windowStart" type="number" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Booking To(Date)</label>
+        <div class="col-md-4">
+            <input [(ngModel)]="windowEnd" type="number" class="form-control"/>
+        </div>
+    </div>
+    <div class="text-center">
+            <input type="button" value="UPDATE" class="btn btn-success" (click)="updateBookingWindow()"/>
+    </div>
+    
   </div>
   <div class="col-md-9 settings-content" *ngIf="WID == 1">
       <div class="p-2">
-          <div class="p-2 report-title">CENTER</div>
+          <div class="p-2 report-title">CENTER SETTINGS</div>
       </div>
-    <div class="col-md-6">
-      <div class="form-group">
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label for="staticEmail" class="col-md-3 col-form-label">Enable Center</label>
+            <div class="col-md-4">
+                <p-multiSelect [options]="centerToEnable"  [(ngModel)]="CtoEnable" showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
+            </div>
+            <div class="col-md-2">
+                <input type="button" value="ENABLE" class="btn btn-success" (click)="enableCenters()"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="staticEmail" class="col-md-3 col-form-label">Disable Center</label>
+            <div class="col-md-4">
+                <p-multiSelect [options]="centerToDisable" [(ngModel)]="CtoDisable"  showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
+            </div>
+            <div class="col-md-2">
+                <input type="button" value="DISABLE" class="btn btn-danger" (click)="disableCenters()"/>
+            </div>
+        </div>
+      <!-- <div class="form-group">
         <label for="firstName"> Enable center </label>
         <p-multiSelect [options]="centerList"  selectionLimit=2 showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'260px'}"></p-multiSelect>
         <div *ngIf="submitted && f.prefSport1.errors" class="invalid-feedback">
             <div *ngIf="f.prefSport1.errors.required">Preferred sport required</div>
         </div>
-    </div>
+    </div> -->
     </div>
   </div>
   <div class="col-md-9 settings-content" *ngIf="WID == 2">
@@ -48,7 +90,7 @@
           <div class="col-md-4">
               <select class="form-control" [(ngModel)]="center2" (change)="handleCenterSelection(center2,2)">
                 <option value=""></option>
-                <option *ngFor="let item of centerList" [value]="item.value">{{item.label}}</option>
+                <option *ngFor="let item of centerList" [value]="item.centreId">{{item.centreName}}</option>
               </select>
           </div>
       </div>
@@ -80,7 +122,7 @@
           <div class="col-md-4">
               <select class="form-control" [(ngModel)]="center3" (change)="handleCenterSelection(center3,3)">
                 <option value=""></option>
-                <option *ngFor="let item of centerList" [value]="item.value">{{item.label}}</option>
+                <option *ngFor="let item of centerList" [value]="item.centreId">{{item.centreName}}</option>
               </select>
           </div>
       </div>

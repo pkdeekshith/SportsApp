@@ -9,7 +9,7 @@ import {MessageService} from 'primeng/api';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-  WID=2;
+  WID=0;
   centerList=[];
   facilityList=[];
   subFacilityList=[];
@@ -24,12 +24,67 @@ export class SettingsComponent implements OnInit {
   SubFtoEnable=[];
   SubFacilitiesToEnable=[];
   SubFacilitiesToDisable=[];
+  centerToEnable=[];
+  centerToDisable=[];
+  CtoEnable=[];
+  CtoDisable=[];
+
+  windowStart;
+  windowEnd;
+  windowFacility;
+  fullWindowData;
+  windowcenter;
   constructor(private BackendService:BackendService,
     private NgxUiLoaderService:NgxUiLoaderService,private MessageService:MessageService) { }
 
   ngOnInit() {
     this.centerList=[];
-    this.centerList.push({label:"Jimmy George",value:2});
+   // this.centerList.push({label:"Jimmy George",value:2});
+   this.NgxUiLoaderService.start();
+   this.BackendService.getCenterListAdmin().subscribe(
+     data=>{
+       this.NgxUiLoaderService.stop();
+       //this.centerList = data;
+       data.forEach(i => { 
+        if(i.onlineActive){
+          this.centerList.push(i);
+          this.centerToDisable.push({label:i.centreName,value:i});
+        }else{
+          this.centerToEnable.push({label:i.centreName,value:i});
+        }
+      });
+     },error=>{
+       this.NgxUiLoaderService.stop();
+       console.log(error);
+       
+     }
+   )
+  }
+
+  resetCenterSettingsPage(){
+    this.centerList=[];
+    this.centerToDisable=[];
+    this.centerToEnable=[];
+   // this.centerList.push({label:"Jimmy George",value:2});
+   this.NgxUiLoaderService.start();
+   this.BackendService.getCenterListAdmin().subscribe(
+     data=>{
+       this.NgxUiLoaderService.stop();
+      // this.centerList = data;
+       data.forEach(i => { 
+        if(i.onlineActive){
+          this.centerList.push(i);
+          this.centerToDisable.push({label:i.centreName,value:i});
+        }else{
+          this.centerToEnable.push({label:i.centreName,value:i});
+        }
+      });
+     },error=>{
+       this.NgxUiLoaderService.stop();
+       console.log(error);
+       
+     }
+   )
   }
   setScreen(ID){
     this.WID = ID;
@@ -37,7 +92,7 @@ export class SettingsComponent implements OnInit {
   handleCenterSelection(id,wid){
     this.FacilitiesToEnable=[];
     this.FacilitiesToDisable=[];
-    this.BackendService.getFacilitiesForAdmin().subscribe(
+    this.BackendService.getFacilitiesForAdmin(id).subscribe(
       data=>{
         if(data){
           this.facilityList=data;
@@ -186,5 +241,105 @@ export class SettingsComponent implements OnInit {
         this.NgxUiLoaderService.stop();
       }
     )
+  }
+  disableCenters(){
+    if(!this.CtoDisable.length) return;
+    this.NgxUiLoaderService.start();
+    for(let i=0;i<this.CtoDisable.length;i++){
+      this.CtoDisable[i].onlineActive = false;
+    }
+    this.BackendService.updateCenters(this.CtoDisable).subscribe(
+      data=>{
+        if(data && data.status=="Success"){
+          this.resetCenterSettingsPage();
+          this.MessageService.clear();
+          this.MessageService.add({key: 'successToast', severity:'success', summary: '', detail: 'Success'});    
+        }else{
+
+        }
+        
+        this.NgxUiLoaderService.stop();
+      },
+      error=>{
+        this.NgxUiLoaderService.stop();
+      }
+    )
+  }
+  enableCenters(){
+    if(!this.CtoEnable.length) return;
+    this.NgxUiLoaderService.start();
+    for(let i=0;i<this.CtoEnable.length;i++){
+      this.CtoEnable[i].onlineActive = true;
+    }
+    this.BackendService.updateCenters(this.CtoEnable).subscribe(
+      data=>{
+        if(data && data.status=="Success"){
+          this.resetCenterSettingsPage();
+          this.MessageService.clear();
+          this.MessageService.add({key: 'successToast', severity:'success', summary: '', detail: 'Success'});    
+        }else{
+
+        }
+        
+        this.NgxUiLoaderService.stop();
+      },
+      error=>{
+        this.NgxUiLoaderService.stop();
+      }
+    )
+  }
+  getCurrentBookingWindow(id){
+    this.NgxUiLoaderService.start();
+    this.BackendService.getOnlineBookingWindow().subscribe(
+      data=>{
+        this.NgxUiLoaderService.stop();
+        if(data){
+          this.fullWindowData = data;
+          data.forEach((item)=>{
+            if(item.facilityId == id){              
+              this.windowStart = item.bookingStartDate;
+              this.windowEnd = item.bookingEndDate;
+              return;
+            }
+          })
+        }
+      },error=>{
+        this.NgxUiLoaderService.stop();
+      }
+    )
+  }
+  updateBookingWindow(){
+    if(this.windowcenter && this.windowFacility && this.windowStart && this.windowEnd){
+      let temp = this.fullWindowData;
+      temp.forEach((item)=>{
+      if(item.facilityId == this.windowFacility){
+        item.bookingStartDate = this.windowStart;
+        item.bookingEndDate=this.windowEnd;
+        return;
+      }
+    })
+    console.log(temp);
+    this.NgxUiLoaderService.start();
+    this.BackendService.saveBookingWindow(temp).subscribe(
+      data=>{
+        this.NgxUiLoaderService.stop();
+        if(data && data.status=="Success"){
+          this.resetBookingWindowPage();
+          this.MessageService.clear();
+          this.MessageService.add({key: 'successToast', severity:'success', summary: '', detail: 'Success'});    
+        }
+      },error=>{
+        this.NgxUiLoaderService.stop();
+      }
+    )
+    }
+ 
+  }
+  resetBookingWindowPage(){
+    this.windowcenter="";
+    this.windowFacility="";
+    this.windowStart="";
+    this.windowEnd="";
+
   }
 }

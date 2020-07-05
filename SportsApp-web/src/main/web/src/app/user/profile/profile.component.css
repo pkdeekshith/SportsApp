@@ -2,17 +2,17 @@
     padding: 20px;
 }
 .main-content{
-    background: yellow;
+    /* background: yellow; */
 }
 .side-content{
-    background: #00002d;
-    color: white;
+    /* background: #00002d;
+    color: white; */
 }
 .side-content table{
-    color: white !important;
+    color: black !important;
 }
 .topfix{
-    padding-top: 10px;
+    /* padding-top: 10px; */
 }
 #profile-tab .col-sm-6 .row div{
     margin-left: 5px;
@@ -27,3 +27,10 @@
 }
 
          
+#profile-tab , .panel-bd-top.topfix{
+    background: #FFFFFF;
+    box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11);
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 15px;
+}

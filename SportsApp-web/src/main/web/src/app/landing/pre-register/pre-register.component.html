@@ -1,0 +1,36 @@
+<div class="validate-wrapper">
+  <!-- <div class="validate-title ml-5 mt-3">
+      <div class="valid-title"><label>Create your account</label></div>
+      <p>Please select the preferred sport to proceed.</p>
+  </div> -->
+  <div class="validate-form container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mt-5">
+          <div class="form-group">
+            <label for="firstName">Preferred Sports</label>
+            <p-multiSelect [options]="preferredSports"  [(ngModel)]="prefSport" (onChange)="handlePreferredSportSelection()" selectionLimit=2 showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'100%'}"></p-multiSelect>
+           
+          </div>
+      
+          <div class="form-group mt-3">
+            <label for="firstName">Facility</label>
+            <p-multiSelect type="text"  [(ngModel)]="prefFacility" [options]="failities"  selectionLimit=2 showHeader=false   [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'100%'}"></p-multiSelect>
+           
+        </div>
+      
+        <div style="width: 100%;text-align:center;" class="form-group mt-4">
+          <input type="button" class="btn btn-success avail-btn" [disabled]="!prefSport || !prefFacility"  (click)="proceedAfterSportSelection()" value="CHECK AVAILABLITY"/>
+        </div>
+        </div>
+        
+      </div>
+      <div class="col-md-6">
+        <div class="validate-image"></div>
+      </div>
+    </div>
+    
+
+  </div>
+
+</div>

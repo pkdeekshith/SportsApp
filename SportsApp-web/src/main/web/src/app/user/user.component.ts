@@ -14,9 +14,11 @@ export class UserComponent implements OnInit {
               private Utility : Utility,
               private Router : Router
               ) { 
-                if(this.BackendService.memberId == undefined){
-                  let s = this.Utility.getSession();
-                  s == false ? (this.Router.navigateByUrl("/landing/login")) : (this.BackendService.memberId=s) ;
+                if(this.BackendService.memberId == undefined && this.BackendService.memberRole != 'newuser'){
+                  
+                  this.Router.navigateByUrl("/landing/login")
+                  //let s = this.Utility.getSession();
+                  //s == false ? (this.Router.navigateByUrl("/landing/login")) : (this.BackendService.memberId=s) ;
                 }
               }
 

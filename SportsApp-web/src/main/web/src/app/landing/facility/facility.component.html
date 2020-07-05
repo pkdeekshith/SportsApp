@@ -1,0 +1,25 @@
+<div class="facility-wrapper">
+<div class="container pb-5">
+
+
+  <div *ngFor="let item of facilityList; let i = index" class="row facility-horizon-box">
+     <div class="facility-image col-md-3">
+      <img alt="" src="data:image/png;base64,{{item.facilityPhoto}}" style="height: 130px;width: 200px;display: block;">
+     </div>
+     <div class="col-md-9 facility-data">
+       <div class="info-box">
+          <div class="coach-text"><span>Coaching Available</span></div>
+          <div class="center-main"><span>{{item.centerName}}-{{item.facilityName}}</span></div>
+          <div class="center-place"><span>Thiruvananthapuram</span></div>
+          <div class="mt-4"><span *ngFor="let feature of feature" class="feature-text">{{feature}}</span></div>
+       </div>
+       <div class="rate-box">
+          <div><span class="rupee"></span><span class="price-text">{{item.rateMonthly}}</span><span class="month-text">for 1 month</span></div>
+          <div><input type="button" value="Explore" class="btn btn-success explore-btn" (click)="goToValidatePage(item)"></div>
+       </div>
+     </div>
+
+  </div>
+</div>
+</div>
+

@@ -11,6 +11,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,8 @@ import com.ins.pos.service.util.EnglishNumberToWords;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(BookingServiceImpl.class);
 	
 	@Autowired
 	private FacilityRepository facilityRepository;
@@ -95,6 +99,10 @@ public class BookingServiceImpl implements BookingService {
 			SubFacility subFacility = subFacilityRepository.findById(bookingJsonDTO.getSubFacilityId()).get();
 			Member member = memberRepository.findById(bookingJsonDTO.getMemberId()).get();
 			timeTableRepository.findAllById(bookingJsonDTO.getTimeTableId()).forEach(timeTables::add);
+			
+			if(member.getMemberTypeValidity().before(new Date())){
+				throw new Exception("Membership validity expired on "+member.getMemberTypeValidity()+". Please renew the membership!!");
+			}
 			
 			for (Long id : bookingJsonDTO.getOtherMemberId()) {
 				Member addMember = memberRepository.findById(id).get();
@@ -154,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
 
 			}
 			for (TimeTable timeTbl : timeTables) {
-				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTbl.getSessionStartTime(), timeTbl.getSessionEndTime(), "Monthly", true, subFacility);
+				List<AccountsSubSector> accountSubSectorList = accountsSubSectorRepository.findActiveBookingForSubFacility(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTbl.getSessionStartTime(), timeTbl.getSessionEndTime(), "Monthly", true, subFacility,true);
 				if(accountSubSectorList.size()>=subFacility.getSlotLimit()) {
 					throw new Exception("Slot not available");
 				}
@@ -166,23 +174,24 @@ public class BookingServiceImpl implements BookingService {
 			accounts.setMemberId(member);
 			accounts.setBranchId(branch);
 			if(priceList!=null&&!priceList.isEmpty()) {
-				accounts.setPaidAmount(priceList.get(0).getRatePerMonth());
-				String words = EnglishNumberToWords.convert(accounts.getPaidAmount());
+				accounts.setPayableAmount(priceList.get(0).getRatePerMonth());
+				String words = EnglishNumberToWords.convert(accounts.getPayableAmount());
 				accounts.setWords(words);
 			}
-			accounts.setPaidDate(new Date());
+			accounts.setPaidDate(null);
 			accounts.setTypeOfBooking("Bookings");
 			accounts.setBookingDate(bookedDate.getTime());
 			accounts.setBookingDateLast(bookingEndDate.getTime());
 			accounts.setCenterId(center);
 			accounts.setCautionStatus(false);
 			accounts.setCreditAmount(0.00);
-			accounts.setActive(true);
+			accounts.setActive(false);
 			accounts.setBookingApp("Online");
 			accounts.setTypeOfBooking("Monthly");
 			accounts.setSessionStartTime(timeTables.get(0).getSessionStartTime());
 			accounts.setSessionEndTime(timeTables.get(0).getSessionEndTime());
 			accounts.setIsCentreBooking(false);
+			accounts.setOnHold(true);
 			accountsRepository.save(accounts);
 			List<Date> bookedDates = new ArrayList<>();
 			List<TimeTable> timeTables1 = new ArrayList<>();
@@ -222,7 +231,7 @@ public class BookingServiceImpl implements BookingService {
 			booking.setSessionStartTime(timeTbl.getSessionStartTime());
 			booking.setEntryStatus(false);
 			booking.setBookStatus(1);
-			booking.setActive(true);
+			booking.setActive(false);
 			booking.setBookingApp("Online");
 			booking.setCount(1);
 			bookingRepository.save(booking);
@@ -260,10 +269,12 @@ public class BookingServiceImpl implements BookingService {
 			accountsSubSectorRepository.save(accountsSub);
 			response.put("status", "Success");
 			response.put("accountId", accounts.getAccountsId());
+			response.put("memberId", member.getMemberId());
 			
 		} catch (Exception e) {
+			LOGGER.error("Exception : ",e);
 			response.put("status", "Failure");
-			response.put("message", e.getMessage());
+			response.put("message", e);
 		}
 		return response.toString();
 

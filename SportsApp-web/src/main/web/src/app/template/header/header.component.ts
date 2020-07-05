@@ -7,7 +7,7 @@ import { BackendService} from '../../shared/service/backend.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private BackEnd:BackendService) { }
+  constructor(public BackEnd:BackendService) { }
 
   ngOnInit() {
   }

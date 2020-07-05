@@ -1,12 +1,12 @@
 <div class="row reg-title">
-  <div *ngIf="!editMode"><label>MEMBER REGISTRATION</label></div>
-  <div *ngIf="editMode"><label>EDIT MEMBER INFORMATION</label></div>
+  <div *ngIf="!editMode && false"><label>MEMBER REGISTRATION</label></div>
+  <div *ngIf="editMode && false"><label>EDIT MEMBER INFORMATION</label></div>
 </div>
 <div class=" reg-wrapper">
   
 <form [formGroup]="registerForm">
     <p-messages styleClass="prime-slider-override"></p-messages>
-  <div class="facilityBlock" *ngIf="!editMode">
+  <div class="facilityBlock" *ngIf="!editMode && false">
     <div class="subheader"><span>FACILITY DETAILS</span></div>
     <div class="row">
         <div class="col-md-3"></div>
@@ -36,10 +36,10 @@
         </div>
       </div>
   </div>
-  <div class="facilityBlock edit" id="fade-in" style="position: relative">
+  <div class="facilityBlock edit show container" id="fade-in" style="position: relative">
       <!-- <div id="fade-in" class="edit"></div> -->
-      <div class="subheader"><span>PERSONAL DETAILS</span></div>
-      <div class="row" *ngIf="editMode">
+      <!-- <div class="subheader"><span>PERSONAL DETAILS</span></div> -->
+      <!-- <div class="row" *ngIf="editMode">
           <div class="col-md-3"></div>
         <div class="col-md-3 col-sm-12">
           <div class="form-group">
@@ -50,243 +50,288 @@
             </div>
         </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3"></div>
-          <div class="col-md-3 col-sm-12">
-              <div class="form-group">
-                <label for="firstName">Member Name</label>
-                <input type="text" formControlName="memberName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />
-                <div *ngIf="submitted && f.memberName.errors" class="invalid-feedback">
-                    <div *ngIf="f.memberName.errors.required">Name is required</div>
-                    <div *ngIf="f.memberName.errors.pattern">Only alphabets and . are allowed</div>
-                </div>
+      </div> -->
+      <div class="validate-title mt-3" *ngIf="!editMode">
+        <div class="valid-title"><label>Create your account</label></div>
+        <p>Please fill the details to proceed.</p>
+    </div>
+      <div class="form-block row pl-5 pr-5">
+        <div class="mt-2 mb-2 person-title"><span>Personal Details</span></div>
+        <div class="col-md-12 ">
+          <div class="form-group">
+            <label for="firstName">Member Name</label>
+            <input type="text" formControlName="memberName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memberName.errors }" />
+            <div *ngIf="submitted && f.memberName.errors" class="invalid-feedback">
+                <div *ngIf="f.memberName.errors.required">Name is required</div>
+                <div *ngIf="f.memberName.errors.pattern">Only alphabets and . are allowed</div>
             </div>
-            </div>
-            <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="lastName">Gender</label>
-                  <select  formControlName="gender" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.gender.errors }" >
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Transgender</option>
-                  </select>
-                    <div *ngIf="submitted && f.gender.errors" class="invalid-feedback">
-                      <div *ngIf="f.gender.errors.required">Gender is required</div>
-                  </div>
-              </div>
-              </div>
-             
-      </div>
-      <div class="row">
-          <div class="col-md-3"></div>
-          <div class="col-md-3 col-sm-12">
-              <div class="form-group cal" [ngClass]="{ 'is-invalid': submitted && f.dateOfBirth.errors }">
-                <label for="username">DoB</label>
-                <br>
-                <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'85%'}" formControlName="dateOfBirth" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
-                <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
-                    <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="guardName">Guardian Name</label>
-                  <input type="text" formControlName="guardName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.guardName.errors }" />
-                  <div *ngIf="submitted && f.guardName.errors" class="invalid-feedback">
-                      <div *ngIf="f.guardName.errors.required">Guardian name is required</div>
-                      <div *ngIf="f.guardName.errors.pattern">Only alphabets and . are allowed</div>
-                  </div>
-              </div>
-              </div>
-      </div>
-      <div class="row">
-         
-          <div class="col-md-3"></div>
-          <div class="col-md-3 col-sm-12">
-            <div class="form-group">
-              <label for="address">Address</label>
-              <input  formControlName="address" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.address.errors }" />
-                <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
-                  <div *ngIf="f.address.errors.required">Address is required</div>
-              </div>
-          </div>
-          </div>
-          <div class="col-md-3 col-sm-12">
-            <div class="form-group">
-              <label for="country">Country</label>
-              <input  disabled formControlName="country" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.country.errors }" />
-                <div *ngIf="submitted && f.country.errors" class="invalid-feedback">
-                  <div *ngIf="f.country.errors.required">Country required</div>
-              </div>
-          </div>
-          </div>
-          
-          
-          
-        </div> 
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="state">State</label>
-                  <select type="text" (change)="handleStateSelection()" formControlName="state" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.state.errors }" >
-                    <option *ngFor="let state of stateList" [value]="state">{{state}}</option>
-                  </select>
-                  <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
-                      <div *ngIf="f.state.errors.required">State  is required</div>
-                  </div>
-              </div>
-              </div>
-              <div class="col-md-3 col-sm-12">
-                  <div class="form-group">
-                    <label for="district">District</label>
-                    <select type="text" formControlName="district" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.district.errors }" >
-                      <option *ngFor="let district of districtList" [value]="district">{{district}}</option>
-                    </select>
-                    <div *ngIf="submitted && f.district.errors" class="invalid-feedback">
-                        <div *ngIf="f.district.errors.required">Age is required</div>
-                    </div>
-                </div>
-                </div>
         </div>
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-3 col-sm-12">
-              <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" formControlName="city" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.city.errors }" />
-                <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
-                    <div *ngIf="f.city.errors.required">City is required</div>
-                </div>
+        </div>  
+        <div class="col-md-12 col-sm-12">
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input  formControlName="address" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.address.errors }" />
+              <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
+                <div *ngIf="f.address.errors.required">Address is required</div>
             </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group cal" [ngClass]="{ 'is-invalid': submitted && f.dateOfBirth.errors }">
+            <label for="username">DoB</label>
+            <br>
+            <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'85%'}" formControlName="dateOfBirth" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
+            <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
+                <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
             </div>
-            <div class="col-md-3 col-sm-12">
-              <div class="form-group">
-                <label for="pin">PIN Code</label>
-                <input type="text" maxlength="6"  formControlName="pin" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.pin.errors }" />
-                <div *ngIf="submitted && f.pin.errors" class="invalid-feedback">
-                    <div *ngIf="f.pin.errors.required">PIN is required</div>
-                    <div *ngIf="f.pin.errors?.minlength">Please provide 6 digit PIN</div>
-                    <div *ngIf="f.pin.errors.pattern">Only numbers are allowed</div>
-                </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="lastName">Gender</label>
+            <select  formControlName="gender" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.gender.errors }" >
+              <option>Male</option>
+              <option>Female</option>
+              <option>Transgender</option>
+            </select>
+              <div *ngIf="submitted && f.gender.errors" class="invalid-feedback">
+                <div *ngIf="f.gender.errors.required">Gender is required</div>
             </div>
+        </div>
+        </div>
+        
+        <div class="col-md-12 col-sm-12">
+          <div class="form-group">
+            <label for="guardName">Guardian Name</label>
+            <input type="text" formControlName="guardName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.guardName.errors }" />
+            <div *ngIf="submitted && f.guardName.errors" class="invalid-feedback">
+                <div *ngIf="f.guardName.errors.required">Guardian name is required</div>
+                <div *ngIf="f.guardName.errors.pattern">Only alphabets and . are allowed</div>
             </div>
+        </div>
+        </div>
+
+      </div>
+      <div class="form-block row pl-5 pr-5">
+        <div class="mt-2 mb-2 person-title"><span>Location Details</span></div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input  disabled formControlName="country" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.country.errors }" />
+              <div *ngIf="submitted && f.country.errors" class="invalid-feedback">
+                <div *ngIf="f.country.errors.required">Country required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="state">State</label>
+            <select type="text" (change)="handleStateSelection()" formControlName="state" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.state.errors }" >
+              <option *ngFor="let state of stateList" [value]="state">{{state}}</option>
+            </select>
+            <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                <div *ngIf="f.state.errors.required">State  is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="district">District</label>
+            <select type="text" formControlName="district" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.district.errors }" >
+              <option *ngFor="let district of districtList" [value]="district">{{district}}</option>
+            </select>
+            <div *ngIf="submitted && f.district.errors" class="invalid-feedback">
+                <div *ngIf="f.district.errors.required">Age is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" formControlName="city" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.city.errors }" />
+            <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                <div *ngIf="f.city.errors.required">City is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="pin">PIN Code</label>
+            <input type="text" maxlength="6"  formControlName="pin" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.pin.errors }" />
+            <div *ngIf="submitted && f.pin.errors" class="invalid-feedback">
+                <div *ngIf="f.pin.errors.required">PIN is required</div>
+                <div *ngIf="f.pin.errors?.minlength">Please provide 6 digit PIN</div>
+                <div *ngIf="f.pin.errors.pattern">Only numbers are allowed</div>
+            </div>
+        </div>
+        </div>
+
+
+      </div>
+      <div class="form-block row pl-5 pr-5">
+        <div class="mt-2 mb-2 person-title"><span>Contact Details</span></div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="mobNumber">Phone Number</label>
+            <input type="text"  maxlength="10"  formControlName="mobNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
+            <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
+                <div *ngIf="f.mobNumber.errors.required">Valid mobile number is required</div>
+                <div *ngIf="f.mobNumber.errors?.minlength">Please provide 10 digit number</div>
+                <div *ngIf="f.mobNumber.errors.pattern">Valid mobile number is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="email">E-Mail</label>
+            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">Email  is required</div>
+                <div *ngIf="f.email.errors?.email">Please provide valid email address</div>
+            </div>
+        </div>
+        </div>
+
+      </div>
+      <div class="form-block row pl-5 pr-5">
+        <div class="mt-2 mb-2 person-title"><span>Other Details</span></div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="idType">ID Proof Type</label>
+            <select  formControlName="idType" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.idType.errors }" >
+                <option>Aadhar</option>
+                <option>College/School ID</option>
+                <option>Voter ID</option>
+                <option>Driving License</option>
+                <option>PAN</option>
+                <option>Birth Cetificate</option>
+            </select>
+              <div *ngIf="submitted && f.idType.errors" class="invalid-feedback">
+                <div *ngIf="f.idType.errors.required">ID Proof type required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="idNumber">ID Proof Number</label>
+            <input type="text" formControlName="idNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }" />
+            <div *ngIf="submitted && f.idNumber.errors" class="invalid-feedback">
+                <div *ngIf="f.idNumber.errors.required">ID Proof Number is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="student">Are You a Student?</label>
+            <select  formControlName="student" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.student.errors }" >
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+              <div *ngIf="submitted && f.student.errors" class="invalid-feedback">
+                <div *ngIf="f.student.errors.required">Answer is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="govt">Are You Govt. Employee?</label>
+            <select  formControlName="govt" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.govt.errors }" >
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+              <div *ngIf="submitted && f.govt.errors" class="invalid-feedback">
+                <div *ngIf="f.govt.errors.required">Answer is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="coaching">Coaching Required?</label>
+            <select  formControlName="coaching" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.coaching.errors }" >
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+              <div *ngIf="submitted && f.coaching.errors" class="invalid-feedback">
+                <div *ngIf="f.coaching.errors.required">Answer is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-3 col-sm-12">
+          <div class="form-group">
+            <label for="password">Photo</label>
+            <input #file  type="file" accept='image/*' (change)="preview(file.files)" />
             
-          </div> 
-          <div class="row">
-              <div class="col-md-3"></div>
-              <div class="col-md-3 col-sm-12">
-                  <div class="form-group">
-                    <label for="mobNumber">Contact Number</label>
-                    <input type="text"  maxlength="10"  formControlName="mobNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
-                    <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
-                        <div *ngIf="f.mobNumber.errors.required">Valid mobile number is required</div>
-                        <div *ngIf="f.mobNumber.errors?.minlength">Please provide 10 digit number</div>
-                        <div *ngIf="f.mobNumber.errors.pattern">Valid mobile number is required</div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-3 col-sm-12">
-                    <div class="form-group">
-                      <label for="email">E-Mail</label>
-                      <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-                      <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                          <div *ngIf="f.email.errors.required">Email  is required</div>
-                          <div *ngIf="f.email.errors?.email">Please provide valid email address</div>
-                      </div>
-                  </div>
-                  </div>
+           
+        </div>
+        </div>
+        <div class="col-md-3 col-sm-12">
+            <div class="form-group">
+              <img [src]=""  *ngIf="!imgURL" style="height: 100px;width:100px;background: #d4cdcd"> 
+              <img [src]="imgURL"  *ngIf="imgURL" style="height: 100px;width:100px">
+              
           </div>
-          <div class="row">
-              <div class="col-md-3"></div>
-              <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="idType">ID Proof Type</label>
-                  <select  formControlName="idType" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.idType.errors }" >
-                      <option>Aadhar</option>
-                      <option>Voter ID</option>
-                      <option>Driving License</option>
-                  </select>
-                    <div *ngIf="submitted && f.idType.errors" class="invalid-feedback">
-                      <div *ngIf="f.idType.errors.required">ID Proof type required</div>
-                  </div>
-              </div>
-              </div>
-              <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="idNumber">ID Proof Number</label>
-                  <input type="text" formControlName="idNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }" />
-                  <div *ngIf="submitted && f.idNumber.errors" class="invalid-feedback">
-                      <div *ngIf="f.idNumber.errors.required">ID Proof Number is required</div>
-                  </div>
-              </div>
-              </div>
-              
-              
-            </div> 
-            <div class="row">
+          </div>
+
+      </div>
+      <div class="form-block row pl-5 pr-5" *ngIf="!editMode">
+        <div class="mt-2 mb-2 person-title"><span>Membership Details</span></div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="center">Center</label>
+            <input type="text" disabled formControlName="center" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.center.errors }" />
+            <div *ngIf="submitted && f.center.errors" class="invalid-feedback">
+                <div *ngIf="f.center.errors.required">Password is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="memCost">Membership Cost</label>
+            <input type="text"  disabled formControlName="memCost" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memCost.errors }" />
+            <div *ngIf="submitted && f.memCost.errors" class="invalid-feedback">
+                <div *ngIf="f.memCost.errors.required">Password is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group cal">
+            <label for="username">Membership Start Date</label>
+            <br>
+            <p-calendar disabled=true formControlName="memStartDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
+            <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
+                <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group cal">
+            <label for="username">Membership Validity End Date</label>
+            <br>
+            <p-calendar disabled=true formControlName="memEndDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
+            <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
+                <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
+            </div>
+        </div>
+        </div>
+        <div style="width: 100%;text-align:center;" class="form-group"  ><input type="button" class="btn btn-primary btn-reg"  value="VERIFY AND CREATE ACCOUNT" (click)="proceedToSlotSelection()"/></div>
+
+
+      </div>
+
+      <div class="row">
+
+      </div>
+      
+      
     
-                <div class="col-md-3"></div>
-                <div class="col-md-2 col-sm-12">
-                    <div class="form-group">
-                      <label for="student">Are You a Student?</label>
-                      <select  formControlName="student" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.student.errors }" >
-                        <option>Yes</option>
-                        <option>No</option>
-                      </select>
-                        <div *ngIf="submitted && f.student.errors" class="invalid-feedback">
-                          <div *ngIf="f.student.errors.required">Answer is required</div>
-                      </div>
-                  </div>
-                  </div>
-                  <div class="col-md-2 col-sm-12">
-                      <div class="form-group">
-                        <label for="govt">Are You Govt. Employee?</label>
-                        <select  formControlName="govt" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.govt.errors }" >
-                          <option>Yes</option>
-                          <option>No</option>
-                        </select>
-                          <div *ngIf="submitted && f.govt.errors" class="invalid-feedback">
-                            <div *ngIf="f.govt.errors.required">Answer is required</div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="col-md-2 col-sm-12">
-                        <div class="form-group">
-                          <label for="coaching">Coaching Required?</label>
-                          <select  formControlName="coaching" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.coaching.errors }" >
-                            <option>Yes</option>
-                            <option>No</option>
-                          </select>
-                            <div *ngIf="submitted && f.coaching.errors" class="invalid-feedback">
-                              <div *ngIf="f.coaching.errors.required">Answer is required</div>
-                          </div>
-                      </div>
-                      </div>
-                      
-                      
-              </div> 
+      
+      
+        
+         
+           
               <div class="row">
                   <div class="col-md-3"></div>
-                  <div class="col-md-3 col-sm-12">
-                      <div class="form-group">
-                        <label for="password">Photo</label>
-                        <input #file  type="file" accept='image/*' (change)="preview(file.files)" />
-                        
-                        <!-- <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                          <span style="color:red;" *ngIf="message">{{message}}</span>
-                        </div>  -->
-                    </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12">
-                        <div class="form-group">
-                          <img [src]=""  *ngIf="!imgURL" style="height: 100px;width:100px;background: #d4cdcd"> 
-                          <img [src]="imgURL"  *ngIf="imgURL" style="height: 100px;width:100px">
-                          
-                      </div>
-                      </div>
+                 
               </div>
               <div class="" *ngIf="editMode" style="text-align: center">
                 <input type="button" style="min-width: 100px;" class="btn btn-success" value="EDIT" (click)="editMember()"/>
@@ -294,53 +339,7 @@
               </div>
   </div>
   
-  <div class="facilityBlock" *ngIf="!editMode">
-      <div class="subheader"><span>MEMBERSHIP DETAILS</span></div>
-      <div class="row">
-          <div class="col-md-3 col-sm-12">
-              <div class="form-group">
-                <label for="center">Center</label>
-                <input type="text" disabled formControlName="center" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.center.errors }" />
-                <div *ngIf="submitted && f.center.errors" class="invalid-feedback">
-                    <div *ngIf="f.center.errors.required">Password is required</div>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-3 col-sm-12">
-                <div class="form-group">
-                  <label for="memCost">Membership Cost</label>
-                  <input type="text"  disabled formControlName="memCost" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.memCost.errors }" />
-                  <div *ngIf="submitted && f.memCost.errors" class="invalid-feedback">
-                      <div *ngIf="f.memCost.errors.required">Password is required</div>
-                  </div>
-              </div>
-              </div>
-              <div class="col-md-3 col-sm-12">
-                  <div class="form-group cal">
-                    <label for="username">Membership Start Date</label>
-                    <br>
-                    <p-calendar disabled=true formControlName="memStartDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
-                    <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
-                        <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-3 col-sm-12">
-                    <div class="form-group cal">
-                      <label for="username">Membership Validity End Date</label>
-                      <br>
-                      <p-calendar disabled=true formControlName="memEndDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="1950:2020"></p-calendar>
-                      <div *ngIf="submitted && f.dateOfBirth.errors" class="invalid-feedback">
-                          <div *ngIf="f.dateOfBirth.errors.required">DoB is required</div>
-                      </div>
-                  </div>
-                  </div>
-      </div>
-      <div class="row">
-          <div style="width: 100%;text-align:center;" class="form-group" *ngIf="showProceedBtn"><input type="button" class="btn btn-primary btn-reg" value="PROCEED" (click)="proceedToSlotSelection()"/></div>
-
-      </div>
-  </div>
+  
   <p-toast key="errorToast" position="top-right"></p-toast>
   <p-dialog modal="true" header="Review & Confirm" draggable=false  [(visible)]="displayReview" [style]="{width: '70%'}" >
     <div class="container reviewPopup">

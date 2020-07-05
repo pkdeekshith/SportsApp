@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ins.pos.dto.MemberContactDetailsJsonDTO;
 import com.ins.pos.dto.MemberDetailsJsonDTO;
 import com.ins.pos.dto.MemberJsonDTO;
 import com.ins.pos.dto.MemberShipTypeJsonDTO;

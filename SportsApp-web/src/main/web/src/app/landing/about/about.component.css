@@ -1,4 +1,52 @@
-.about-banner{
+.about-wrapper{
+    min-height: calc(100vh - 125px) !important;
+   background: white;
+}
+.home-image{
+    background: url("../../../assets/images/home-image.JPG") no-repeat;
+    height: 475px;
+    width: 100%;
+    background-size: 100% 100%;
+}
+.headline{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 40px;
+    line-height: 106.3%;
+    letter-spacing: 0.02em;
+    color: #3C4852;
+}
+.head-text{
+    font-style: normal;
+font-weight: normal;
+font-size: 15px;
+line-height: 136.9%;
+/* or 26px */
+
+
+color: #3C4852;
+}
+.head-text p{
+   text-align: justify;
+}
+.about-text{
+    background: #FFFFFF;
+    box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11);
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 5px;
+    padding: 10px;
+}
+.cont-read{
+    color: red;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+
+
+/* .about-banner{
     height:330px;
     width: 100%;    
 }
@@ -47,5 +95,8 @@
 
 
 }
+.descrptn p{
+    text-align: justify;
+}
 /* Background Gradient for Analagous Colors */
-
+ 
