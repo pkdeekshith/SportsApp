@@ -763,6 +763,8 @@ public class ReportServiceImpl implements ReportService {
 					paymentOrderReportDTO.setBookingType2(po.getAccountId2().getTypeOfBooking());
 				}
 				paymentOrderReportDTO.setMemberId(po.getMemberId().getMemberId());
+				paymentOrderReportDTO.setMemberName(po.getMemberId().getMemberName());
+				paymentOrderReportDTO.setDate(po.getCreatedDate());
 				paymentOrderReportDTO.setOrderId(po.getOrderId());
 				switch (po.getStatus()) {
 				case "S":

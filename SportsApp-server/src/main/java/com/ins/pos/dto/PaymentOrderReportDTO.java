@@ -1,10 +1,16 @@
 package com.ins.pos.dto;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class PaymentOrderReportDTO {
 
 	private String orderId;
 
 	private Long memberId;
+
+	private String memberName;
 
 	private Long accountId1;
 
@@ -15,6 +21,9 @@ public class PaymentOrderReportDTO {
 	private String bookingType2;
 
 	private Double totalAmount;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date date;
 
 	private String status;
 
@@ -80,6 +89,22 @@ public class PaymentOrderReportDTO {
 
 	public void setBookingType2(String bookingType2) {
 		this.bookingType2 = bookingType2;
+	}
+
+	public String getMemberName() {
+		return memberName;
+	}
+
+	public void setMemberName(String memberName) {
+		this.memberName = memberName;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }
