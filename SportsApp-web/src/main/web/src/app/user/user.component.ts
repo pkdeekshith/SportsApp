@@ -23,7 +23,7 @@ export class UserComponent implements OnInit {
               }
 
   ngOnInit() {
-   
+    this.BackendService.editMode = false;
   }
 
 }

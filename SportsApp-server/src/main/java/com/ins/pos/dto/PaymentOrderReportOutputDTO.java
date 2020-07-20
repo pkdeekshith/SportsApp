@@ -7,6 +7,10 @@ public class PaymentOrderReportOutputDTO {
 	private List<PaymentOrderReportDTO> data;
 	private double totalAmount;
 	private String status;
+	private String fromDate;
+	private String toDate;
+	private String bookingApp;
+	private String paymentStatus;
 
 	public List<PaymentOrderReportDTO> getData() {
 		return data;
@@ -30,5 +34,37 @@ public class PaymentOrderReportOutputDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getBookingApp() {
+		return bookingApp;
+	}
+
+	public void setBookingApp(String bookingApp) {
+		this.bookingApp = bookingApp;
+	}
+
+	public String getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(String paymentStatus) {
+		this.paymentStatus = paymentStatus;
 	}
 }

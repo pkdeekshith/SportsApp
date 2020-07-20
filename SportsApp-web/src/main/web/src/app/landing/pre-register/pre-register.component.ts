@@ -13,8 +13,8 @@ import Swal from 'sweetalert2';
 export class PreRegisterComponent implements OnInit {
   preferredSports =[];
   failities=[];
-  prefSport;
-  prefFacility;
+  prefSport=[];
+  prefFacility=[];
   temp={};
   constructor(private Router:Router,private BackEnd : BackendService,private ngxService: NgxUiLoaderService,private messageService: MessageService) { }
 
@@ -24,7 +24,10 @@ export class PreRegisterComponent implements OnInit {
     if( this.BackEnd.facilityToValidate && this.BackEnd.facilityToValidate.centreId){
       center = this.BackEnd.facilityToValidate.centreId.toString();
     }
-   
+    // "chart.js": "^2.9.3",
+            // "node_modules/chart.js/dist/Chart.js"
+
+
     this.BackEnd.getPreferedSportAndFacilities(center).subscribe(
       data=>{
         this.temp={};
@@ -54,7 +57,7 @@ export class PreRegisterComponent implements OnInit {
                     });
                     if(f){
                       this.prefSport = [Number(f)];
-                      this.handlePreferredSportSelection();
+                      this.handlePreferredSportSelection(1);
                     }
                     
                   }
@@ -69,7 +72,8 @@ export class PreRegisterComponent implements OnInit {
     
   }
 
-  handlePreferredSportSelection(){
+  handlePreferredSportSelection(arg){
+    this.prefFacility=[];
     this.ngxService.start();
     let centerid="0";
     if( this.BackEnd.facilityToValidate && this.BackEnd.facilityToValidate.centreId){
@@ -86,9 +90,12 @@ export class PreRegisterComponent implements OnInit {
           temp.push({"label":i.facilityName,"value":i.facilityId})});
           this.failities=temp; 
           //Set default facility wiht user selected one 
-          if(this.BackEnd.facilityToValidate){
-            this.prefFacility = [Number(this.BackEnd.facilityToValidate.facilityId)];
-          } 
+          if(arg == 1){
+            if(this.BackEnd.facilityToValidate){
+              this.prefFacility = [Number(this.BackEnd.facilityToValidate.facilityId)];
+            } 
+          }
+          
       },
       error  => {
         console.log("Error", error);
@@ -98,10 +105,11 @@ export class PreRegisterComponent implements OnInit {
   }
   proceedAfterSportSelection(){
     //call availablility check
+    debugger;
     let errorMsgs=[];
     let proceedFlag = false;
     let severity;
-    if(!this.prefSport || !this.prefFacility){
+    if(!this.prefSport.length || !this.prefFacility.length){
       this.messageService.clear()
       this.messageService.add({key: 'errorToast', severity:'error', summary: '', detail: 'Please select facility'});
       return;

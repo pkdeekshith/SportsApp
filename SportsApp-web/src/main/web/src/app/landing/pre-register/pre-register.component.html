@@ -1,4 +1,4 @@
-<div class="validate-wrapper">
+<div class="validate-wrapper mt-1">
   <!-- <div class="validate-title ml-5 mt-3">
       <div class="valid-title"><label>Create your account</label></div>
       <p>Please select the preferred sport to proceed.</p>
@@ -9,7 +9,7 @@
         <div class="mt-5">
           <div class="form-group">
             <label for="firstName">Preferred Sports</label>
-            <p-multiSelect [options]="preferredSports"  [(ngModel)]="prefSport" (onChange)="handlePreferredSportSelection()" selectionLimit=2 showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'100%'}"></p-multiSelect>
+            <p-multiSelect [options]="preferredSports"  [(ngModel)]="prefSport" (onChange)="handlePreferredSportSelection(0)" selectionLimit=2 showHeader=false  styleClass="multiPref" [style]="{minWidth:'100%'}" [panelStyle]="{minWidth:'100%'}"></p-multiSelect>
            
           </div>
       
@@ -20,7 +20,7 @@
         </div>
       
         <div style="width: 100%;text-align:center;" class="form-group mt-4">
-          <input type="button" class="btn btn-success avail-btn" [disabled]="!prefSport || !prefFacility"  (click)="proceedAfterSportSelection()" value="CHECK AVAILABLITY"/>
+          <input type="button" class="btn btn-success avail-btn" [disabled]="!prefSport.length || !prefFacility.length"  (click)="proceedAfterSportSelection()" value="CHECK AVAILABLITY"/>
         </div>
         </div>
         

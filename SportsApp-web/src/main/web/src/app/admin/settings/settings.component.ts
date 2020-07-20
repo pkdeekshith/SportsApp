@@ -92,6 +92,8 @@ export class SettingsComponent implements OnInit {
   handleCenterSelection(id,wid){
     this.FacilitiesToEnable=[];
     this.FacilitiesToDisable=[];
+    this.SubFacilitiesToEnable=[];
+    this.SubFacilitiesToDisable=[];
     this.BackendService.getFacilitiesForAdmin(id).subscribe(
       data=>{
         if(data){

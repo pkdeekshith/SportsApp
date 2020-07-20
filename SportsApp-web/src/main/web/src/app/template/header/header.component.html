@@ -3,7 +3,8 @@
     <div class="container">
       <a class="navbar-brand logoBox" href="#">
             <img src="./assets/images/logo.png" alt="" style="height: 100%">
-          </a>
+      </a>
+      <span class="ml-2 app-title-main">SPOTS</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -22,9 +23,33 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/landing/login">SignIn</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/privacy">Privacy & Security</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/faq">FAQ</a>
+          </li>
           <li class="nav-item special">
             <a class="nav-link" routerLink="/landing/facility">JOIN</a>
           </li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarResponsive" *ngIf="BackEnd.editMode">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item" *ngIf="this.BackEnd.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/profile">Profile</a>
+          </li>
+          <li class="nav-item " *ngIf="this.BackEnd.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/history">Booking History</a>
+          </li>
+          
+          <li class="nav-item" *ngIf="this.BackEnd.memberRole =='user'">
+            <a class="nav-link" routerLink="/user/sport">Book Now</a>
+          </li>
+          <li class="nav-item" *ngIf="this.BackEnd.memberRole=='user'">
+            <a class="nav-link" (click)="logout()">Logout</a>
+          </li>
+          
         </ul>
       </div>
     </div>

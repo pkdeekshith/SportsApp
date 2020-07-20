@@ -2,15 +2,18 @@
   <div class="container">
     <div class="row">
       <div class="col-md-7">
-        <div class="container pt-5 home-info">
+        <div class="container pt-5 home-info mt-1">
           <div class="headline">
-            <label>FIND AND BOOK SPORT <br/>FACILITIES ACROSS KERALA</label>
+            <label>Book… Play…& Enjoy!</label>
           </div>
           <div class="head-text mt-4">
-            <p>Find sport facilities from football picthes to swimming</p>
+            <!-- <p>Find sport facilities from football picthes to swimming</p>
             <p>pools in a range of cities across Kerala.Find and take</p>
             <p>membership for your favourite sport and train with the </p>
-            <p>best coaches</p>
+            <p>best coaches</p> -->
+            <p class="home-text-new">
+              Here Directorate of Sports & Youth Affairs, Government of Kerala fleeting new milestone in the field of Sports in Kerala. The project – “SPOTS” pertains to the E- virtual ticket purchase features for accessing all the Sports facilities across Kerala, especially for public. Now it acts in live for Jimmy George Sports Hub, Thiruvananthapuram. Public can access the facilities like Badminton Court, Swimming Pool, Basketball Court,  Gymnastics, Sports Life Fitness Centreetc. Booking, Slot Allotment, Payment methods all are available only through online. This application allow for online monitoring of actual transactions and permitting to become a member/customer!
+            </p>
           </div>
           <div class="search-section mt-4">
             <div>
@@ -24,7 +27,7 @@
               </select>
             </div>
             <div class="col-md-9 mt-3" style="text-align: center;">
-              <input type="button" class="btn btn-secondary search-btn" value="SEARCH" (click)="goToJoinPage()"/>
+              <input type="button" [disabled]= "!searchedCenter"  class="btn btn-secondary search-btn" value="SEARCH" (click)="goToJoinPage()"/>
             </div>
           </div>
         </div>

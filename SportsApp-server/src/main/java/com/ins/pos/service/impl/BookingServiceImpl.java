@@ -166,6 +166,10 @@ public class BookingServiceImpl implements BookingService {
 				if(accountSubSectorList.size()>=subFacility.getSlotLimit()) {
 					throw new Exception("Slot not available");
 				}
+				List<AccountsSubSector> accountSubSectorListForMember = accountsSubSectorRepository.findActiveBookingForSubFacilityForMember(bookingStartDate.getTime(), bookingEndDate.getTime(), timeTbl.getSessionStartTime(), timeTbl.getSessionEndTime(), "Monthly", true, subFacility,true,member);
+				if(accountSubSectorListForMember.size()>0) {
+					throw new Exception("Facility already booked by the user!! Please try after some time if previous booking is not successful.");
+				}
 			}
 			List<Price> priceList = priceRepository.findByActiveAndSubFacilityId(true, subFacility);
 			
@@ -274,7 +278,7 @@ public class BookingServiceImpl implements BookingService {
 		} catch (Exception e) {
 			LOGGER.error("Exception : ",e);
 			response.put("status", "Failure");
-			response.put("message", e);
+			response.put("message", e.getMessage());
 		}
 		return response.toString();
 

@@ -57,7 +57,7 @@ doBooking(){
     };
   this.ngxService.start();
   if(this.BackEnd.memberRole == "user"){
-    paymentRequest.memberId = this.BackEnd.memberId; //login user
+    paymentRequest.memberId = this.BackEnd.memberId.toString(); //login user
     this.BackEnd.saveBooking(this.selectedFacility,this.BackEnd.memberId).subscribe(
       data=>{
         paymentRequest.accountId.push(data.accountId);
@@ -83,7 +83,6 @@ doBooking(){
                    window.location.href=url;
                  }else{
                    console.log("in initiate oayment error");
-                   
                  }
                  
               },error=>{
@@ -92,7 +91,18 @@ doBooking(){
               }
             );
             }
-        })}else{
+        })}else if(data && data.status == "Failure"){
+          this.ngxService.stop();
+          let message = data.message || "Technical Error Occured";
+          Swal.fire({
+            type : 'error',
+            html: '<b>'+message+'</b>',
+            allowOutsideClick :false,
+            allowEnterKey:false,
+            allowEscapeKey:false
+          })
+        }
+        else{
           this.ngxService.stop();
           alert("server error");
         }
@@ -126,7 +136,6 @@ doBooking(){
                   this.BackEnd.initiatePayment(paymentRequest).subscribe(
                     data=>{
                       this.ngxService.stop();
-
                      // data= {"key":"3DSZ2OM25982AC29157AC29158NNFXKV","status":"S"};
                        if(data.status == "S"){
                          const url= this.Config.URL.paymentFinal+data.key;
@@ -140,7 +149,19 @@ doBooking(){
                     }
                   );
                   }
-              })}else{
+              })}
+              else if(data && data.status == "Failure"){
+                this.ngxService.stop();
+                let message = data.message || "Technical Error Occred";
+                Swal.fire({
+                  type : 'error',
+                  html: '<b>'+message+'</b>',
+                  allowOutsideClick :false,
+                  allowEnterKey:false,
+                  allowEscapeKey:false
+                })
+              }
+              else{
                 this.ngxService.stop();
                 alert("server error");
               }

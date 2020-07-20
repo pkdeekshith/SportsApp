@@ -72,7 +72,7 @@ export class RegisterComponent implements OnInit {
       district : ['', Validators.required],
       country : ['INDIA', Validators.required],
       state : ['', Validators.required],
-      mobNumber : ['', [Validators.required,Validators.minLength(10),Validators.pattern('^[0-9]+$')]],
+      mobNumber : ['', [Validators.required,Validators.minLength(10),Validators.maxLength(11),Validators.pattern('^[0-9]+$')]],
       pin : ['', [Validators.required,Validators.minLength(6),Validators.pattern('^[0-9]+$')]],
       email : ['', [Validators.required,Validators.email]],
       idNumber : ['', Validators.required],

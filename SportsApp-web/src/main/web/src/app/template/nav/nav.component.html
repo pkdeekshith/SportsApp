@@ -4,12 +4,37 @@
       <a class="navbar-brand logoBox" href="#">
             <img src="./assets/images/logo.png" alt="" style="height: 100%">
           </a>
+          <span class="ml-2 app-title-main">SPOTS</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <!-- <div><i class="fas fa-user-circle fa-2x" style="color: green"></i><span style="margin-left: 15px">Welcome User</span></div> -->
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto" *ngIf="!this.BackendService.editMode">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/home" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">Home</a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" routerLink="/landing/about" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">About</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/contact" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/login" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">SignIn</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/privacy" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">Privacy & Security</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/landing/faq" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">FAQ</a>
+          </li>
+          <li class="nav-item special" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">
+            <a class="nav-link" routerLink="/landing/facility" *ngIf="this.BackendService.memberRole == undefined || this.BackendService.memberRole == 'newuser'">JOIN</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" *ngIf="this.BackendService.memberRole =='user' || this.BackendService.memberRole =='admin'">
           <li class="nav-item" *ngIf="this.BackendService.memberRole =='user'">
             <a class="nav-link" routerLink="/user/profile">Profile</a>
           </li>

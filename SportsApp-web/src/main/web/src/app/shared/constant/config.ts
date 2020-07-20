@@ -28,11 +28,20 @@ export class Config {
                      getAllBookings:this.baseURL+"api/booking/getAllBookingForMember/",
                      renewMember:this.baseURL+"api/member/renewMember",
                      getBookingSummary:this.baseURL+"api/report/getBookingSummary",
+                     getBookingSummaryPDF:this.baseURL+"api/report/getBookingSummaryPDF",
                      getSpotBookingForDays:this.baseURL+"api/report/getSpotBookingForDays",
+                     getSpotBookingForDaysPDF:this.baseURL+"api/report/getSpotBookingForDaysPDF",
                      getAllAccountsForDays:this.baseURL+"api/report/getAllAccountsForDays",
+                     getAllAccountsForDaysPDF:this.baseURL+"api/report/getAllAccountsForDaysPDF",
                      getAllBookingForDays:this.baseURL+"api/report/getAllBookingForDays",
+                     getAllBookingForDaysPDF:this.baseURL+"api/report/getAllBookingForDaysPDF",
+
                      getConsolidatedReportByDate:this.baseURL+"api/report/getConsolidatedReportByDate",
+                     getConsolidatedReportByDatePDF:this.baseURL+"api/report/getConsolidatedReportByDatePDF",
+
                      getConsolidatedReportByFacility:this.baseURL+"api/report/getConsolidatedReportByFacility",
+                     getConsolidatedReportByFacilityPDF:this.baseURL+"api/report/getConsolidatedReportByFacilityPDF",
+
                      getAllFacilitiesAdmin:this.baseURL+"api/admin/getAllFacilities",
                      updateFacilities:this.baseURL+"api/admin/updateFacilities",
                      getAllSubFacilitiesAdmin:this.baseURL+"api/admin/getAllSubFacilities",
@@ -48,7 +57,14 @@ export class Config {
                      updateCenters:this.baseURL+"api/admin/updateCenters",
                      getCenterListAdmin: this.baseURL+"api/admin/getAllCenters",
                      getOnlineBookingWindow: this.baseURL+"api/admin/getOnlineBookingWindow",
-                     saveBookingWindow:  this.baseURL+"api/admin/saveBookingWindow"
+                     saveBookingWindow:  this.baseURL+"api/admin/saveBookingWindow",
+                     paymenthistory:this.baseURL+"api/report/getPaymentDetailsForDays",
+                     paymenthistoryPDF:this.baseURL+"api/report/getPaymentDetailsForDaysPDF",
+
+                     activeMembers:this.baseURL+"api/report/getActiveMemberContacts",
+                     activeMembersPDF:this.baseURL+"api/report/getActiveMemberContactsPDF",
+
+                     triggerSms : this.baseURL+"api/report/triggerSMS"
 
               }
        }

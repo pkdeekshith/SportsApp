@@ -1,6 +1,7 @@
 import { Injectable, getDebugNode } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders ,HttpResponse, HttpResponseBase} from '@angular/common/http';
 import { Config } from "../constant/config";
+import {map} from 'rxjs/operators'
 @Injectable({
   providedIn: 'root'
 })
@@ -145,11 +146,11 @@ export class BackendService {
     return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
   }
   getBookingsHistory(id){
-    return this.Http.get<any>(this.URL.getUpcomingBookings+id, {})
+    return this.Http.get<any>(this.URL.getAllBookings+id, {})
   }
   renewMember(id){
     let req = {
-      "centerId":2,
+      "centerId":this.memberData.centreId.toString(),
       "memberId":parseInt(id)
     };
     return this.Http.post<any>(this.URL.renewMember, req)
@@ -157,8 +158,44 @@ export class BackendService {
   getBookingSummary(req){
     return this.Http.post<any>(this.URL.getBookingSummary, req)
   }
+  getBookingSummaryPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getBookingSummaryPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
   getSpotBookingForDays(req){
     return this.Http.post<any>(this.URL.getSpotBookingForDays, req)
+  }
+  getSpotBookingForDaysPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getSpotBookingForDaysPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
   }
   getAllAccountsForDays(req){
     return this.Http.post<any>(this.URL.getAllAccountsForDays, req)
@@ -166,11 +203,83 @@ export class BackendService {
   getAllBookingForDays(req){
     return this.Http.post<any>(this.URL.getAllBookingForDays, req)
   }
+  getAllAccountsForDaysPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getAllAccountsForDaysPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
+  getAllBookingForDaysPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getAllBookingForDaysPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
   getConsolidatedReportByDate(req){
     return this.Http.post<any>(this.URL.getConsolidatedReportByDate, req)
   }
+  getConsolidatedReportByDatePDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getConsolidatedReportByDatePDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
   getConsolidatedReportByFacility(req){
     return this.Http.post<any>(this.URL.getConsolidatedReportByFacility, req)
+  }
+  getConsolidatedReportByFacilityPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.getConsolidatedReportByFacilityPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
   }
   getFacilitiesForAdmin(id){
     let req={"centerId":id.toString()};
@@ -208,6 +317,52 @@ export class BackendService {
   }
   getMemberCred(req){
     return this.Http.post<any>(this.URL.getMemberCred, req)
+  }
+  getPaymentHistory(req){
+    return this.Http.post<any>(this.URL.paymenthistory, req)
+  }
+  getPaymentHistoryPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.paymenthistoryPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
+  getActiveUsers(req){
+    return this.Http.post<any>(this.URL.activeMembers, req)
+  }
+  getActiveUsersPDF(req){
+    let httpOptionsPDF={
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      }),
+      responseType :'blob' as 'json'
+    }
+    let headers = new HttpHeaders();
+    headers.append('Content-Type','application/pdf');
+    headers.append('Accept','application/pdf');
+    return this.Http.post<any>(this.URL.activeMembersPDF, req, httpOptionsPDF).
+    pipe(map(res =>{
+      if(res){
+        console.log('got pdf');
+      }
+      return new Blob([res],{type:'application/pdf'})
+    }))
+  }
+  sendUserMessage(req){
+    return this.Http.post<any>(this.URL.triggerSms, req)
+
   }
   //helper functions-move to utility later
   getDOB(date){

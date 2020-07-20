@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.ins.pos.entity.AccountsSubSector;
+import com.ins.pos.entity.Member;
 import com.ins.pos.entity.SubFacility;
 
 public interface AccountsSubSectorRepository extends CrudRepository<AccountsSubSector, Long> {
@@ -17,5 +18,13 @@ public interface AccountsSubSectorRepository extends CrudRepository<AccountsSubS
 			@Param("sessionEndTime") int sessionEndTime, @Param("typeOfBooking") String typeOfBooking,
 			@Param("active") Boolean active, @Param("subFacility") SubFacility subFacility,
 			@Param("onHold") Boolean onHold);
+	
+	@Query("select a from AccountsSubSector a inner join a.accountsId ac inner join a.subFacilityId sf where ac.bookingDate>=:bookingStartDate and ac.bookingDateLast<=:bookingEndDate and ac.sessionStartTime=:sessionStartTime and ac.sessionEndTime=:sessionEndTime and ac.typeOfBooking=:typeOfBooking and (ac.active=:active or ac.onHold=:onHold) and sf=:subFacility and ac.memberId=:memberId")
+	public List<AccountsSubSector> findActiveBookingForSubFacilityForMember(@Param("bookingStartDate") Date bookingStartDate,
+			@Param("bookingEndDate") Date bookingEndDate, @Param("sessionStartTime") int sessionStartTime,
+			@Param("sessionEndTime") int sessionEndTime, @Param("typeOfBooking") String typeOfBooking,
+			@Param("active") Boolean active, @Param("subFacility") SubFacility subFacility,
+			@Param("onHold") Boolean onHold,@Param("memberId") Member memberId);
+
 	
 }

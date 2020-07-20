@@ -189,8 +189,8 @@
               <div id="profile-tab" class="tab-pane active">
                 <div class="pd-20">
                   <div class="row"><h3 class="mgbt-xs-15 mgtp-10 font-semibold" ><i class="fas fa-user-circle"></i> ABOUT</h3>
-                  <input type="button" (click)="editMember()" value="Edit Info" class="btn btn-danger" style="margin-left: 4%;"/>
-                  <input type="button" class="btn btn-success" [disabled]="memberInfo.active == true"  (click)="renewMember()" value="Renew Membership" class="btn btn-success" style="margin-left: 4%;"/>
+                  <input type="button" (click)="editMember()" value="EDIT" class="btn btn-danger" style="margin-left: 4%; min-width: 80px;"/>
+                  <input type="button" class="btn btn-success" [disabled]="!memberInfo.isRenewalPending"  (click)="renewMember()" value="RENEW MEMBERSHIP" class="btn btn-success" style="margin-left: 2%;min-width: 80px;"/>
                 </div>
                   <div class="row">
                     <div class="col-sm-6">
@@ -305,12 +305,12 @@
                     <div class="col-sm-12 mgbt-xs-20">
                       <h3 class="mgbt-xs-15 font-semibold"><i class="fa fa-file-text-o mgr-10 profile-icon"></i> ACTIVE BOOKINGS</h3>
                       <div class="content-list content-menu activeTable">
-                        <p-table #tt [value]="activeBookings" [paginator]="true" [rows]="4" [globalFilterFields]="['facilityName','bookingStartDate']" [responsive]="true">
+                        <p-table #tt [value]="activeBookings" [paginator]="true" [rows]="4" [globalFilterFields]="['facilityName','bookingStartDate']" >
                           <ng-template pTemplate="caption">
                               <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
                               <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
                           </ng-template>
-                        <ng-template pTemplate="header">
+                        <ng-template pTemplate="header" >
                             <tr>
                                 <th>Facility</th>
                                 <th>SubFacility</th>

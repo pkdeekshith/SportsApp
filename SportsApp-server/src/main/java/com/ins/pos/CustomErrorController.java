@@ -22,7 +22,7 @@ public class CustomErrorController extends BasicErrorController {
     @Override
     public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
         HttpStatus status = getStatus(request);
-        if (status == HttpStatus.NOT_FOUND) {
+        if (status == HttpStatus.NOT_FOUND||status == HttpStatus.UNAUTHORIZED) {
             return new ModelAndView("forward:/");
         } else {
             return super.errorHtml(request, response);

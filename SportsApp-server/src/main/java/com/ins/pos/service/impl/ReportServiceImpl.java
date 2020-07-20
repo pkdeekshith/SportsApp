@@ -1,10 +1,10 @@
 package com.ins.pos.service.impl;
 
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -43,9 +43,6 @@ import com.ins.pos.entity.Facility;
 import com.ins.pos.entity.Member;
 import com.ins.pos.entity.PaymentOrderStatus;
 import com.ins.pos.entity.SubFacility;
-import com.ins.pos.pdf.PDFGeneratorService;
-import com.ins.pos.pdf.PDFRequest;
-import com.ins.pos.pdf.Transactions;
 import com.ins.pos.repository.AccountsRepository;
 import com.ins.pos.repository.BookingRepository;
 import com.ins.pos.repository.CenterRepository;
@@ -55,9 +52,6 @@ import com.ins.pos.repository.MemberRepository;
 import com.ins.pos.repository.PaymentOrderStatusRepository;
 import com.ins.pos.repository.SubFacilityRepository;
 import com.ins.pos.service.ReportService;
-
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperPrint;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -119,6 +113,10 @@ public class ReportServiceImpl implements ReportService {
 			}
 			Date fromDate = simpleDateFormat.parse(request.getString("fromDate"));
 			Date endDate = simpleDateFormat.parse(request.getString("endDate"));
+			summaryReportOutputDTO.setFromDate(request.getString("fromDate"));
+			summaryReportOutputDTO.setToDate(request.getString("endDate"));
+			summaryReportOutputDTO.setCenter(centers.get(0).getCentreName());
+			summaryReportOutputDTO.setBookingApp(bookingAppInput);
 			Calendar endDateCalender = new GregorianCalendar();
 			endDateCalender.setTime(endDate);
 			endDateCalender.set(Calendar.HOUR_OF_DAY, 23);
@@ -155,6 +153,8 @@ public class ReportServiceImpl implements ReportService {
 
 			}
 			list = new ArrayList<SummaryReportDTO>(map.values());
+			if(!list.isEmpty())
+			list.sort(Comparator.comparing(SummaryReportDTO::getDate));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -222,6 +222,10 @@ public class ReportServiceImpl implements ReportService {
 				Optional<Center> centerOpt = centerRepository.findById(center);
 				centers.add(centerOpt.get());
 			}
+			
+			spotBookingReportOutputDTO.setBookingApp(bookingAppInput);
+			spotBookingReportOutputDTO.setCenter(centers.get(0).getCentreName());
+			spotBookingReportOutputDTO.setDate(request.getString("date"));
 			List<Accounts> accountList = accountsRepository.getSpotBookingForDays(fromDate, endDate, "Quick Bookings",
 					true, bookingApp, centers);
 
@@ -284,6 +288,8 @@ public class ReportServiceImpl implements ReportService {
 
 			}
 			list = new ArrayList<SpotBookingReportDTO>(map.values());
+			if(!list.isEmpty())
+			list.sort(Comparator.comparing(SpotBookingReportDTO::getSlot));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -354,16 +360,22 @@ public class ReportServiceImpl implements ReportService {
 			endDateCalender.setTime(endDate);
 			endDateCalender.set(Calendar.HOUR_OF_DAY, 23);
 			endDateCalender.set(Calendar.MINUTE, 59);
-			endDateCalender.set(Calendar.SECOND, 29);
+			endDateCalender.set(Calendar.SECOND, 59);
 			endDate = endDateCalender.getTime();
 			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
 			String subFacility = request.getString("subfacilityId");
 			if (center.equals("All") && facility.equals("All") && subFacility.equals("All")) {
+				bookingReportOutputDTO.setCenter("All");
+				bookingReportOutputDTO.setFacility("All");
+				bookingReportOutputDTO.setSubFacility("All");
 				bookingList = bookingRepository.getAllBookingForDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && subFacility.equals("All")) {
 				if (!center.equals("All")) {
 					Optional<Center> centerOpt = centerRepository.findById(center);
+					bookingReportOutputDTO.setCenter(centerOpt.get().getCentreName());
+					bookingReportOutputDTO.setFacility("All");
+					bookingReportOutputDTO.setSubFacility("All");
 					bookingList = bookingRepository.getAllBookingForDaysAndCenter(fromDate, endDate, centerOpt.get(),
 							bookingApp);
 				}
@@ -374,6 +386,9 @@ public class ReportServiceImpl implements ReportService {
 						Optional<Center> centerOpt = centerRepository.findById(center);
 						Facility facilities = facilityRepository.findByFacilityIdAndCenterId(Long.parseLong(facility),
 								centerOpt.get());
+						bookingReportOutputDTO.setCenter(centerOpt.get().getCentreName());
+						bookingReportOutputDTO.setFacility(facilities.getFacilityName());
+						bookingReportOutputDTO.setSubFacility("All");
 						bookingList = bookingRepository.getAllBookingForDaysAndCenterAndFacility(fromDate, endDate,
 								centerOpt.get(), facilities, bookingApp);
 					}
@@ -385,11 +400,16 @@ public class ReportServiceImpl implements ReportService {
 							centerOpt.get());
 					SubFacility subFacilities = subFacilityRepository.findByFacilityIdAndSubFacilityId(facilities,
 							Long.parseLong(subFacility));
+					bookingReportOutputDTO.setCenter(centerOpt.get().getCentreName());
+					bookingReportOutputDTO.setFacility(facilities.getFacilityName());
+					bookingReportOutputDTO.setSubFacility(subFacilities.getSubFacilityName());
 					bookingList = bookingRepository.getAllBookingForDaysAndCenterAndFacilityAndSubFacility(fromDate,
 							endDate, centerOpt.get(), facilities, subFacilities, bookingApp);
 				}
 			}
-
+			bookingReportOutputDTO.setBookingApp(bookingAppInput);
+			bookingReportOutputDTO.setFromDate(request.getString("fromDate"));
+			bookingReportOutputDTO.setToDate(request.getString("endDate"));
 			for (Booking book : bookingList) {
 				BookingReportDTO bookingReportDTO = new BookingReportDTO();
 				bookingReportDTO.setBookedDate(book.getBookedDate());
@@ -402,6 +422,9 @@ public class ReportServiceImpl implements ReportService {
 				bookingReportDTO.setSubfacility(book.getSubFacilityId().getSubFacilityName());
 				listBooking.add(bookingReportDTO);
 			}
+			if(!listBooking.isEmpty())
+			listBooking.sort(Comparator.comparing(BookingReportDTO::getBookingId));
+
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -451,6 +474,32 @@ public class ReportServiceImpl implements ReportService {
 			String facility = request.getString("facilityId");
 			String subFacility = request.getString("subfacilityId");
 			String paymentType = request.getString("typeOfPayment");
+			
+			accountReportOutputDTO.setBookingApp(bookingAppInput);
+			if(center.equals("All")) {
+				accountReportOutputDTO.setCenter("All");
+				accountReportOutputDTO.setFacility("All");
+				accountReportOutputDTO.setSubFacility("All");
+			}else {
+				Optional<Center> centerOpt = centerRepository.findById(center);
+				accountReportOutputDTO.setCenter(centerOpt.get().getCentreName());
+				accountReportOutputDTO.setFacility("All");
+				accountReportOutputDTO.setSubFacility("All");
+				if(!facility.equals("All")) {
+					Facility facilities = facilityRepository
+							.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
+					accountReportOutputDTO.setFacility(facilities.getFacilityName());
+					if(!subFacility.equals("All")) {
+						SubFacility subFacilities = subFacilityRepository.findByFacilityIdAndSubFacilityId(facilities,
+								Long.parseLong(subFacility));
+						accountReportOutputDTO.setSubFacility(subFacilities.getSubFacilityName());
+					}
+				}
+			}
+			accountReportOutputDTO.setFromDate(request.getString("fromDate"));
+			accountReportOutputDTO.setPaymentType(paymentType);
+			accountReportOutputDTO.setToDate(request.getString("endDate"));
+			
 			if (center.equals("All") && facility.equals("All") && subFacility.equals("All")
 					&& paymentType.equals("All")) {
 				accountList = accountsRepository.getAllSelectedDays(fromDate, endDate, bookingApp);
@@ -461,9 +510,7 @@ public class ReportServiceImpl implements ReportService {
 				} else if (facility.equals("All") && subFacility.equals("All")) {
 
 					if (!center.equals("All")) {
-
 						Optional<Center> centerOpt = centerRepository.findById(center);
-
 						accountList = accountsRepository.getAllSelectedDaysAndCenterAllPayment(fromDate, endDate,
 								centerOpt.get(), bookingApp);
 					}
@@ -488,7 +535,6 @@ public class ReportServiceImpl implements ReportService {
 								fromDate, endDate, centerOpt.get(), facilities, subFacilities, bookingApp);
 					}
 				}
-
 			} else {
 				if (paymentType.equals("New Member") || paymentType.equals("Member Renewal")) {
 					if (center.equals("All")) {
@@ -544,11 +590,13 @@ public class ReportServiceImpl implements ReportService {
 				accountReportDTO.setReceiptDate(account.getPaidDate());
 				accountReportDTO.setReceiptNo(account.getAccountsId());
 				accountReportDTO.setReceiptType(keyMap.get(account.getTypeOfBooking()));
-				totalDebitAmount += account.getCreditAmount();
-				totalCreditAmount += account.getPaidAmount();
+				totalCreditAmount += account.getCreditAmount();
+				totalDebitAmount += account.getPaidAmount();
 				listBooking.add(accountReportDTO);
 
 			}
+			if(!listBooking.isEmpty())
+			listBooking.sort(Comparator.comparing(AccountReportDTO::getReceiptNo));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -593,6 +641,23 @@ public class ReportServiceImpl implements ReportService {
 			endDate = endDateCalender.getTime();
 			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
+			
+			consolidatedReportByDateOutputDTO.setBookingApp(bookingAppInput);
+			consolidatedReportByDateOutputDTO.setFromDate(request.getString("fromDate"));
+			consolidatedReportByDateOutputDTO.setToDate(request.getString("endDate"));
+			if(center.equals("All")) {
+				consolidatedReportByDateOutputDTO.setCenter("All");
+				consolidatedReportByDateOutputDTO.setFacility("All");
+			}else {
+				Optional<Center> centerOpt = centerRepository.findById(center);
+				consolidatedReportByDateOutputDTO.setCenter(centerOpt.get().getCentreName());
+				consolidatedReportByDateOutputDTO.setFacility("All");
+				if(!facility.equals("All")) {
+					Facility facilities = facilityRepository
+							.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
+					consolidatedReportByDateOutputDTO.setFacility(facilities.getFacilityName());
+				}
+			}
 			if (center.equals("All") && facility.equals("All")) {
 				accountList = accountsRepository.getAllSelectedDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && (!center.equals("All"))) {
@@ -629,6 +694,8 @@ public class ReportServiceImpl implements ReportService {
 				}
 			}
 			listBooking = new ArrayList<ConsolidatedReportByDateDTO>(map.values());
+			if(!listBooking.isEmpty())
+			listBooking.sort(Comparator.comparing(ConsolidatedReportByDateDTO::getDate));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -673,6 +740,26 @@ public class ReportServiceImpl implements ReportService {
 			endDate = endDateCalender.getTime();
 			Long center = request.getLong("centerId");
 			String facility = request.getString("facilityId");
+			
+			consolidatedReportByFacilityOutputDTO.setBookingApp(bookingAppInput);
+
+			consolidatedReportByFacilityOutputDTO.setFromDate(request.getString("fromDate"));
+			consolidatedReportByFacilityOutputDTO.setToDate(request.getString("endDate"));
+			if(center.equals("All")) {
+				consolidatedReportByFacilityOutputDTO.setCenter("All");
+				consolidatedReportByFacilityOutputDTO.setFacility("All");
+			}else {
+				Optional<Center> centerOpt = centerRepository.findById(center);
+				consolidatedReportByFacilityOutputDTO.setCenter(centerOpt.get().getCentreName());
+				consolidatedReportByFacilityOutputDTO.setFacility("All");
+				if(!facility.equals("All")) {
+					Facility facilities = facilityRepository
+							.findByFacilityIdAndCenterId(Long.parseLong(facility), centerOpt.get());
+					consolidatedReportByFacilityOutputDTO.setFacility(facilities.getFacilityName());
+				}
+			}
+			
+			
 			if (center.equals("All") && facility.equals("All")) {
 				accountList = accountsRepository.getAllSelectedDays(fromDate, endDate, bookingApp);
 			} else if (facility.equals("All") && (!center.equals("All"))) {
@@ -712,6 +799,8 @@ public class ReportServiceImpl implements ReportService {
 
 			}
 			listBooking = new ArrayList<ConsolidatedReportByFacilityDTO>(map.values());
+			if(!listBooking.isEmpty())
+			listBooking.sort(Comparator.comparing(ConsolidatedReportByFacilityDTO::getDate));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -746,13 +835,34 @@ public class ReportServiceImpl implements ReportService {
 			List<PaymentOrderStatus> paymentOrders = new ArrayList<PaymentOrderStatus>();
 
 			if ("All".equals(paymentStatus)) {
+				paymentOrderReportOutputDTO.setPaymentStatus("All");
 				paymentStatuses.add("S");
 				paymentStatuses.add("F");
 				paymentStatuses.add("C");
 				paymentStatuses.add("I");
 			} else {
 				paymentStatuses.add(paymentStatus);
+				switch (paymentStatus) {
+				case "S":
+					paymentOrderReportOutputDTO.setPaymentStatus("Success");
+					break;
+				case "F":
+					paymentOrderReportOutputDTO.setPaymentStatus("Failed");
+					break;
+				case "C":
+					paymentOrderReportOutputDTO.setPaymentStatus("Cancelled");
+					break;
+				case "I":
+					paymentOrderReportOutputDTO.setPaymentStatus("In Progress");
+					break;
+				default:
+					paymentOrderReportOutputDTO.setPaymentStatus(paymentStatus);
+				}
 			}
+			paymentOrderReportOutputDTO.setBookingApp("Online");
+			paymentOrderReportOutputDTO.setFromDate(request.getString("fromDate"));
+			paymentOrderReportOutputDTO.setPaymentStatus(paymentStatus);
+			paymentOrderReportOutputDTO.setToDate(request.getString("endDate"));
 			paymentOrders = paymentOrderStatusRepository.getAllPaymentOrders(fromDate, endDate, paymentStatuses);
 			for (PaymentOrderStatus po : paymentOrders) {
 				PaymentOrderReportDTO paymentOrderReportDTO = new PaymentOrderReportDTO();
@@ -787,6 +897,8 @@ public class ReportServiceImpl implements ReportService {
 				paymentOrderReportDTOList.add(paymentOrderReportDTO);
 				totalAmount += po.getTotalAmount();
 			}
+			if(!paymentOrderReportDTOList.isEmpty())
+			paymentOrderReportDTOList.sort(Comparator.comparing(PaymentOrderReportDTO::getDate));
 			status = "Success";
 		} catch (Exception e) {
 			LOGGER.error("Exception - ", e);
@@ -818,7 +930,8 @@ public class ReportServiceImpl implements ReportService {
 			memberContactDetailsJsonDTO.setMemberName(m.getMemberName());
 			memberJSONList.add(memberContactDetailsJsonDTO);
 		});
-
+		if(!memberJSONList.isEmpty())
+		memberJSONList.sort(Comparator.comparing(MemberContactDetailsJsonDTO::getMemberId));
 		return memberJSONList;
 	}
 

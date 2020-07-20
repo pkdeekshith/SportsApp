@@ -6,6 +6,8 @@ import { HttpClientModule,HTTP_INTERCEPTORS } from  '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import {TableModule} from 'primeng/table';
 import {CalendarModule} from 'primeng/calendar';
+import {PanelModule} from 'primeng/panel';
+
 import {MultiSelectModule} from 'primeng/multiselect';
 import { NgxUiLoaderModule } from  'ngx-ui-loader';
 import {MessagesModule} from 'primeng/messages';
@@ -32,6 +34,7 @@ import {Config} from './shared/constant/config';
 import {Utility} from './shared/utility/utility';
 
 import {Data} from './shared/data/data';
+
 import {MessageService} from 'primeng/api';
 import { AdminComponent } from './admin/admin.component';
 import { SettingsComponent } from './admin/settings/settings.component';
@@ -42,6 +45,8 @@ import { FacilityComponent } from './landing/facility/facility.component';
 import { SportComponent } from './user/sport/sport.component';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import {APIInterceptor} from '../app/shared/service/interceptor.service';
+import { PrivacyComponent } from './landing/privacy/privacy.component';
+import { FaqComponent } from './landing/faq/faq.component';
 
 
 @NgModule({
@@ -67,7 +72,9 @@ import {APIInterceptor} from '../app/shared/service/interceptor.service';
     PreRegisterComponent,
     BookComponent,
     FacilityComponent,
-    SportComponent
+    SportComponent,
+    PrivacyComponent,
+    FaqComponent
   ],
   imports: [
     BrowserModule,
@@ -85,12 +92,13 @@ import {APIInterceptor} from '../app/shared/service/interceptor.service';
     MessageModule,
     DialogModule,
     ToastModule,
-    AngularFontAwesomeModule
+    AngularFontAwesomeModule,
+    PanelModule
 
   ],
   providers: [Config,MessageService,Data,Utility,{provide: HTTP_INTERCEPTORS, useClass: APIInterceptor, multi: true}],
   exports:[ FormsModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule,PanelModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

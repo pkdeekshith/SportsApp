@@ -11,6 +11,10 @@ public class SummaryReportOutputDTO {
 	private double quickBooking;
 	private double total;
 	private String status;
+	private String bookingApp;
+	private String center;
+	private String fromDate;
+	private String toDate;
 
 	public List<SummaryReportDTO> getData() {
 		return data;
@@ -66,5 +70,37 @@ public class SummaryReportOutputDTO {
 
 	public void setTotal(double total) {
 		this.total = total;
+	}
+
+	public String getBookingApp() {
+		return bookingApp;
+	}
+
+	public void setBookingApp(String bookingApp) {
+		this.bookingApp = bookingApp;
+	}
+
+	public String getCenter() {
+		return center;
+	}
+
+	public void setCenter(String center) {
+		this.center = center;
+	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
 	}
 }

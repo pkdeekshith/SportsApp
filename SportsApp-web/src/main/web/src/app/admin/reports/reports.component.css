@@ -33,3 +33,11 @@
 .report_wrapper{
     min-height: 100%;
 }
+td{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+::ng-deep .ui-table-caption{
+    text-align: right !important;
+}

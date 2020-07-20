@@ -4,16 +4,19 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +77,9 @@ public class AuthEndPoint {
 	
 	@Autowired
 	private PaymentOrderStatusRepository paymentOrderStatusRepository;
+	
+	@Value("${sportsapp.renewal.reminder.days}")
+	private long reminderDays;
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/login")
@@ -112,6 +118,14 @@ public class AuthEndPoint {
 					facilityTypeList.add(facilityTypeJsonDTO);
 				}
 			}
+			Date today = new Date();
+			long duration  = member.getMemberTypeValidity().getTime() - today.getTime();
+			long diffInDays = TimeUnit.MILLISECONDS.toDays(duration);
+			if(diffInDays<reminderDays) {
+				memberDetailsJsonDTO.setIsRenewalPending(true);
+			}else {
+				memberDetailsJsonDTO.setIsRenewalPending(false);
+			}
 			if (memberDetailsJsonDTO.getMemberPhoto() != null) {
 				try {
 					byte[] fileContent = FileUtils.readFileToByteArray(new File(memberDetailsJsonDTO.getMemberPhoto()));
@@ -132,7 +146,7 @@ public class AuthEndPoint {
 		} catch (AuthenticationException e) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("status", "Failure");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders)
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).headers(responseHeaders)
 					.body("Invalid Username or Password!");
 		}
 	}

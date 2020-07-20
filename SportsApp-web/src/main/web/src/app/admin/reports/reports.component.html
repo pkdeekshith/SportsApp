@@ -1,4 +1,5 @@
 <div class="row report_wrapper">
+  <p-toast key="successToast" position="top-right"></p-toast>
   <div class="col-md-3 leftMenu">
     
     <ul>
@@ -8,6 +9,8 @@
       <li (click)="setWIN(3)">ALL ACCOUNT FOR DAYS</li> 
       <li (click)="setWIN(4)">CONSOLIDATED REPORT BY DATE</li>
       <li (click)="setWIN(5)">CONSOLIDATED REPORT BY FACILITY</li>
+      <li (click)="setWIN(6)">PAYMENT HISTORY</li>
+      <li (click)="setWIN(7)">ACTIVE USERS</li>
     </ul>
   </div>
   <!-- Summary Start-->
@@ -58,9 +61,9 @@
     <div class="pr-2">
       <p-table #tt [value]="bookingSummary" [paginator]="true" [rows]="4" [globalFilterFields]="['date']">
         <ng-template pTemplate="caption">
-            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
-            <!-- <span>TOTAL :  {{totalAmount}}</span> -->
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getBookingSummary('pdf')"/>
+            <!-- <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto"> -->
           </ng-template>
       <ng-template pTemplate="header">
           <tr>
@@ -124,10 +127,9 @@
       </div>
         
       <div class="pr-2">
-        <p-table #tt [value]="spotBookingSummary" [paginator]="true" [rows]="4" [globalFilterFields]="['slot','count','price','amount']">
+        <p-table #tt [value]="spotBookingSummary" [paginator]="true" [rows]="4">
           <ng-template pTemplate="caption">
-              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+             <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getSpotBookingSummary('pdf')"/>
           </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -212,8 +214,7 @@
       <div class="pr-2">
         <p-table #tt [value]="allBookingForDay" [paginator]="true" [rows]="4" [globalFilterFields]="['bookingId','memberName']">
           <ng-template pTemplate="caption">
-              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getAllBookingForDays('pdf')"/>    
           </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -315,8 +316,7 @@
       <div class="pr-2">
         <p-table #tt [value]="allAccountForDay" [paginator]="true" [rows]="4" [globalFilterFields]="['receiptNo','memberName']">
           <ng-template pTemplate="caption">
-              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getAllAccountForDays('pdf')"/>      
           </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -399,8 +399,7 @@
     <div class="pr-2">
         <p-table #tt [value]="consolidatedByDate" [paginator]="true" [rows]="4" [globalFilterFields]="['date','facility']">
           <ng-template pTemplate="caption">
-              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getConsolidatedReportByDate('pdf')"/>        
           </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -474,8 +473,7 @@
       <div class="pr-2">
         <p-table #tt [value]="consolidatedByFacility" [paginator]="true" [rows]="4" [globalFilterFields]="['date','facility']">
           <ng-template pTemplate="caption">
-              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getConsolidatedReportByFacility('pdf')"/>           
           </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -496,4 +494,143 @@
       </div>
     </div>
     <!--CONSOLIDATED by facility report End-->
+    <!--payment start -->
+    <div class="col-md-9 report-content" *ngIf="WIN == 06">
+    
+      <div class="p-2">
+        <div class="p-2 report-title">PAYMENT HISTORY</div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="">From Date</label>
+              <p-calendar  [(ngModel)]="payFromDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="2000:2099" class="pr-2"></p-calendar>
+          </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="">To Date</label>
+              <p-calendar   [(ngModel)]="payToDate" dateFormat="dd.mm.yy" showIcon="true" [yearNavigator]="true" yearRange="2000:2099"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="">Booking Mode</label>
+              <select  class="form-control" [(ngModel)]="payBookingMode">
+                <option value="Online">Online</option>
+                <option value="Offline">Offline</option>
+                <option value="Mobile">Mobile</option>
+                <option value="All">All</option>
+              </select>          </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="">Status</label>
+              <select  class="form-control" [(ngModel)]="payStatus" >
+                <option value="All">All</option>
+                <option value="S">Success</option>
+                <option value="F">Failed</option>
+                <option value="C">Cancelled</option>
+                <option value="I">In Progress</option>
+              </select>            </div>
+          </div>
+          <div class="col-md-3 my-auto">
+            <input type="button" (click)="getPaymentHistory()" class="btn btn-info mt-2" value="VIEW" style="min-width: 190px;"/>
+          </div>
+        </div>
+        
+       
+      </div>
+       
+  
+      <div class="pr-2">
+        <p-table #tt [value]="paymentSummary" [paginator]="true" [rows]="4" [globalFilterFields]="['date']">
+          <!-- <ng-template pTemplate="caption">
+              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+              <input type="text" pInputText size="50" placeholder="Search" (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </ng-template> -->
+            <ng-template pTemplate="caption">
+              <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getPaymentHistory('pdf')"/>           
+            </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                  <th>Date</th>
+                  <th>Order ID</th>
+                  <th>Member ID</th>
+                  <th>Member Name</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-paymentSummary>
+            <tr>
+                  <td>{{paymentSummary.date}}</td>
+                  <td>{{paymentSummary.orderId}}</td>
+                  <td>{{paymentSummary.memberId}}</td>
+                  <td>{{paymentSummary.memberName}}</td>
+                  <td>{{paymentSummary.totalAmount}}</td>
+                  <td>{{paymentSummary.status}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+      </div>
+    </div>
+    <!--payment end-->
+    <!--user sms start-->
+    <div class="col-md-9 report-content" *ngIf="WIN == 07">
+    
+      <div class="p-2">
+        <div class="p-2 report-title">ACTIVE USERS</div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="">Center</label>
+              <select  class="form-control " [(ngModel)]="activeUsersCenter">
+                <option value="0">All</option>
+                <option *ngFor="let center of centerList" [ngValue]="center.centreId">{{center.centreName}}</option>
+              </select>  
+            </div>
+          </div>
+          <div class="col-md-3 my-auto">
+            <input type="button" (click)="getActiveUsers()" class="btn btn-info mt-2" value="VIEW" style="min-width: 190px;"/>
+          </div>
+        </div>
+        
+       
+      </div>
+       
+  
+      <div class="pr-2">
+        <p-table #tt [value]="activeUsers" [paginator]="true" [rows]="4" >
+          <ng-template pTemplate="caption">
+            <input type='button' class="btn btn-info text-right" value="Export as PDF" (click)="getActiveUsers('pdf')"/>           
+          </ng-template> 
+        <ng-template pTemplate="header">
+            <tr>
+                  <th>Name</th>
+                  <th>Mobile Number</th>
+                  
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-activeUsers>
+            <tr>
+                  <td>{{activeUsers.memberName}}</td>
+                  <td>{{activeUsers.memberContactNo}}</td>
+                  
+            </tr>
+        </ng-template>
+    </p-table>
+      </div>
+      <div class="">
+        <div class="col-md-9 pl-0 mt-1">
+          <div class="form-group">
+            <label for="">Message</label>
+            <textarea class="form-control" [(ngModel)]="userMessage"></textarea>
+          </div>
+        </div>
+        <div class="col-md-3 my-auto">
+          <input type="button" (click)="sendUserMessage()" class="btn btn-info mt-2" value="SEND" style="min-width: 190px;"/>
+        </div>
+      </div>
+    </div>
+    <!-- user sms end-->
 </div>

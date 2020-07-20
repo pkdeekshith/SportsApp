@@ -27,13 +27,14 @@ export class LandingComponent implements OnInit {
    const orderId = localStorage.getItem("orderId");
    if(tok && orderId){
     this.ngxService.start();
+    localStorage.removeItem('orderId');
      this.BackendService.getMemberCred({tok,orderId}).subscribe(
        data=>{
          this.ngxService.stop();
          if(data && data.status =="S"){
-           this.BackendService.memberId = data.memberId;
+           this.BackendService.memberId = data.memberId.toString();
            this.BackendService.memberRole = 'user';
-           localStorage.clear();
+           localStorage.removeItem('orderId');
            this.Router.navigateByUrl("/user/history");
          }
        },error=>{

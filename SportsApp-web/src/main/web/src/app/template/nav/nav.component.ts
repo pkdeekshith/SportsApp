@@ -17,7 +17,7 @@ export class NavComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.BackendService.memberRole)
+   
   }
   logout(){
     this.Utility.deleteSession();

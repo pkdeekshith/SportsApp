@@ -7,6 +7,11 @@ public class ConsolidatedReportByFacilityOutputDTO {
 	private List<ConsolidatedReportByFacilityDTO> data;
 	private double totalAmount;
 	private String status;
+	private String bookingApp;
+	private String center;
+	private String fromDate;
+	private String toDate;
+	private String facility;
 
 	public List<ConsolidatedReportByFacilityDTO> getData() {
 		return data;
@@ -30,5 +35,45 @@ public class ConsolidatedReportByFacilityOutputDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getBookingApp() {
+		return bookingApp;
+	}
+
+	public void setBookingApp(String bookingApp) {
+		this.bookingApp = bookingApp;
+	}
+
+	public String getCenter() {
+		return center;
+	}
+
+	public void setCenter(String center) {
+		this.center = center;
+	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getFacility() {
+		return facility;
+	}
+
+	public void setFacility(String facility) {
+		this.facility = facility;
 	}
 }

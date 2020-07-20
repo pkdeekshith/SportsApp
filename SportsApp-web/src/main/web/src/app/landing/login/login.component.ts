@@ -182,8 +182,7 @@ export class LoginComponent implements OnInit {
     this.ngxService.start();
     let req={"email":this.f.username.value,"password":this.f.password.value};
     this.BackEnd.login(req)
-    .subscribe(
-      
+    .subscribe(      
       data  => {
         this.ngxService.stop();
         if(data && data.body && data.body.memberId){

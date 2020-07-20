@@ -20,13 +20,13 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     //this.centerList = [{id:2,name:'jimmy'},{id:3,name:'Newone'}];
     
-    this.ngxService.start();
+   // this.ngxService.start();
     this.BackEnd.getCentreList().subscribe(
       data=>{
-        this.ngxService.stop();
+       // this.ngxService.stop();
         this.centerList = data;
       },error=>{
-        this.ngxService.stop();
+       // this.ngxService.stop();
         console.log(error);
         
       }

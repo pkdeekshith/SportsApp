@@ -35,13 +35,13 @@
     <div class="form-group row">
         <label class="col-md-3 col-form-label">Booking From(Date)</label>
         <div class="col-md-4">
-            <input [(ngModel)]="windowStart" type="number" class="form-control"/>
+            <input [(ngModel)]="windowStart" type="number" class="form-control" min="1" max="31"/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-3 col-form-label">Booking To(Date)</label>
         <div class="col-md-4">
-            <input [(ngModel)]="windowEnd" type="number" class="form-control"/>
+            <input [(ngModel)]="windowEnd" type="number" class="form-control" min="1" max="31"/>
         </div>
     </div>
     <div class="text-center">

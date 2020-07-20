@@ -1,0 +1,31 @@
+<div class="faq-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <div class="container pt-1 about-text">
+          <div class="head-text mt-4">
+            <p class="faqH">GENERAL</p>
+            <div *ngFor="let item of data" class="mt-2">
+              <p-panel header={{item.title}} [toggleable]="true" [collapsed]="true">{{item.text}}</p-panel>
+            </div>
+            <p class="faqH">PRICING</p>
+            <div *ngFor="let item of price" class="mt-2">
+              <p-panel header={{item.title}} [toggleable]="true" [collapsed]="true">{{item.text}}</p-panel>
+            </div>
+            <p class="faqH">REGISTRATION</p>
+            <div *ngFor="let item of reg" class="mt-2">
+              <p-panel header={{item.title}} [toggleable]="true" [collapsed]="true">{{item.text}}</p-panel>
+            </div>
+            <p class="faqH">PAYMENT</p>
+            <div *ngFor="let item of pay" class="mt-2">
+              <p-panel header={{item.title}} [toggleable]="true" [collapsed]="true">{{item.text}}</p-panel>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 mt-1">
+          <div class="home-image"></div>
+      </div>
+    </div>
+  </div>
+</div>

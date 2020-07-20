@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -92,6 +93,9 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Autowired
 	private MemberCenterRepository memberCenterRepository;
+	
+	@Value("${sportsapp.renewal.reminder.days}")
+	private long reminderDays;
 
 	@Override
 	public List<MemberShipTypeJsonDTO> getMemberShipTypes() {
@@ -335,6 +339,14 @@ public class MemberServiceImpl implements MemberService {
 			if(memberCenter!=null) {
 				memberDetailsJsonDTO.setCenterName(memberCenter.getCenter().getCentreName());
 				memberDetailsJsonDTO.setCentreId(memberCenter.getCenter().getCentreId());
+			}
+			Date today = new Date();
+			long duration  = member.get().getMemberTypeValidity().getTime() - today.getTime();
+			long diffInDays = TimeUnit.MILLISECONDS.toDays(duration);
+			if(diffInDays<reminderDays) {
+				memberDetailsJsonDTO.setIsRenewalPending(true);
+			}else {
+				memberDetailsJsonDTO.setIsRenewalPending(false);
 			}
 		}
 		if (memberDetailsJsonDTO.getMemberPhoto() != null) {

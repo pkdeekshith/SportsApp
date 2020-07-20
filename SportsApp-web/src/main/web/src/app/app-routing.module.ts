@@ -20,6 +20,8 @@ import {AdminComponent} from './admin/admin.component';
 import {SettingsComponent} from './admin/settings/settings.component';
 import {ReportsComponent} from './admin/reports/reports.component';
 import { FacilityComponent } from './landing/facility/facility.component';
+import { PrivacyComponent } from './landing/privacy/privacy.component';
+import { FaqComponent } from './landing/faq/faq.component';
 
 const routes: Routes = [
   { path: 'landing', component: LandingComponent,
@@ -31,7 +33,9 @@ const routes: Routes = [
       {path:'contact',component :ContactComponent},
       {path:'login',component :LoginComponent},
       {path:'validate',component : PreRegisterComponent},
-      {path:'register',component:RegisterComponent}
+      {path:'register',component:RegisterComponent},
+      {path:'privacy',component:PrivacyComponent},
+      {path:'faq',component:FaqComponent}
     ]
 
     

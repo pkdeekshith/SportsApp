@@ -47,7 +47,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setSummaryReport(reportService.getAllBookingForDays(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "BookingSummaryReport.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -68,7 +68,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setSpotBookingReport(reportService.getSpotBookingForDays(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "SpotBookingSummaryReport.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -89,7 +89,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setBookingReport(reportService.getBookingReport(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "BookingForDays.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -110,7 +110,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setAccountReport(reportService.getAccountReport(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "AccountForDays.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -132,7 +132,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setConsolidatedReportByDate(reportService.getConsolidatedReportByDate(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "ConsolidatedReportByDays.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -154,7 +154,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setConsolidatedReportByFacility(reportService.getConsolidatedReportByFacility(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "ConsolidatedReportByFacility.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -176,7 +176,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setPaymentOrderReport(reportService.getPaymentDetailsForDays(data, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "PaymentReport.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");
@@ -198,7 +198,7 @@ public class ReportEndPoint {
 		try {
 			Transactions transaction = new Transactions();
 			transaction.setGetActiveMemberContacts(reportService.getAllMemberContactDetails(requestJSON, response));
-			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "Test.jasper");
+			PDFRequest pdfReq = pdfGeneratorService.getPDFRequest(transaction, "UserReport.jasper");
 			JasperPrint jasperPrint = pdfGeneratorService.createPdf(pdfReq);
 			response.setContentType("application/x-pdf");
 			response.setHeader("Content-disposition", "inline; filename=report.pdf");

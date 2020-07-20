@@ -40,6 +40,7 @@ public class MemberDetailsJsonDTO {
 	private Boolean firstLogin;
 	private String centerName;
 	private Long centreId;
+	private Boolean isRenewalPending;
 
 	public Long getMemberId() {
 		return memberId;
@@ -279,5 +280,13 @@ public class MemberDetailsJsonDTO {
 
 	public void setCentreId(Long centreId) {
 		this.centreId = centreId;
+	}
+
+	public Boolean getIsRenewalPending() {
+		return isRenewalPending;
+	}
+
+	public void setIsRenewalPending(Boolean isRenewalPending) {
+		this.isRenewalPending = isRenewalPending;
 	}
 }

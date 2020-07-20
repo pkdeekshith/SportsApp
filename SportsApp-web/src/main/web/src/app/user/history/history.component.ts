@@ -18,7 +18,7 @@ export class HistoryComponent implements OnInit {
   oldBookings:any=[];
   ngOnInit() {
     this.memberId = this.BackEnd.memberId;
-    this.BackEnd.getUpcomingBookings(this.memberId).subscribe(
+    this.BackEnd.getBookingsHistory(this.memberId).subscribe(
       data=>{ 
         this.oldBookings=data;
         this.ngxService.stop();

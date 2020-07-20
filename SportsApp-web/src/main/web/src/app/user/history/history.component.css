@@ -7,6 +7,15 @@
     background: #00002d  !important;
     color: white !important;
 }
+::ng-deep .ui-table-wrapper{
+    overflow: auto;
+}
+@media only screen and (max-width: 600px) {
+    ::ng-deep .ui-table table{
+        width:auto !important;
+    }
+  }
+
 .history-page{
     /* background: url("../../../assets/images/Banner-5.jpg"); */
     padding-bottom: 20px;

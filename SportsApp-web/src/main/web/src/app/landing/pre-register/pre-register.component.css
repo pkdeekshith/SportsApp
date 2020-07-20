@@ -32,3 +32,6 @@
     margin-top: 5px !important;
     min-width: 125PX;
 }
+::ng-deep .ui-multiselect-label{
+    min-height: 30px;
+}

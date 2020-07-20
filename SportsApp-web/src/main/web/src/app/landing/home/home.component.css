@@ -35,7 +35,7 @@ color: #3C4852;
     /* box-shadow: 0px 4px 21px rgba(0, 0, 0, 0.11); */
     border-radius: 6px;
     padding: 12px;
-    margin-top: 5px;
+    /* margin-top: 5px; */
 }
 .search-btn{
     background: #68AE3E !important;
@@ -49,7 +49,10 @@ color: #3C4852;
     display: inline-block !important;
     margin-left: 10px;
 }
-
+.home-text-new{
+    text-align: justify !important;
+    font-size: 15px;
+}
 
 /* .home-banner{
     height:330px;
