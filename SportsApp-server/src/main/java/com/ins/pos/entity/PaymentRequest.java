@@ -76,7 +76,7 @@ public class PaymentRequest {
 	@Column
 	private String addField10 = "NA";
 
-	@Column(columnDefinition = "VARCHAR(21845)")
+	@Column(columnDefinition = "TEXT")
 	private String reqMsg;
 
 	@Column
