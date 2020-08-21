@@ -1,12 +1,13 @@
 package com.ins.pos.service.util;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.net.URLEncoder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -19,19 +20,24 @@ public class CommunicationUtil {
 
 	@Autowired
 	RestTemplate restTemplate;
+	
+	@Value("${sms.url}")
+	private String smsURL;
+	
+	@Value("${sms.username}")
+	private String smsUserName;
+	
+	@Value("${sms.password}")
+	private String smsPassword;
+	
+	@Value("${sms.senderId}")
+	private String smsSenderId;
 
-	public boolean sendSms(String yourapiKey, String textMessage, String textSender, String mobileNumber) {
+	public boolean sendSms(String textMessage, String mobileNumber) {
 		boolean status = false;
 		try {
 
-			String apiKey = "apikey=" + URLEncoder.encode(yourapiKey, "UTF-8");
-			String message = "&message=" + URLEncoder.encode(textMessage, "UTF-8");
-			String sender = "&sender=" + URLEncoder.encode(textSender, "UTF-8");
-			String numbers = "&numbers=" + URLEncoder.encode(mobileNumber, "UTF-8");
-
-			// Send data
-			String uri = "https://api.textlocal.in/send/?" + apiKey + numbers + message + sender;
-
+			String uri = smsURL.replace("$username", smsUserName).replace("$password", smsPassword).replace("$message", textMessage).replace("$mobNo", mobileNumber).replace("$sender", smsSenderId); 
 			ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 			if (responseEntity.getStatusCode() == HttpStatus.OK) {
 				status = true;

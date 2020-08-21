@@ -230,21 +230,21 @@ public class AdminServiceImpl implements AdminService {
 					if (paymenOrderStatus.getMemberId() != null) {
 						Member m = paymenOrderStatus.getMemberId();
 						String subject = "SportsApp - Payment successfull - Account created for " + m.getMemberName();
-						String smsBody = "SportsApp - Payment is successfull and account has been created. Please check your mail for login details.";
+						String smsBody = "SportsApp - Payment is successfull and account has been created. One time password is "+m.getPassword();
 						String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">Payment is successfull and account has been created for you within SportsApp!</h3><h5></h5><h4>Please follow these instructions for logging in to the system.</h4><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Browse to ${url}</h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter your credentials</h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID: ${userId}</strong></h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: ${password}</strong></h5><h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payment Reference ID: ${refID}</h5><h5></h5><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
 						mailbody = mailbody.replace("${name}", m.getMemberName()).replace("${userId}", m.getUserName())
 								.replace("${password}", m.getPassword())
 								.replace("${refID}", paymentResponse.getPgMeTrnRefNo()).replace("${url}", appURL);
 						boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
-						boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic",
-								smsBody, "TXTLCL", "91" + m.getMemberContactNo());
+						boolean smsStatus = communicationUtil.sendSms(
+								smsBody, m.getMemberContactNo());
 						CommunicationLog communicationLog = new CommunicationLog();
 						communicationLog.setCreatedDate(new Date());
 						communicationLog.setMailBody(mailbody);
 						communicationLog.setMailId(m.getEmail());
 						communicationLog.setMailStatus(emailStatus);
 						communicationLog.setOrderId(request.getOrderID());
-						communicationLog.setPhoneNumber("91" + m.getMemberContactNo());
+						communicationLog.setPhoneNumber(m.getMemberContactNo());
 						communicationLog.setSmsContent(smsBody);
 						communicationLog.setSmsStatus(smsStatus);
 						communicationLogRepository.save(communicationLog);
@@ -257,8 +257,8 @@ public class AdminServiceImpl implements AdminService {
 						String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">We are sorry that your payment was not successful.</h3><h5></h5><h4>The amount for the said transaction has not been charged by us. In case, the amount has been charged, the refund will be processed by your respective bank.</h4><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
 						mailbody = mailbody.replace("${name}", m.getMemberName());
 						boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
-						boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic",
-								smsBody, "TXTLCL", "91" + m.getMemberContactNo());
+						boolean smsStatus = communicationUtil.sendSms(
+								smsBody,  m.getMemberContactNo());
 						CommunicationLog communicationLog = new CommunicationLog();
 						communicationLog.setCreatedDate(new Date());
 						communicationLog.setMailBody(mailbody);

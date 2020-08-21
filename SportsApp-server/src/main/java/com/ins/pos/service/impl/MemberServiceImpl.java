@@ -406,20 +406,19 @@ public class MemberServiceImpl implements MemberService {
 			userRepository.save(user);
 			memberRepository.save(m);
 			String subject = "SportsApp - Password reset for " + m.getMemberName();
-			String smsBody = "SportsApp - Password reset is successfull. Please check your mail for login details.";
+			String smsBody = "SportsApp - Password reset is successfull. One time password is "+m.getPassword();
 			String mailbody = "<h2><strong style=\"color: #000;\">Dear ${name} ,</strong></h2><h3 style=\"color: #4485b8;\">Password reset is successfull!</h3><h5></h5><h4>Please find the details below.</h4><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID: ${userId}</strong></h5><h5><strong >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: ${password}</strong></h5><h5></h5><h4 style=\"color: #4485b8;\">Sincerely,<br>Administrator</p></h4>";
 			mailbody = mailbody.replace("${name}", m.getMemberName()).replace("${userId}", m.getUserName())
 					.replace("${password}", m.getPassword());
 			boolean emailStatus = communicationUtil.sendEmail(m.getEmail(), subject, mailbody);
-			boolean smsStatus = communicationUtil.sendSms("ygWI8sO+qIc-M4uDF2kFDvD7Nc8BpLbloZyF7zZOic", smsBody, "TXTLCL",
-					"91" + m.getMemberContactNo());
+			boolean smsStatus = communicationUtil.sendSms(smsBody, m.getMemberContactNo());
 			CommunicationLog communicationLog = new CommunicationLog();
 			communicationLog.setCreatedDate(new Date());
 			communicationLog.setMailBody(mailbody);
 			communicationLog.setMailId(m.getEmail());
 			communicationLog.setMailStatus(emailStatus);
 			communicationLog.setOrderId("M"+m.getMemberId()+"FP"+(new Date()).getTime());
-			communicationLog.setPhoneNumber("91" + m.getMemberContactNo());
+			communicationLog.setPhoneNumber(m.getMemberContactNo());
 			communicationLog.setSmsContent(smsBody);
 			communicationLog.setSmsStatus(smsStatus);
 			communicationLogRepository.save(communicationLog);
