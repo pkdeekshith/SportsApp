@@ -128,8 +128,8 @@ public class MemberServiceImpl implements MemberService {
 				calender.add(Calendar.YEAR, 1);
 				member.setMemberTypeStartDate(new Date());
 				member.setMemberTypeValidity(calender.getTime());
-				// password = PasswordGenerator.generateRandomPassword(8);
-				password = "password";
+				password = PasswordGenerator.generateRandomPassword(8);
+				//password = "password";
 				member.setPassword(password);
 				isNewMember = true;
 				// BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
