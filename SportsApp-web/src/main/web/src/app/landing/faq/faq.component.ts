@@ -22,7 +22,7 @@ export class FaqComponent implements OnInit {
     },
     {
       title:'How long does it take to set up my account?',
-      text:"It depends on your data. It typically takes less than 10 minutes to start with."
+      text:"Within a very short time."
     },
     {
       title:'Any additional charges or support fees?',
@@ -46,7 +46,7 @@ export class FaqComponent implements OnInit {
     },
     {
       title:"How many languages does SPOT support?",
-      text:"SPOT is owned by Directorate of Sports & Youth Affairs, Government of Kerala."
+      text:"Currently, SPOT is only available in English."
     }];
     this.price =[
       {
@@ -100,11 +100,7 @@ export class FaqComponent implements OnInit {
       },
       {
         title:"How do I track my unpaid registrations?",
-        text:"To track unpaid registrations, please navigate to Payments > Unpaid Registrations."
-      },
-      {
-        title:"How do I collect recurring payments?",
-        text:"While booking, in the Fee & Payments Options section, define the payment type as Monthly Payment and follow the steps"
+        text:"Contact customer care."
       },
       {
         title:"Does SPOT support family member discounts?",
@@ -112,7 +108,7 @@ export class FaqComponent implements OnInit {
       },
       {
         title:"How do I view all my registrations?",
-        text:"To view all registrations please navigate to Registration > All Registrations"
+        text:"From user home page."
       }
     ]
     this.pay=[
@@ -130,7 +126,7 @@ export class FaqComponent implements OnInit {
       },
       {
         title:"How do I generate payment reports?",
-        text:""
+        text:"From user home page."
       },
       {
         title:"How do I track my unpaid registrations?",
@@ -139,11 +135,8 @@ export class FaqComponent implements OnInit {
       {
         title:"What happens if there is fraudulent activity on our payments?",
         text:"Please let us know first. We will work with you and the payment gateway to resolve the issue."
-      },
-      {
-        title:"How do I collect recurring payments?",
-        text:"While creating a program, in the Fee & Payments Options section, define the payment type as Monthly Payment and follow the steps."
       }
+      
     ]
 
   }

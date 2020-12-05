@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
       data=>{
        // this.ngxService.stop();
         this.centerList = data;
+        this.searchedCenter = data[0];
       },error=>{
        // this.ngxService.stop();
         console.log(error);

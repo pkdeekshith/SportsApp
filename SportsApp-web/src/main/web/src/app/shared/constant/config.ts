@@ -7,7 +7,7 @@ export class Config {
        constructor(){
               this.debug = (location.hostname == "localhost")?true:false;
               if(this.debug){
-                     this.baseURL = "http://15.206.200.143:8080/SportsApp/";
+                     this.baseURL = "https://sportskerala.co.in/SportsApp/";
               }else{
                      this.baseURL = "/SportsApp/";   
               }
